@@ -1,0 +1,158 @@
+@font-face {
+    font-family: 'THSarabunNew';
+    src: url('/static/fonts/thsarabunnew-webfont.eot');
+    src: url('/static/fonts/thsarabunnew-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/thsarabunnew-webfont.woff') format('woff'),
+         url('/static/fonts/thsarabunnew-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'THSarabunNew';
+    src: url('/static/fonts/thsarabunnew_bolditalic-webfont.eot');
+    src: url('/static/fonts/thsarabunnew_bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/thsarabunnew_bolditalic-webfont.woff') format('woff'),
+         url('/static/fonts/thsarabunnew_bolditalic-webfont.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'THSarabunNew';
+    src: url('/static/fonts/thsarabunnew_italic-webfont.eot');
+    src: url('/static/fonts/thsarabunnew_italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/thsarabunnew_italic-webfont.woff') format('woff'),
+         url('/static/fonts/thsarabunnew_italic-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'THSarabunNew';
+    src: url('/static/fonts/thsarabunnew_bold-webfont.eot');
+    src: url('/static/fonts/thsarabunnew_bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/static/fonts/thsarabunnew_bold-webfont.woff') format('woff'),
+         url('/static/fonts/thsarabunnew_bold-webfont.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+.thsarabunnew{
+   font-family: 'THSarabunNew', sans-serif;
+}
+
+/*
+    customize font for semantic-ui
+*/
+
+body {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.button {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.text.container {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.input input {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.list .list > .item .header,
+.ui.list > .item .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.steps .step .title {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.form input:not([type]),
+.ui.form input[type="date"],
+.ui.form input[type="datetime-local"],
+.ui.form input[type="email"],
+.ui.form input[type="number"],
+.ui.form input[type="password"],
+.ui.form input[type="search"],
+.ui.form input[type="tel"],
+.ui.form input[type="time"],
+.ui.form input[type="text"],
+.ui.form input[type="file"],
+.ui.form input[type="url"] {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.menu {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.message .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.cards > .card > .content > .header,
+.ui.card > .content > .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.items > .item > .content > .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.statistics .statistic > .value,
+.ui.statistic > .value {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.statistics .statistic > .label,
+.ui.statistic > .label {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.accordion .title:not(.ui) {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.modal > .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.popup > .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.search > .results .result .title {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.search > .results > .message .header {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.ui.category.search > .results .category > .name {
+    font-family: 'THSarabunNew', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+/*
+    end of customize font for semantic-ui
+*/
