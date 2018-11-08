@@ -1,7 +1,6 @@
 import { Segment , Header , Button} from 'semantic-ui-react'
 
 const segmentStyle = {
-    marginLeft: '15rem ',
     overflow : 'none',
     background : '#ffc5c5',
     borderColor: '#ffc5c5',
@@ -17,7 +16,7 @@ export default (props) => (
     <div>
         <Segment clearing style={segmentStyle}>
             <Header floated='left'>
-                <p style={fontHeader}>Welcome</p>
+                <p style={fontHeader}>{props.pageTitle}</p>
             </Header>
             <Header floated='right'>
                 <Button>Log out</Button>

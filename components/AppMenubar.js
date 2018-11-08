@@ -23,7 +23,7 @@ export default (props) => (
                 <p style={textVersion}>Version 0.0.1</p>
             </center>
             <Menu.Item >
-                <Link href={{ pathname: '/', query: { name: 'Home' } }}>
+                <Link href={`/`}>
                     <a>Home</a>
                 </Link>
             </Menu.Item>

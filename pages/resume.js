@@ -1,11 +1,16 @@
-import Layout from "../components/MyLayout"
+import React from 'react'
+import { withLayout } from '../hoc'
+import { compose, withProps } from 'recompose'
 
-const resume = () => {
-    return(
-        <div>
-            <p>this is about</p>
-        </div>
-    )
-}
+const enhance = compose(
+    withProps({
+        pageTitle: 'Resume'
+    }),
+    withLayout
+)
 
-export default resume
+export default enhance( ()=> 
+    <div>
+        This Resume
+    </div>
+)

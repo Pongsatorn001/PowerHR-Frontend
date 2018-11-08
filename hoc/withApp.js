@@ -10,8 +10,7 @@ export default function withApp(WrappedComponent) {
                 <Provider >
                     <main>
                         <Head>
-                            <link href="/static/vendor/node_modules/semantic-ui-css/semantic.min.css" rel="stylesheet"/>
-                            <link href="/static/vendor/node_modules/froala-editor/css/froala_style.min.css" rel="stylesheet"/>
+                            <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.css"></link>                            <link href="/static/vendor/node_modules/froala-editor/css/froala_style.min.css" rel="stylesheet"/>
                             <link href="/static/vendor/node_modules/froala-editor/css/froala_editor.pkgd.min.css" rel="stylesheet"/>
                             <link href="/static/vendor/node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>
                             <link href="/static/vendor/node_modules/animate.css/animate.min.css" rel="stylesheet"/>

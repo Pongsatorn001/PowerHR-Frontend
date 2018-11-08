@@ -1,6 +1,7 @@
 import React from 'react'
 import Document, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
+import { withApp } from '../hoc'
 
 export default class MyDocument extends Document {
 
@@ -16,6 +17,8 @@ export default class MyDocument extends Document {
     return (
       <html>
         <Head>
+          <title>PowerHR</title>
+          <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.css"></link>          
           {styleTags}
         </Head>
         <body>
