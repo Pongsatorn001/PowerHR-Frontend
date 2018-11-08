@@ -2,8 +2,8 @@ import { Segment , Header , Button} from 'semantic-ui-react'
 
 const segmentStyle = {
     overflow : 'none',
-    background : '#ffc5c5',
-    borderColor: '#ffc5c5',
+    background : '#ff84a1',
+    borderColor: '#ff84a1',
     paddingBottom : '0px',
     borderRadius : '0px'
 }
