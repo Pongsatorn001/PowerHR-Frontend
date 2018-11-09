@@ -24,6 +24,7 @@ const DropdownMenu = styled(Dropdown) `
         background : #f96387 !important;
         active : #f96387 !important;
     }
+    color : rgb(255,255,255,1) !important;
 `;
 
 const HR = styled.hr `
@@ -33,12 +34,12 @@ const HR = styled.hr `
 `;
 
 const DropdownMenu_Menu = styled(Dropdown.Menu) `
-    border-color : #ff84a1 !important;
-    background : #f96387 !important;
-`;
-
-const DropdownMenu_item = styled(Dropdown.Item)`
-    color : #000000 !important;
+    margin-top: -40px !important;
+    font-size : 15px !important;
+    .ui.menu .ui.dropdown .menu>.item &:hover {
+        background : #f96387 !important;
+        color : #ffffff !important;
+    }
 `;
 
 export default (props) => (
@@ -51,31 +52,19 @@ export default (props) => (
                 <P>Version 0.0.1</P>
             </center>
             <HR size="1" color="white"></HR>
-            <DropdownMenu item text='การจัดการข้อมูลผู้สมัคร'>
+            <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
                 <DropdownMenu_Menu>
-                    <DropdownMenu_item icon='sitemap' >
-                        <Link href={`/resume`}>
-                            <a>ตำแหน่ง (Positions)</a>
-                        </Link>
-                    </DropdownMenu_item>
-                    <DropdownMenu_item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' >
-                    
-                    </DropdownMenu_item>
-                    <DropdownMenu_item icon='delete' text='Black List' >
-                    
-                    </DropdownMenu_item>
+                    <Link href={`/positions`}>
+                        <Dropdown.Item icon='sitemap' text="ตำแหน่ง (Positions)" />
+                    </Link>
+                    <Link href={`/resume`}>
+                        <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
+                    </Link>
+                    <Link>
+                        <Dropdown.Item icon='delete' text='Black List' />                   
+                    </Link>
                 </DropdownMenu_Menu>
             </DropdownMenu>
-            {/* <Menu.Item >
-                <Link href={`/`}>
-                    <a>Home</a>
-                </Link>
-            </Menu.Item>
-            <Menu.Item >
-                <Link href={`/resume`}>
-                    <a>Resume</a>
-                </Link>
-            </Menu.Item> */}
         </MenuBar>
     </div>
 )

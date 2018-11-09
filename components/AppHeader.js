@@ -1,26 +1,55 @@
-import { Segment , Header , Button} from 'semantic-ui-react'
+import { Segment , Header , Icon , Dropdown} from 'semantic-ui-react'
+import styled from 'styled-components'
 
-const segmentStyle = {
-    overflow : 'none',
-    background : '#ff84a1',
-    borderColor: '#ff84a1',
-    paddingBottom : '0px',
-    borderRadius : '0px'
-}
+const SegmentHeader = styled(Segment) `
+    overflow : none !important;
+    background : #ff84a1 !important;
+    border-color : #ff84a1 !important;
+    padding-bottom : 0px !important;
+    border-radius : 0px !important;
+`;
 
-const fontHeader = {
-    fontSize : '25px',
-}
+const TextHeader = styled(Header)`
+    margin-bottom : 14px !important;
+`;
+
+const Text = styled.text `
+    color : white !important;
+    font-size : 13px !important;
+    margin-right : 8px !important;
+`;
+
+const Icons = styled(Icon) `
+    font-size: 2em !important;
+    color : white 
+`;
+
+const DropdownButton = styled(Dropdown)`
+    margin-left : 4px !important;  
+    color : white
+`;
+
+const DropdownMenu = styled(Dropdown.Menu)`
+    margin-left : 11px !important;  
+    margin-top : 1px !important; 
+`;
+
+const name = 'Tan Kitpakorn'
 
 export default (props) => (
     <div>
-        <Segment clearing style={segmentStyle}>
-            <Header floated='left'>
-                <p style={fontHeader}>{props.pageTitle}</p>
-            </Header>
-            <Header floated='right'>
-                <Button>Log out</Button>
-            </Header>
-        </Segment>
+        <SegmentHeader clearing >
+            <TextHeader as='h4' floated='right'>
+                <p>
+                    <Text>Welcome,</Text>
+                    <Icons name='user circle'/>
+                    <DropdownButton simple item text={name} >
+                        <DropdownMenu>
+                            <Dropdown.Item icon='sign-out' text="Logout" />
+                        </DropdownMenu>
+                    </DropdownButton>
+                </p>
+            </TextHeader>
+        </SegmentHeader>
     </div>
 )
