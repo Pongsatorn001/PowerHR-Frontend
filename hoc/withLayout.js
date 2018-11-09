@@ -7,6 +7,13 @@ import { withApp } from './'
 import styled from 'styled-components'
 import Box from '../components/Box'
 import theme from '../theme/default'
+import { injectGlobal } from 'styled-components'
+
+injectGlobal`
+  body {
+    background : #f9f9f9;
+  }
+`
 
 const PageWrapper = styled(Box) `
     min-height: 100vh;
