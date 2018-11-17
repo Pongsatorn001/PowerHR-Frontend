@@ -1,4 +1,5 @@
 import { Segment , Header , Button} from 'semantic-ui-react'
+import {btn_primary} from './Button'
 
 const segmentStyle = {
     overflow : 'none',
@@ -19,7 +20,7 @@ export default (props) => (
                 <p style={fontHeader}>{props.pageTitle}</p>
             </Header>
             <Header floated='right'>
-                <Button>Log out</Button>
+                {btn_primary('LogOut')}
             </Header>
         </Segment>
     </div>
