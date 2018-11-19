@@ -25,6 +25,8 @@ const colors = {
     textPrimaryInvert: '#992d2d2d',
     textPlaceholder: '#bfbfbf',
     dropArea: '#c6fcff',
+
+    ping: '#FF6B82',
 }
 
 const dimens = {

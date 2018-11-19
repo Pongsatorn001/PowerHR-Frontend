@@ -60,7 +60,7 @@ export default (props) => (
                     <Link href={`/positions`}>
                         <Dropdown.Item icon='sitemap' text="ตำแหน่ง (Positions)" />
                     </Link>
-                    <Link href={`/resume`}>
+                    <Link href={`/job_positions`}>
                         <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
                     </Link>
                     <Link href={`/resume`}>
