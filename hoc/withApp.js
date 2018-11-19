@@ -5,7 +5,8 @@ import { injectGlobal } from 'styled-components'
 
 injectGlobal`
   body {
-    background : #f9f9f9;
+    background : #efecec;
+    @import url('https://fonts.googleapis.com/css?family=Kanit');
     font-family: 'Kanit', sans-serif ;
   }
 `
@@ -18,7 +19,6 @@ export default function withApp(WrappedComponent) {
                     <main>
                         <Head>
                             <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.0/dist/semantic.min.css"/>
-                            <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet"/>                        
                             <link href="/static/vendor/node_modules/froala-editor/css/froala_style.min.css" rel="stylesheet"/>
                             <link href="/static/vendor/node_modules/froala-editor/css/froala_editor.pkgd.min.css" rel="stylesheet"/>
                             <link href="/static/vendor/node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>

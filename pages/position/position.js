@@ -1,19 +1,11 @@
 import React from 'react'
-import { withLayout } from '../hoc'
+import { withLayout } from '../../hoc'
 import { compose, withProps } from 'recompose'
 import styled from 'styled-components'
-import { Button , Input , Header , Icon , Table } from 'semantic-ui-react'
+import { Button , Icon , Table } from 'semantic-ui-react'
+import Link from 'next/link'
+import { TextHeaderTable } from '../../components/TextHeader'
 
-const HeaderName = styled(Header)`
-    padding-top : 20px !important;
-    padding-left : 50px !important;
-    font-family: 'Kanit', sans-serif !important;
-`;
-
-const HeaderButtonAdd = styled(Header)`
-    padding-top : 20px !important;
-    padding-right : 36px !important;
-`;
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -39,17 +31,9 @@ const TableHeadcell = styled(Table.HeaderCell)`
 
 const ButtonEdit = styled(Button)`
     color : #000 !important;
-    background : #ffe14a !important;
+    background : #fff700 !important;
+    font-family : 'Kanit', sans-serif !important;
 `;
-
-const IconAdd = styled(Icon)`
-    padding-left : 8px !important;
-`;
-
-const Small = styled.small `
-    font-size: 15px !important;
-    font-weight: 600;
-`
 
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
@@ -60,6 +44,9 @@ const Div = styled.div `
     box-shadow : rgb(204, 204, 204) 0px 1px 2px;
     margin-right : 13px;
 `
+const ButtonAdd = styled(Button)`
+    font-family : 'Kanit', sans-serif !important;
+`
 
 const enhance = compose(
     withProps({
@@ -68,19 +55,14 @@ const enhance = compose(
     withLayout
 )
 
+let count = 3
+let pos_name = 'Positions (ตำแหน่ง)'
+let pos_des = `จำนวนตำแหน่งงานทั้งหมด ${count} ตำแหน่ง`
+let button_name = 'เพิ่มตำแหน่ง'
+
 export default enhance( ()=> 
     <Div>
-        <HeaderName as='h1' floated='left'>
-            Positions (ตำแหน่ง)&nbsp;<Small>( จำนวนตำแหน่งงานทั้งหมด 1 ตำแหน่ง )</Small>
-        </HeaderName>
-        <HeaderButtonAdd as='h2' floated='right'>
-            <Button positive animated='fade' size='medium' style={{"font-family": "'Kanit', sans-serif !important;"}}>
-                <Button.Content visible>เพิ่มตำแหน่ง</Button.Content>
-                <Button.Content hidden>
-                    <IconAdd name='add' />
-                </Button.Content>
-            </Button>
-        </HeaderButtonAdd>
+        {TextHeaderTable(pos_name , pos_des , button_name)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -105,11 +87,18 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
+                            <ButtonEdit animated='fade' size='mini'>
+                                <Button.Content visible content='แก้ไข'/>
+                                <Button.Content hidden >
+                                    <Icon name='edit' />
+                                </Button.Content>
+                            </ButtonEdit>
+                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                <Button.Content visible content='ลบ'/>
+                                <Button.Content hidden >
+                                    <Icon name='trash alternate' />
+                                </Button.Content>
+                            </ButtonAdd>
                         </center>
                     </TableCell>
                 </TableRow>
@@ -122,11 +111,18 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
+                            <ButtonEdit animated='fade' size='mini'>
+                                <Button.Content visible content='แก้ไข'/>
+                                <Button.Content hidden >
+                                    <Icon name='edit' />
+                                </Button.Content>
+                            </ButtonEdit>
+                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                <Button.Content visible content='ลบ'/>
+                                <Button.Content hidden >
+                                    <Icon name='trash alternate' />
+                                </Button.Content>
+                            </ButtonAdd>
                         </center>
                     </TableCell>
                 </TableRow>
@@ -139,14 +135,21 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
+                            <ButtonEdit animated='fade' size='mini'>
+                                <Button.Content visible content='แก้ไข'/>
+                                <Button.Content hidden >
+                                    <Icon name='edit' />
+                                </Button.Content>
+                            </ButtonEdit>
+                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                <Button.Content visible content='ลบ'/>
+                                <Button.Content hidden >
+                                    <Icon name='trash alternate' />
+                                </Button.Content>
+                            </ButtonAdd>
                         </center>
                     </TableCell>
-                </TableRow>
+                </TableRow>    
             </TableBody>
         </TablePosition>
     </Div>

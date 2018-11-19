@@ -7,7 +7,7 @@ const colors = {
     background: '#f8f9fb',
     foreground: 'white',
     backgroundInvert: '#2D2D2D',
-    elementBackground: '#ffffff',
+    
     elementBorder: color('#6f6f6f').alpha(0.2).string(),
     elementHighlightBlue: color('#78baf9').alpha(0.3).string(),
     elementHighlightGray: '#e6e7e9',
@@ -27,6 +27,9 @@ const colors = {
     dropArea: '#c6fcff',
 
     ping: '#FF6B82',
+    textTitle: '#464646',
+    gray: '#a2a2a2',
+    elementBackground: '#ffffff',
 }
 
 const dimens = {
