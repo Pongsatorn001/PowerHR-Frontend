@@ -28,6 +28,7 @@ const DropdownMenu = styled(Dropdown) `
     }
     color : rgb(255,255,255,1) !important;
     font-family: 'Kanit', sans-serif !important;
+    margin-top: -5px !important;
 `;
 
 const HR = styled.hr `
@@ -43,7 +44,16 @@ const DropdownMenu_Menu = styled(Dropdown.Menu) `
         background : #f96387 !important;
         color : #ffffff !important;
     }
+    
 `;
+
+const MenuItem = styled(Menu.Item)`
+    font-family: 'Kanit', sans-serif !important;
+    &:hover {
+        background : #f96387 !important;
+        active : #f96387 !important;
+    }
+`
 
 export default (props) => (
     <div>
@@ -54,12 +64,9 @@ export default (props) => (
                 </Link>
                 <P>Version 0.0.1</P>
             </center>
-            <HR size="1" color="white"></HR>
+            <HR size="1" color="white" />
             <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
                 <DropdownMenu_Menu>
-                    <Link href={`/positions`}>
-                        <Dropdown.Item icon='sitemap' text="ตำแหน่ง (Positions)" />
-                    </Link>
                     <Link href={`/resume`}>
                         <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
                     </Link>
@@ -68,6 +75,11 @@ export default (props) => (
                     </Link>
                 </DropdownMenu_Menu>
             </DropdownMenu>
+            <Link href={`/positions`}>
+                <MenuItem
+                    name='ตำแหน่งงานในบริษัท'
+                />
+            </Link>
         </MenuBar>
     </div>
 )

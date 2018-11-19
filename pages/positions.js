@@ -60,6 +60,9 @@ const Div = styled.div `
     box-shadow : rgb(204, 204, 204) 0px 1px 2px;
     margin-right : 13px;
 `
+const ButtonAdd = styled(Button)`
+    font-family : 'Kanit', sans-serif !important;
+`
 
 const enhance = compose(
     withProps({
@@ -74,12 +77,14 @@ export default enhance( ()=>
             Positions (ตำแหน่ง)&nbsp;<Small>( จำนวนตำแหน่งงานทั้งหมด 1 ตำแหน่ง )</Small>
         </HeaderName>
         <HeaderButtonAdd as='h2' floated='right'>
-            <Button positive animated='fade' size='medium' style={{"font-family": "'Kanit', sans-serif !important;"}}>
-                <Button.Content visible>เพิ่มตำแหน่ง</Button.Content>
+            <ButtonAdd positive animated='fade' size='medium'>
+                <Button.Content visible>
+                    เพิ่มตำแหน่ง
+                </Button.Content>
                 <Button.Content hidden>
                     <IconAdd name='add' />
                 </Button.Content>
-            </Button>
+            </ButtonAdd>
         </HeaderButtonAdd>
         <TablePosition striped>
             <Table.Header>
