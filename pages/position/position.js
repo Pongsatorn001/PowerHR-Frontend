@@ -1,19 +1,11 @@
 import React from 'react'
-import { withLayout } from '../hoc'
+import { withLayout } from '../../hoc'
 import { compose, withProps } from 'recompose'
 import styled from 'styled-components'
-import { Button , Input , Header , Icon , Table } from 'semantic-ui-react'
+import { Button , Icon , Table } from 'semantic-ui-react'
+import Link from 'next/link'
+import { TextHeaderTable } from '../../components/TextHeader'
 
-const HeaderName = styled(Header)`
-    padding-top : 20px !important;
-    padding-left : 50px !important;
-    font-family: 'Kanit', sans-serif !important;
-`;
-
-const HeaderButtonAdd = styled(Header)`
-    padding-top : 20px !important;
-    padding-right : 36px !important;
-`;
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -43,15 +35,6 @@ const ButtonEdit = styled(Button)`
     font-family : 'Kanit', sans-serif !important;
 `;
 
-const IconAdd = styled(Icon)`
-    padding-left : 8px !important;
-`;
-
-const Small = styled.small `
-    font-size: 15px !important;
-    font-weight: 600;
-`
-
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
 `
@@ -72,21 +55,14 @@ const enhance = compose(
     withLayout
 )
 
+let count = 3
+let pos_name = 'Positions (ตำแหน่ง)'
+let pos_des = `จำนวนตำแหน่งงานทั้งหมด ${count} ตำแหน่ง`
+let button_name = 'เพิ่มตำแหน่ง'
+
 export default enhance( ()=> 
     <Div>
-        <HeaderName as='h1' floated='left'>
-            Positions (ตำแหน่ง)&nbsp;<Small>( จำนวนตำแหน่งงานทั้งหมด 1 ตำแหน่ง )</Small>
-        </HeaderName>
-        <HeaderButtonAdd as='h2' floated='right'>
-            <ButtonAdd positive animated='fade' size='medium'>
-                <Button.Content visible>
-                    เพิ่มตำแหน่ง
-                </Button.Content>
-                <Button.Content hidden>
-                    <IconAdd name='add' />
-                </Button.Content>
-            </ButtonAdd>
-        </HeaderButtonAdd>
+        {TextHeaderTable(pos_name , pos_des , button_name)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
