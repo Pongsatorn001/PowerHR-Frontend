@@ -39,7 +39,8 @@ const TableHeadcell = styled(Table.HeaderCell)`
 
 const ButtonEdit = styled(Button)`
     color : #000 !important;
-    background : #ffe14a !important;
+    background : #fff700 !important;
+    font-family : 'Kanit', sans-serif !important;
 `;
 
 const IconAdd = styled(Icon)`
@@ -110,11 +111,18 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
+                            <ButtonEdit animated='fade' size='mini'>
+                                <Button.Content visible content='แก้ไข'/>
+                                <Button.Content hidden >
+                                    <Icon name='edit' />
+                                </Button.Content>
+                            </ButtonEdit>
+                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                <Button.Content visible content='ลบ'/>
+                                <Button.Content hidden >
+                                    <Icon name='trash alternate' />
+                                </Button.Content>
+                            </ButtonAdd>
                         </center>
                     </TableCell>
                 </TableRow>
@@ -127,11 +135,18 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
+                            <ButtonEdit animated='fade' size='mini'>
+                                <Button.Content visible content='แก้ไข'/>
+                                <Button.Content hidden >
+                                    <Icon name='edit' />
+                                </Button.Content>
+                            </ButtonEdit>
+                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                <Button.Content visible content='ลบ'/>
+                                <Button.Content hidden >
+                                    <Icon name='trash alternate' />
+                                </Button.Content>
+                            </ButtonAdd>
                         </center>
                     </TableCell>
                 </TableRow>
@@ -144,14 +159,21 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
+                            <ButtonEdit animated='fade' size='mini'>
+                                <Button.Content visible content='แก้ไข'/>
+                                <Button.Content hidden >
+                                    <Icon name='edit' />
+                                </Button.Content>
+                            </ButtonEdit>
+                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                <Button.Content visible content='ลบ'/>
+                                <Button.Content hidden >
+                                    <Icon name='trash alternate' />
+                                </Button.Content>
+                            </ButtonAdd>
                         </center>
                     </TableCell>
-                </TableRow>
+                </TableRow>    
             </TableBody>
         </TablePosition>
     </Div>
