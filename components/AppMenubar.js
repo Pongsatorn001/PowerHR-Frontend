@@ -75,7 +75,7 @@ export default (props) => (
                     </Link>
                 </DropdownMenu_Menu>
             </DropdownMenu>
-            <Link href={`/positions`}>
+            <Link href={`/position/position`}>
                 <MenuItem
                     name='ตำแหน่งงานในบริษัท'
                 />
