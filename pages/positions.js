@@ -54,6 +54,12 @@ const Small = styled.small `
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
 `
+const Div = styled.div `
+    position : relative ;
+    background : rgb(255, 255, 255);
+    box-shadow : rgb(204, 204, 204) 0px 1px 2px;
+    margin-right : 13px;
+`
 
 const enhance = compose(
     withProps({
@@ -63,7 +69,7 @@ const enhance = compose(
 )
 
 export default enhance( ()=> 
-    <div style={{"position": "relative;" , "background": "rgb(255, 255, 255);" , "box-shadow": "rgb(204, 204, 204) 0px 1px 2px;" , "marginRight" : "13px;"}}>
+    <Div>
         <HeaderName as='h1' floated='left'>
             Positions (ตำแหน่ง)&nbsp;<Small>( จำนวนตำแหน่งงานทั้งหมด 1 ตำแหน่ง )</Small>
         </HeaderName>
@@ -143,5 +149,5 @@ export default enhance( ()=>
                 </TableRow>
             </TableBody>
         </TablePosition>
-    </div>
+    </Div>
 )   
