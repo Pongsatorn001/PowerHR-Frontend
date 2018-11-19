@@ -5,19 +5,15 @@ import styled from 'styled-components'
 import { Button , Input , Header , Icon , Table } from 'semantic-ui-react'
 
 const HeaderName = styled(Header)`
-    padding-top : 30px !important;
-    padding-left : 50px !important;
-    color : #515151 !important;
-`;
-
-const HeaderSearch = styled(Header)`
     padding-top : 20px !important;
     padding-left : 50px !important;
+    font-family: 'Kanit', sans-serif !important;
 `;
 
 const HeaderButtonAdd = styled(Header)`
     padding-top : 20px !important;
     padding-right : 87px !important;
+    
 `;
 
 const TablePosition = styled(Table)`
@@ -58,12 +54,11 @@ const enhance = compose(
 
 export default enhance( ()=> 
     <div>
-        <HeaderName as='h2'>Positions (ตำแหน่ง)</HeaderName>
-        <HeaderSearch as='h6' floated='left'>
-            <Input icon='search' placeholder='Search...' />
-        </HeaderSearch>
+        <HeaderName as='h1' floated='left'>
+            Positions (ตำแหน่ง)<small></small>
+        </HeaderName>
         <HeaderButtonAdd as='h2' floated='right'>
-            <Button positive animated='vertical' size='medium'>
+            <Button positive animated='vertical' size='medium' style={{"font-family": "'Kanit', sans-serif !important;"}}>
                 <Button.Content visible>เพิ่มตำแหน่ง</Button.Content>
                 <Button.Content hidden>
                     <IconAdd name='add' />
@@ -105,4 +100,4 @@ export default enhance( ()=>
             </TableBody>
         </TablePosition>
     </div>
-)
+)   

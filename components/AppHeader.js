@@ -11,11 +11,12 @@ const SegmentHeader = styled(Segment) `
 
 const TextHeader = styled(Header)`
     margin-bottom : 14px !important;
+    font-family: 'Kanit', sans-serif !important;
 `;
 
 const Text = styled.text `
     color : white !important;
-    font-size : 13px !important;
+    font-size : 16px !important;
     margin-right : 8px !important;
 `;
 

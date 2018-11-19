@@ -6,6 +6,7 @@ const H1 = styled.h1 `
     margin-top : 1rem !important;
     color : #ffffff ;
     cursor : pointer ;
+    font-family: 'Kanit', sans-serif !important;
 `
 
 const MenuBar = styled(Menu) `
@@ -13,10 +14,11 @@ const MenuBar = styled(Menu) `
 `;
 
 const P = styled.p `
-    font-size : 13px ;
+    font-size : 14px ;
     color : #ffffff8c ;
     margin-top : -0.5rem ;
     margin-bottom : 1.5rem !important ;
+    font-family: 'Kanit', sans-serif !important;
 `;
 
 const DropdownMenu = styled(Dropdown) `
@@ -25,6 +27,7 @@ const DropdownMenu = styled(Dropdown) `
         active : #f96387 !important;
     }
     color : rgb(255,255,255,1) !important;
+    font-family: 'Kanit', sans-serif !important;
 `;
 
 const HR = styled.hr `
