@@ -41,7 +41,7 @@ export default (props) => (
     <div>
         <SegmentHeader clearing >
             <TextHeader as='h4' floated='right'>
-                <p>
+                <div>
                     <Text>Welcome,</Text>
                     <Icons name='user circle'/>
                     <DropdownButton simple item text={name} >
@@ -49,7 +49,7 @@ export default (props) => (
                             <Dropdown.Item icon='sign-out' text="Logout" />
                         </DropdownMenu>
                     </DropdownButton>
-                </p>
+                </div>
             </TextHeader>
         </SegmentHeader>
     </div>

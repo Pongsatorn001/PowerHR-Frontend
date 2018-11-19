@@ -12,15 +12,15 @@ const HeaderName = styled(Header)`
 
 const HeaderButtonAdd = styled(Header)`
     padding-top : 20px !important;
-    padding-right : 87px !important;
-    
+    padding-right : 36px !important;
 `;
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
-    padding-right : 100px !important;
+    padding-right : 50px !important;
+    padding-bottom : 20px !important;
     border: none !important;
-    background: #f9f9f9 !important;
+    background: #fff !important;
 `;
 
 const TableBody = styled(Table.Body)`
@@ -29,11 +29,12 @@ const TableBody = styled(Table.Body)`
 `;
 
 const TableRow = styled(Table.Row)`
-    border-color : #f9f9f9 !important;
+    border-color : #fff ;
+    background: #fff ;
 `;
 
 const TableHeadcell = styled(Table.HeaderCell)`
-    border-color : #f9f9f9 !important;
+    border-color : #fff !important;
 `;
 
 const ButtonEdit = styled(Button)`
@@ -45,6 +46,15 @@ const IconAdd = styled(Icon)`
     padding-left : 8px !important;
 `;
 
+const Small = styled.small `
+    font-size: 15px !important;
+    font-weight: 600;
+`
+
+const TableCell = styled(Table.Cell)`
+    border-top : none !important;
+`
+
 const enhance = compose(
     withProps({
         pageTitle: 'Resume'
@@ -53,19 +63,19 @@ const enhance = compose(
 )
 
 export default enhance( ()=> 
-    <div>
+    <div style={{"position": "relative;" , "background": "rgb(255, 255, 255);" , "box-shadow": "rgb(204, 204, 204) 0px 1px 2px;" , "marginRight" : "13px;"}}>
         <HeaderName as='h1' floated='left'>
-            Positions (ตำแหน่ง)<small></small>
+            Positions (ตำแหน่ง)&nbsp;<Small>( จำนวนตำแหน่งงานทั้งหมด 1 ตำแหน่ง )</Small>
         </HeaderName>
         <HeaderButtonAdd as='h2' floated='right'>
-            <Button positive animated='vertical' size='medium' style={{"font-family": "'Kanit', sans-serif !important;"}}>
+            <Button positive animated='fade' size='medium' style={{"font-family": "'Kanit', sans-serif !important;"}}>
                 <Button.Content visible>เพิ่มตำแหน่ง</Button.Content>
                 <Button.Content hidden>
                     <IconAdd name='add' />
                 </Button.Content>
             </Button>
         </HeaderButtonAdd>
-        <TablePosition>
+        <TablePosition striped>
             <Table.Header>
                 <Table.Row>
                     <TableHeadcell>
@@ -80,14 +90,14 @@ export default enhance( ()=>
                 </Table.Row>
             </Table.Header>
             <TableBody>
-                <TableRow>
-                    <Table.Cell>
+                <TableRow >
+                    <TableCell>
                         <center>001</center>
-                    </Table.Cell>
-                    <Table.Cell>
+                    </TableCell>
+                    <TableCell>
                         <center>Fontend Developer</center>
-                    </Table.Cell>
-                    <Table.Cell>
+                    </TableCell>
+                    <TableCell>
                         <center>
                             <Button.Group size='mini'>
                                 <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
@@ -95,7 +105,41 @@ export default enhance( ()=>
                                 <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
                             </Button.Group>
                         </center>
-                    </Table.Cell>
+                    </TableCell>
+                </TableRow>
+                <TableRow >
+                    <TableCell>
+                        <center>001</center>
+                    </TableCell>
+                    <TableCell>
+                        <center>Fontend Developer</center>
+                    </TableCell>
+                    <TableCell>
+                        <center>
+                            <Button.Group size='mini'>
+                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
+                                <Button.Or text='or' />
+                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
+                            </Button.Group>
+                        </center>
+                    </TableCell>
+                </TableRow>
+                <TableRow >
+                    <TableCell>
+                        <center>001</center>
+                    </TableCell>
+                    <TableCell>
+                        <center>Fontend Developer</center>
+                    </TableCell>
+                    <TableCell>
+                        <center>
+                            <Button.Group size='mini'>
+                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
+                                <Button.Or text='or' />
+                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
+                            </Button.Group>
+                        </center>
+                    </TableCell>
                 </TableRow>
             </TableBody>
         </TablePosition>
