@@ -14,7 +14,8 @@ const HeaderButtonAdd = styled(Header)`
 `;
 
 const H2 = styled.h2 `
-  font-family : 'Kanit', sans-serif !important;
+    font-family : 'Kanit', sans-serif !important;
+    padding-top : 40px !important;
 `
 
 const IconAdd = styled(Icon)`
@@ -40,7 +41,7 @@ export const TextHeaderTable = (name , descrip , button ,  positions) => {
                 {name}&nbsp;<Small>( จำนวนทั้งหมด {descrip} {positions} )</Small>
             </HeaderName>
             <HeaderButtonAdd as='h2' floated='right'>
-                <Link href={`/position/addPositions`}>
+                <Link href={`/position/addPosition`}>
                     <ButtonAdd positive animated='fade' size='medium'>
                         <Button.Content visible>
                             {button}
