@@ -2,7 +2,7 @@ import React from 'react'
 import { withLayout } from '../../hoc'
 import { compose, withProps , withState , withHandlers } from 'recompose'
 import styled from 'styled-components'
-import { Button , Icon , Table } from 'semantic-ui-react'
+import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
@@ -45,6 +45,9 @@ const Div = styled.div `
     margin-right : 13px;
 `
 const ButtonAdd = styled(Button)`
+    font-family : 'Kanit', sans-serif !important;
+`
+const HeaderContent = styled(Header)`
     font-family : 'Kanit', sans-serif !important;
 `
 
@@ -99,12 +102,32 @@ export default enhance( (props)=>
                                             </Button.Content>
                                         </ButtonEdit>
                                     </Link>
-                                    <ButtonAdd animated='fade' size='mini' color="youtube">
-                                        <Button.Content visible content='ลบ'/>
-                                        <Button.Content hidden >
-                                            <Icon name='trash alternate' />
-                                        </Button.Content>
-                                    </ButtonAdd>
+                                    <Modal 
+                                        trigger={
+                                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                                <Button.Content visible content='ลบ'/>
+                                                <Button.Content hidden >
+                                                    <Icon name='trash alternate' />
+                                                </Button.Content>
+                                            </ButtonAdd>
+                                        }
+                                        size="tiny"
+                                    >
+                                        <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                            <Modal.Content>
+                                                <p>
+                                                    คุณต้องการลบข้อมูลตำแหน่งงาน {data} ใช่หรือไม่ ?
+                                                </p>
+                                            </Modal.Content>
+                                        <Modal.Actions>
+                                            <ButtonAdd>
+                                                <Icon name='remove' /> ยกเลิก
+                                            </ButtonAdd>
+                                            <ButtonAdd color='green'>
+                                                <Icon name='checkmark' /> ตกลง
+                                            </ButtonAdd>
+                                        </Modal.Actions>
+                                    </Modal>
                                 </center>
                             </TableCell>
                         </TableRow>
