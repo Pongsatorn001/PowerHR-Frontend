@@ -1,10 +1,10 @@
 import React from 'react'
-import { withLayout } from '../hoc'
+import { withLayout } from '../../hoc'
 import { compose, withProps , withState , withHandlers} from 'recompose'
 import styled from 'styled-components'
 import Link from 'next/link'
-import { Button , Header , Icon , Table , Modal , Image, Grid , Select , Divider , Comment , Form , Input} from 'semantic-ui-react'
-import { TextHeaderTable } from '../components/TextHeader'
+import { Button , Icon , Table } from 'semantic-ui-react'
+import { TextHeaderTable } from '../../components/TextHeader'
 
 const enhance = compose(
     withProps({
@@ -50,35 +50,6 @@ const Div = styled.div `
     background : rgb(255, 255, 255);
     box-shadow : rgb(204, 204, 204) 0px 1px 2px;
     margin-right : 13px;
-`
-const options = [
-    { key: 'p', text: 'ผ่านการสัมภาษณ์', value: 'past' },
-    { key: 'w', text: 'รอการสัมภาษณ์', value: 'waiting ' },
-    { key: 'b', text: 'Blacklist', value: 'blacklist' },
-]
-
-const Description = styled(Modal.Description)`
-    margin-left: 10% !important;
-`;
-
-const TextSpan = styled.span`
-    font-size: 16px !important;
-    margin-left: 2% !important;
-`;
-
-const SelectJob = styled(Select)`
-    font-size: 16px !important;
-    width: 71% !important;
-`;
-
-const TextHeader = styled(Header)`
-    font-size: 20px !important;
-    width: 114% !important;
-`;
-
-const SizeTextInput = styled(Form.Input)`
-    width: 114% !important;
-    height: 5px !important;
 `;
 
 const ButtonEdit = styled(Button)`
@@ -96,10 +67,11 @@ const ButtonAdd = styled(Button)`
 let job_pos_name = 'Job Positions (ตำแหน่งงานที่เปิดรับสมัคร)'
 let job_pos_des = `ตำแหน่ง`
 let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
+let link ='/jobPositions/addJobPosition'
 
 export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name ,job_pos_des)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name ,job_pos_des, link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -125,7 +97,7 @@ export default enhance( (props)=>
                                 <center>{l.id}</center>
                             </TableCell>
                             <TableCell>
-                                <Link href="/resume">
+                                <Link href="/jobPositions/resume">
                                     <center>{l.nameJobPositions}</center>
                                 </Link>
                             </TableCell>

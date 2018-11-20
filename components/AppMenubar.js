@@ -66,10 +66,10 @@ export default (props) => (
             <HR size="1" color="white" />
             <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
                 <DropdownMenu_Menu>
-                    <Link href={`/job_positions`}>
+                    <Link href={`/jobPositions/jobPositions`}>
                         <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
                     </Link>
-                    <Link href={`/resume`}>
+                    <Link href={`/jobPositions/resume`}>
                         <Dropdown.Item icon='delete' text='Black List' />                   
                     </Link>
                 </DropdownMenu_Menu>

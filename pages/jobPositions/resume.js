@@ -1,11 +1,10 @@
 import React from 'react'
-import { withLayout } from '../hoc'
+import { withLayout } from '../../hoc'
 import { compose, withProps , withState , withHandlers} from 'recompose'
-import theme from '../theme/default';
-import Link from 'next/link'
+import theme from '../../theme/default';
 import styled from 'styled-components';
-import { TextHeaderTable } from '../components/TextHeader'
-import { Table , Button , Icon , Modal , Divider , Description , Grid , TextSpan , Select , Image , Header , Comment , Form } from 'semantic-ui-react'
+import { TextHeaderTable } from '../../components/TextHeader'
+import { Table , Button , Icon , Modal , Divider , Grid , TextSpan , Select , Image , Header , Comment , Form } from 'semantic-ui-react'
 
 const Div = styled.div `
     position : relative ;
@@ -99,14 +98,14 @@ const enhance = compose(
     })
 );
 
-let count = 3
+
 let job_pos_name = 'Resume'
-let job_pos_des = `จำนวน Resume ทั้งหมด ${count} ตำแหน่ง`
+let job_pos_des = `คน`
 let job_button_name = 'เพิ่ม Resume'
 
 export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(job_pos_name , job_pos_des , job_button_name)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
