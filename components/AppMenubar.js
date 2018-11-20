@@ -44,7 +44,6 @@ const DropdownMenu_Menu = styled(Dropdown.Menu) `
         background : #f96387 !important;
         color : #ffffff !important;
     }
-    
 `;
 
 const MenuItem = styled(Menu.Item)`
@@ -67,9 +66,6 @@ export default (props) => (
             <HR size="1" color="white" />
             <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
                 <DropdownMenu_Menu>
-                    <Link href={`/positions`}>
-                        <Dropdown.Item icon='sitemap' text="ตำแหน่ง (Positions)" />
-                    </Link>
                     <Link href={`/job_positions`}>
                         <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
                     </Link>

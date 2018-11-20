@@ -1,19 +1,24 @@
 import React from 'react'
 import { withLayout } from '../hoc'
-import { compose, withProps } from 'recompose'
+import { compose, withProps , withState , withHandlers} from 'recompose'
 import styled from 'styled-components'
+import Link from 'next/link'
 import { Button , Header , Icon , Table , Modal , Image, Grid , Select , Divider , Comment , Form , Input} from 'semantic-ui-react'
+import { TextHeaderTable } from '../components/TextHeader'
 
-const HeaderName = styled(Header)`
-    padding-top : 20px !important;
-    padding-left : 50px !important;
-    font-family: 'Kanit', sans-serif !important;
-`;
-
-const HeaderButtonAdd = styled(Header)`
-    padding-top : 20px !important;
-    padding-right : 36px !important;
-`;
+const enhance = compose(
+    withProps({
+        pageTitle: 'Job Positions'
+    }),
+    withLayout,
+    withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'Fontend Developer', ReceivingNumber: '5'}]),
+    withState('closeModel','setCloseModel',false),
+    withHandlers({
+        handleOnClickCancel: props => l => event => {
+            props.setCloseModel(false)
+        },
+    })
+)
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -36,20 +41,6 @@ const TableRow = styled(Table.Row)`
 const TableHeadcell = styled(Table.HeaderCell)`
     border-color : #fff !important;
 `;
-
-const ButtonEdit = styled(Button)`
-    color : #000 !important;
-    background : #ffe14a !important;
-`;
-
-const IconAdd = styled(Icon)`
-    padding-left : 8px !important;
-`;
-
-const Small = styled.small `
-    font-size: 15px !important;
-    font-weight: 600;
-`
 
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
@@ -90,26 +81,25 @@ const SizeTextInput = styled(Form.Input)`
     height: 5px !important;
 `;
 
-const enhance = compose(
-    withProps({
-        pageTitle: 'Resume'
-    }),
-    withLayout
-)
+const ButtonEdit = styled(Button)`
+    color : #000 !important;
+    background : #fff700 !important;
+    font-family : 'Kanit', sans-serif !important;
+`;
 
-export default enhance( ()=> 
+const ButtonAdd = styled(Button)`
+    font-family : 'Kanit', sans-serif !important;
+`;
+
+
+
+let job_pos_name = 'Job Positions (ตำแหน่งงานที่เปิดรับสมัคร)'
+let job_pos_des = `ตำแหน่ง`
+let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
+
+export default enhance( (props)=> 
     <Div>
-        <HeaderName as='h1' floated='left'>
-            Job Positions (ตำแหน่งงานที่เปิดรับสมัคร)&nbsp;<Small>( จำนวนตำแหน่งงานที่เปิดรับสมัครทั้งหมด 1 ตำแหน่ง )</Small>
-        </HeaderName>
-        <HeaderButtonAdd as='h2' floated='right'>
-            <Button positive animated='fade' size='medium' style={{"font-family": "'Kanit', sans-serif !important;"}}>
-                <Button.Content visible>เพิ่มตำแหน่งงานที่เปิดรับ</Button.Content>
-                <Button.Content hidden>
-                    <IconAdd name='add' />
-                </Button.Content>
-            </Button>
-        </HeaderButtonAdd>
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name ,job_pos_des)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -128,131 +118,39 @@ export default enhance( ()=>
                 </Table.Row>
             </Table.Header>
             <TableBody>
-                    <TableRow >
+                {
+                    props.list.map( (l)=>
+                        <TableRow key={l.id}>
                             <TableCell>
-                                <center>001</center>
+                                <center>{l.id}</center>
                             </TableCell>
                             <TableCell>
-                                <Modal trigger={<center><p>Fontend Developer</p></center>}>
-                                    <Modal.Header><h2>Resume: คุณ Fontend Developer</h2></Modal.Header>
-                                        <center> <Image src='https://react.semantic-ui.com/images/wireframe/image.png' wrapped fluid/> </center>
-                                        <Divider hidden />
-                                        <Description>
-                                            <Grid divided='vertically'>
-                                                <Grid.Row columns={2}>
-                                                    <Grid.Column>
-                                                        <Image src='https://react.semantic-ui.com/images/wireframe/square-image.png' size='mini' verticalAlign='middle' circular/> <TextSpan>ผลการสัมภาษณ์ HR</TextSpan>
-                                                        <Divider hidden />
-                                                        <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={options}/>
-                                                    </Grid.Column>
-                                                    <Grid.Column>
-                                                        <Image src='https://react.semantic-ui.com/images/wireframe/square-image.png' size='mini' verticalAlign='middle' circular/> <TextSpan>ผลการสัมภาษณ์ Leader</TextSpan>
-                                                        <Divider hidden />
-                                                        <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={options}/>
-                                                    </Grid.Column>
-                                                </Grid.Row>
-                                            </Grid>
-                                            <Comment.Group>
-                                                <TextHeader dividing  style={{"font-family": "'Kanit', sans-serif !important;"}}>
-                                                    ความคิดเห็นทั้งหมด <Icon disabled name='comments outline' />
-                                                </TextHeader>
-
-                                                <Comment>
-                                                    <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' circular />
-                                                        <Comment.Content>
-                                                            <Comment.Author as='a'>Leader</Comment.Author>
-                                                            <Comment.Metadata>
-                                                                <div>Today at 5:42PM</div>
-                                                            </Comment.Metadata>
-                                                            <Comment.Text>How artistic!</Comment.Text>
-                                                            <Comment.Actions>
-                                                                <a>แก้ไข</a> <a>ลบ</a>
-                                                            </Comment.Actions>
-                                                        </Comment.Content>
-                                                        <Divider hidden />
-                                                        <Comment.Avatar src='https://react.semantic-ui.com/images/avatar/small/matt.jpg' circular />
-                                                        <Comment.Content>
-                                                            <Comment.Author as='a'>Leader</Comment.Author>
-                                                            <Comment.Metadata>
-                                                                <div>Today at 5:42PM</div>
-                                                            </Comment.Metadata>
-                                                            <Comment.Text>How artistic!</Comment.Text>
-                                                            <Comment.Actions>
-                                                                <a>แก้ไข</a> <a>ลบ</a>
-                                                            </Comment.Actions>
-                                                        </Comment.Content>
-                                                </Comment>
-
-                                                <Form reply>
-                                                    <SizeTextInput placeholder='กรุณาแสดงความคิดเห็น' rows={2}/>
-                                                </Form>
-                                                <Divider hidden />
-                                            </Comment.Group>
-                                            <Divider hidden />
-                                        </Description>
-                                    <Modal.Actions>
-                                        <Button>
-                                            <Icon disabled name='cancel' /> ยกเลิก
-                                        </Button>
-                                        <Button positive>
-                                            <Icon disabled name='check' /> ยืนยัน
-                                        </Button>
-                                    </Modal.Actions>
-                                </Modal>
+                                <Link href="/resume">
+                                    <center>{l.nameJobPositions}</center>
+                                </Link>
                             </TableCell>
                             <TableCell>
-                                <center>2</center>
+                                <center>{l.ReceivingNumber}</center>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <Button.Group size='mini'>
-                                        <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                        <Button.Or text='or' />
-                                        <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                                    </Button.Group>
+                                    <ButtonEdit animated='fade' size='mini'>
+                                        <Button.Content visible content='แก้ไข'/>
+                                        <Button.Content hidden >
+                                            <Icon name='edit' />
+                                        </Button.Content>
+                                    </ButtonEdit>
+                                    <ButtonAdd animated='fade' size='mini' color="youtube">
+                                        <Button.Content visible content='ลบ'/>
+                                        <Button.Content hidden >
+                                            <Icon name='trash alternate' />
+                                        </Button.Content>
+                                    </ButtonAdd>
                                 </center>
                             </TableCell>
-                    </TableRow>
-                <TableRow >
-                    <TableCell>
-                        <center>001</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>Fontend Developer</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>2</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
-                        </center>
-                    </TableCell>
-                </TableRow>
-                <TableRow >
-                    <TableCell>
-                        <center>001</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>Fontend Developer</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>2</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>
-                            <Button.Group size='mini'>
-                                <ButtonEdit content='แก้ไข' icon="edit" labelPosition='left' />
-                                <Button.Or text='or' />
-                                <Button color='youtube' content='ลบ' icon="trash alternate" labelPosition='right' />
-                            </Button.Group>
-                        </center>
-                    </TableCell>
-                </TableRow>
+                        </TableRow>
+                    )
+                }
             </TableBody>
         </TablePosition>
     </Div>
