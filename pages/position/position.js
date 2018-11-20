@@ -1,13 +1,11 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps } from 'recompose'
+import { compose, withProps , withState , withHandlers } from 'recompose'
 import styled from 'styled-components'
 import { Button , Icon , Table } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
-
-
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -51,6 +49,7 @@ const ButtonAdd = styled(Button)`
 `
 
 const enhance = compose(
+    withState('list' , 'setlist' , ['Fontend Developer' , 'Backend Developer' , 'Fullstack Developer' , 'Design UX/UI' , 'Tester']),
     withProps({
         pageTitle: 'Resume'
     }),
@@ -61,10 +60,11 @@ let count = 3
 let pos_name = 'Positions (ตำแหน่ง)'
 let pos_des = `จำนวนตำแหน่งงานทั้งหมด ${count} ตำแหน่ง`
 let button_name = 'เพิ่มตำแหน่ง'
+let link = '/position/addPosition'
 
-export default enhance( ()=> 
+export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(pos_name , pos_des , button_name)}
+        {TextHeaderTable(pos_name , pos_des , button_name , link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -80,80 +80,36 @@ export default enhance( ()=>
                 </Table.Row>
             </Table.Header>
             <TableBody>
-                <TableRow >
-                    <TableCell>
-                        <center>001</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>Fontend Developer</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>
-                            <Link href={`/position/editPosition`}>
-                                <ButtonEdit animated='fade' size='mini'>
-                                    <Button.Content visible content='แก้ไข'/>
-                                    <Button.Content hidden >
-                                        <Icon name='edit' />
-                                    </Button.Content>
-                                </ButtonEdit>
-                            </Link>
-                            <ButtonAdd animated='fade' size='mini' color="youtube">
-                                <Button.Content visible content='ลบ'/>
-                                <Button.Content hidden >
-                                    <Icon name='trash alternate' />
-                                </Button.Content>
-                            </ButtonAdd>
-                        </center>
-                    </TableCell>
-                </TableRow>
-                <TableRow >
-                    <TableCell>
-                        <center>001</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>Fontend Developer</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>
-                            <ButtonEdit animated='fade' size='mini'>
-                                <Button.Content visible content='แก้ไข'/>
-                                <Button.Content hidden >
-                                    <Icon name='edit' />
-                                </Button.Content>
-                            </ButtonEdit>
-                            <ButtonAdd animated='fade' size='mini' color="youtube">
-                                <Button.Content visible content='ลบ'/>
-                                <Button.Content hidden >
-                                    <Icon name='trash alternate' />
-                                </Button.Content>
-                            </ButtonAdd>
-                        </center>
-                    </TableCell>
-                </TableRow>
-                <TableRow >
-                    <TableCell>
-                        <center>001</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>Fontend Developer</center>
-                    </TableCell>
-                    <TableCell>
-                        <center>
-                            <ButtonEdit animated='fade' size='mini'>
-                                <Button.Content visible content='แก้ไข'/>
-                                <Button.Content hidden >
-                                    <Icon name='edit' />
-                                </Button.Content>
-                            </ButtonEdit>
-                            <ButtonAdd animated='fade' size='mini' color="youtube">
-                                <Button.Content visible content='ลบ'/>
-                                <Button.Content hidden >
-                                    <Icon name='trash alternate' />
-                                </Button.Content>
-                            </ButtonAdd>
-                        </center>
-                    </TableCell>
-                </TableRow>    
+                {props.list.map( (data , i) => {
+                    return (
+                        <TableRow key={i}>
+                            <TableCell>
+                                <center>{i + 1}</center>
+                            </TableCell>
+                            <TableCell>
+                                <center>{data}</center>
+                            </TableCell>
+                            <TableCell>
+                                <center>
+                                    <Link href={{ pathname: '/position/editPosition', query: { name : data } }}>
+                                        <ButtonEdit animated='fade' size='mini'>
+                                            <Button.Content visible content='แก้ไข'/>
+                                            <Button.Content hidden >
+                                                <Icon name='edit' />
+                                            </Button.Content>
+                                        </ButtonEdit>
+                                    </Link>
+                                    <ButtonAdd animated='fade' size='mini' color="youtube">
+                                        <Button.Content visible content='ลบ'/>
+                                        <Button.Content hidden >
+                                            <Icon name='trash alternate' />
+                                        </Button.Content>
+                                    </ButtonAdd>
+                                </center>
+                            </TableCell>
+                        </TableRow>
+                    )
+                })}
             </TableBody>
         </TablePosition>
     </Div>

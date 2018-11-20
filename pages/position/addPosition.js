@@ -14,8 +14,8 @@ const Div = styled.div `
 `
 const DivForm = styled.div`
   padding-top : 40px !important ;
-  margin-left : 500px !important ;
-  margin-right : 500px !important ;
+  margin-left : 30% !important ;
+  margin-right : 30% !important ;
 `
 
 const DivButton = styled.div`
@@ -45,7 +45,7 @@ export default enhance(() =>
             <ButtonText floated='right' positive>
               <Icon name='checkmark' /> บันทึก
             </ButtonText>
-            <ButtonText floated='right'>
+            <ButtonText floated='right' href="javascript:history.back()">
               <Icon name='times' /> ยกเลิก
             </ButtonText>
           </DivButton>
