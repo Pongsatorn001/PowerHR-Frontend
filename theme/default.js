@@ -7,7 +7,7 @@ const colors = {
     background: '#f8f9fb',
     foreground: 'white',
     backgroundInvert: '#2D2D2D',
-    
+    buttonEdit : '#fff700',
     elementBorder: color('#6f6f6f').alpha(0.2).string(),
     elementHighlightBlue: color('#78baf9').alpha(0.3).string(),
     elementHighlightGray: '#e6e7e9',
@@ -25,10 +25,11 @@ const colors = {
     textPrimaryInvert: '#992d2d2d',
     textPlaceholder: '#bfbfbf',
     dropArea: '#c6fcff',
-
+    fontBlack : '#000000',
     textTitle: '#464646',
     gray: '#a2a2a2',
     elementBackground: '#ffffff',
+    boxShadow : 'rgb(204, 204, 204) 0px 1px 2px',
 }
 
 const dimens = {

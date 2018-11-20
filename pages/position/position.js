@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import { Button , Icon , Table } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
+import theme from '../../theme/default';
+
 
 
 const TablePosition = styled(Table)`
@@ -12,26 +14,26 @@ const TablePosition = styled(Table)`
     padding-right : 50px !important;
     padding-bottom : 20px !important;
     border: none !important;
-    background: #fff !important;
+    background: ${theme.colors.elementBackground} !important;
 `;
 
 const TableBody = styled(Table.Body)`
-    background: #fff !important;
+    background: ${theme.colors.elementBackground} !important;
     border-top-width: 100px !important;
 `;
 
 const TableRow = styled(Table.Row)`
-    border-color : #fff ;
-    background: #fff ;
+    border-color : ${theme.colors.elementBackground} ;
+    background: ${theme.colors.elementBackground} ;
 `;
 
 const TableHeadcell = styled(Table.HeaderCell)`
-    border-color : #fff !important;
+    border-color : ${theme.colors.elementBackground} !important;
 `;
 
 const ButtonEdit = styled(Button)`
-    color : #000 !important;
-    background : #fff700 !important;
+    color : ${theme.colors.fontBlack} !important;
+    background : ${theme.colors.buttonEdit} !important;
     font-family : 'Kanit', sans-serif !important;
 `;
 
@@ -40,8 +42,8 @@ const TableCell = styled(Table.Cell)`
 `
 const Div = styled.div `
     position : relative ;
-    background : rgb(255, 255, 255);
-    box-shadow : rgb(204, 204, 204) 0px 1px 2px;
+    background : ${theme.colors.elementBackground};
+    box-shadow : ${theme.colors.boxShadow};
     margin-right : 13px;
 `
 const ButtonAdd = styled(Button)`
@@ -87,12 +89,14 @@ export default enhance( ()=>
                     </TableCell>
                     <TableCell>
                         <center>
-                            <ButtonEdit animated='fade' size='mini'>
-                                <Button.Content visible content='แก้ไข'/>
-                                <Button.Content hidden >
-                                    <Icon name='edit' />
-                                </Button.Content>
-                            </ButtonEdit>
+                            <Link href={`/position/editPosition`}>
+                                <ButtonEdit animated='fade' size='mini'>
+                                    <Button.Content visible content='แก้ไข'/>
+                                    <Button.Content hidden >
+                                        <Icon name='edit' />
+                                    </Button.Content>
+                                </ButtonEdit>
+                            </Link>
                             <ButtonAdd animated='fade' size='mini' color="youtube">
                                 <Button.Content visible content='ลบ'/>
                                 <Button.Content hidden >
