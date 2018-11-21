@@ -14,8 +14,8 @@ const Div = styled.div `
 `
 const DivForm = styled.div`
   padding-top : 40px !important ;
-  margin-left : 500px !important ;
-  margin-right : 500px !important ;
+  margin-left : 30%  !important ;
+  margin-right : 30%  !important ;
 `
 
 const DivButton = styled.div`
@@ -28,24 +28,24 @@ const ButtonText = styled(Button)`
 
 const enhance = compose(
   withProps({
-    pageTitle: 'Add Position'
+    pageTitle: 'Edit Position'
   }),
   withLayout
 )
   
-export default enhance(() => 
+export default enhance((props) => 
   <Div>
     <center>{TextHeader('Edit Positions ( แก้ไขตำแหน่ง )')}</center>
     <DivForm>
       <Form>
         <Form.Field>
           <label>ชื่อตำแหน่งที่ต้องการแก้ไข : </label>
-          <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'/>
+          <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ' value={props.url.query.name}/>
           <DivButton>
             <ButtonText floated='right' positive>
               <Icon name='checkmark' /> บันทึก
             </ButtonText>
-            <ButtonText floated='right'>
+            <ButtonText floated='right' href="javascript:history.back()">
               <Icon name='times' /> ยกเลิก
             </ButtonText>
           </DivButton>

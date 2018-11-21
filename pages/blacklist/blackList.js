@@ -52,25 +52,28 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
-    withState('list' , 'setlist' , ['Fontend Developer' , 'Backend Developer' , 'Fullstack Developer' , 'Design UX/UI' , 'Tester']),
+    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer'} , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer'}]),
     withProps({
-        pageTitle: 'Positions'
+      pageTitle: 'Welcome to PowerHR Admin',
     }),
     withLayout
-)
-
-let pos_name = 'Positions (ตำแหน่ง)'
-let button_name = 'เพิ่มตำแหน่ง'
-let link = '/position/addPosition'
-
-export default enhance( (props)=> 
+  )
+    
+let blacklist_name = 'Blacklist (ผู้สมัครไม่ผ่านการคัดเลือก)'
+let button_name = 'เพิ่มรายชื่อ'
+let link = '/blacklist/addBlacklist'
+export default enhance((props) => 
     <Div>
-        {TextHeaderTable(pos_name , `จำนวนตำแหน่งงานทั้งหมด ${props.list.length} ตำแหน่ง` , button_name , link)}
+        {console.log(props.list)}
+        {TextHeaderTable(blacklist_name , `จำนวนรายชื่อทั้งหมด ${props.list.length} รายชื่อ` , button_name , link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
                     <TableHeadcell>
-                        <center>รหัส</center>
+                        <center>ชื่อ</center>
+                    </TableHeadcell>
+                    <TableHeadcell>
+                        <center>นามสกุล</center>
                     </TableHeadcell>
                     <TableHeadcell>
                         <center>ตำแหน่ง</center>
@@ -85,21 +88,16 @@ export default enhance( (props)=>
                     return (
                         <TableRow key={i}>
                             <TableCell>
-                                <center>{i + 1}</center>
+                                <center>{data.fname}</center>
                             </TableCell>
                             <TableCell>
-                                <center>{data}</center>
+                                <center>{data.lname}</center>
+                            </TableCell>
+                            <TableCell>
+                                <center>{data.posi}</center>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <Link href={{ pathname: '/position/editPosition', query: { name : data } }}>
-                                        <ButtonEdit animated='fade' size='mini'>
-                                            <Button.Content visible content='แก้ไข'/>
-                                            <Button.Content hidden >
-                                                <Icon name='edit' />
-                                            </Button.Content>
-                                        </ButtonEdit>
-                                    </Link>
                                     <Modal 
                                         trigger={
                                             <ButtonAdd animated='fade' size='mini' color="youtube">
@@ -111,10 +109,10 @@ export default enhance( (props)=>
                                         }
                                         size="tiny"
                                     >
-                                        <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                        <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
                                             <Modal.Content>
                                                 <p>
-                                                    คุณต้องการลบข้อมูลตำแหน่งงาน {data} ใช่หรือไม่ ?
+                                                    คุณต้องการลบข้อมูล {data.fname} {data.lname} ตำแหน่ง {data.posi} ใช่หรือไม่ ?
                                                 </p>
                                             </Modal.Content>
                                         <Modal.Actions>
@@ -134,4 +132,4 @@ export default enhance( (props)=>
             </TableBody>
         </TablePosition>
     </Div>
-)   
+);

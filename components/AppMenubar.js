@@ -69,8 +69,8 @@ export default (props) => (
                     <Link href={`/jobPositions/jobPositions`}>
                         <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
                     </Link>
-                    <Link href={`/jobPositions/resume`}>
-                        <Dropdown.Item icon='delete' text='Black List' />                   
+                    <Link href={`/blacklist/blackList`}>
+                        <Dropdown.Item icon='user times' text='Black List' />
                     </Link>
                 </DropdownMenu_Menu>
             </DropdownMenu>
