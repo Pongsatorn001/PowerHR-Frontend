@@ -25,6 +25,9 @@ const colors = {
     textPrimaryInvert: '#992d2d2d',
     textPlaceholder: '#bfbfbf',
     dropArea: '#c6fcff',
+
+
+    ping: '#FF6B82',
     fontBlack : '#000000',
     textTitle: '#464646',
     gray: '#a2a2a2',

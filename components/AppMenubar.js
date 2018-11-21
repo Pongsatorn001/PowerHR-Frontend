@@ -44,7 +44,6 @@ const DropdownMenu_Menu = styled(Dropdown.Menu) `
         background : #f96387 !important;
         color : #ffffff !important;
     }
-    
 `;
 
 const MenuItem = styled(Menu.Item)`
@@ -67,11 +66,11 @@ export default (props) => (
             <HR size="1" color="white" />
             <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
                 <DropdownMenu_Menu>
-                    <Link href={`/resume`}>
-                        <Dropdown.Item icon='address card outline' text='Job Positions' />
+                    <Link href={`/jobPositions/jobPositions`}>
+                        <Dropdown.Item icon='address card outline' text='ตำแหน่งงาน (Job Positions)' />
                     </Link>
                     <Link href={`/blacklist/blackList`}>
-                        <Dropdown.Item icon='user times' text='Black List' />                   
+                        <Dropdown.Item icon='delete' text='Black List' />                   
                     </Link>
                 </DropdownMenu_Menu>
             </DropdownMenu>
