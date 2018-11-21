@@ -3,8 +3,9 @@ import { withLayout } from '../../hoc'
 import { compose, withProps , withState , withHandlers} from 'recompose'
 import theme from '../../theme/default';
 import styled from 'styled-components';
+import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
-import { Table , Button , Icon , Modal , Divider , Grid , TextSpan , Select , Image , Header , Comment , Form } from 'semantic-ui-react'
+import { Table , Button , Icon , Modal , Divider , Grid , TextSpan , Select , Image , Header , Comment , Form , Rating } from 'semantic-ui-react'
 
 const Div = styled.div `
     position : relative ;
@@ -67,7 +68,7 @@ const TextHeader = styled(Header)`
 
 
 const SizeTextInput = styled(Form.Input)`
-    width: 114% !important;
+    width: 100% !important;
     height: 5px !important;
 `;
 
@@ -99,13 +100,14 @@ const enhance = compose(
 );
 
 
-let job_pos_name = 'Resume'
-let job_pos_des = `คน`
-let job_button_name = 'เพิ่ม Resume'
+let job_pos_name = 'ประวัติผู้สมัคร'
+let job_pos_des = 'คน'
+let job_button_name = 'เพิ่มประวัติผู้สมัคร'
+let link ='/jobPositions/addResume'
 
 export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -145,11 +147,12 @@ export default enhance( (props)=>
                                         <Modal.Description>
                                             <MarginGrid columns={2}>
                                                 <Grid.Column>
-                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR</p>
+                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR <Rating icon='star' defaultRating={0} maxRating={4} /></p>
+                                                    
                                                     <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={options}/>
                                                 </Grid.Column>
                                                 <Grid.Column>
-                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader</p>
+                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader <Rating icon='star' defaultRating={3} maxRating={4} /></p>
                                                     <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={options}/>
                                                 </Grid.Column>
                                             </MarginGrid>
@@ -188,22 +191,6 @@ export default enhance( (props)=>
                                                             <Comment.Action>ลบ</Comment.Action>
                                                         </Comment.Actions>
                                                     </Comment.Content>
-                                                    <Comment.Group>
-                                                        <Comment>
-                                                        <Comment.Avatar src='https://i1.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1' />
-                                                        <Comment.Content>
-                                                            <Comment.Author as='a'>HR</Comment.Author>
-                                                            <Comment.Metadata>
-                                                            <div>Just now</div>
-                                                            </Comment.Metadata>
-                                                            <Comment.Text>ได้ !!</Comment.Text>
-                                                            <Comment.Actions>
-                                                                <Comment.Action>แก้ไข</Comment.Action>
-                                                                <Comment.Action>ลบ</Comment.Action>
-                                                            </Comment.Actions>
-                                                        </Comment.Content>
-                                                        </Comment>
-                                                    </Comment.Group>
                                                 </Comment>
 
                                                 <Form reply>
@@ -231,12 +218,14 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <ButtonEdit animated='fade' size='mini'>
-                                        <Button.Content visible content='แก้ไข'/>
-                                        <Button.Content hidden >
-                                            <Icon name='edit' />
-                                        </Button.Content>
-                                    </ButtonEdit>
+                                    <Link href="/jobPositions/editResume">
+                                        <ButtonEdit animated='fade' size='mini'>
+                                            <Button.Content visible content='แก้ไข'/>
+                                            <Button.Content hidden >
+                                                <Icon name='edit' />
+                                            </Button.Content>
+                                        </ButtonEdit>
+                                    </Link>
                                     <ButtonAdd animated='fade' size='mini' color="youtube">
                                         <Button.Content visible content='ลบ'/>
                                         <Button.Content hidden >

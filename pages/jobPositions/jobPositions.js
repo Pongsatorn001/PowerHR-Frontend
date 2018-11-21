@@ -67,7 +67,7 @@ const ButtonAdd = styled(Button)`
 let job_pos_name = 'Job Positions (ตำแหน่งงานที่เปิดรับสมัคร)'
 let job_pos_des = `ตำแหน่ง`
 let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
-let link ='/jobPositions/addJobPosition'
+let link ='/jobPositions/addJobPositions'
 
 export default enhance( (props)=> 
     <Div>
@@ -106,12 +106,14 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <ButtonEdit animated='fade' size='mini'>
-                                        <Button.Content visible content='แก้ไข'/>
-                                        <Button.Content hidden >
-                                            <Icon name='edit' />
-                                        </Button.Content>
-                                    </ButtonEdit>
+                                    <Link href="/jobPositions/editJobPositions">
+                                        <ButtonEdit animated='fade' size='mini'>
+                                            <Button.Content visible content='แก้ไข'/>
+                                            <Button.Content hidden >
+                                                <Icon name='edit' />
+                                            </Button.Content>
+                                        </ButtonEdit>
+                                    </Link>
                                     <ButtonAdd animated='fade' size='mini' color="youtube">
                                         <Button.Content visible content='ลบ'/>
                                         <Button.Content hidden >
