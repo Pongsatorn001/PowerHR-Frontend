@@ -65,7 +65,7 @@ let link = '/position/addPosition'
 
 export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(pos_name , `จำนวนตำแหน่งงานทั้งหมด ${props.list.length} ตำแหน่ง` , button_name , link)}
+        {TextHeaderTable(pos_name , `${props.list.length}` , button_name , 'ตำแหน่ง' , link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>

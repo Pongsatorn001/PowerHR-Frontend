@@ -34,7 +34,6 @@ export  const TextHeader = (name) => {
     return <H2>{name}</H2>
 }
 
-
 export const TextHeaderTable = (name , descrip , button ,  positions , link) => {
     return (
         <div>
