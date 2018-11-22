@@ -52,6 +52,12 @@ export default enhance(() =>
                     />
                 </Form.Group>
                 <Form.Field
+                    type="number"
+                    control={Input}
+                    label='เลขบัตรประจำตัวประชาชน'
+                    placeholder='เลขบัตรประจำตัวประชาชน'
+                />
+                <Form.Field
                     id='form-textarea-control-opinion'
                     control={TextArea}
                     label='รายละเอียด/เหตุผล'

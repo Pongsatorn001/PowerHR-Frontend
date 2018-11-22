@@ -23,16 +23,11 @@ const TableBody = styled(Table.Body)`
 const TableRow = styled(Table.Row)`
     border-color : ${theme.colors.elementBackground} ;
     background: ${theme.colors.elementBackground} ;
+    cursor : pointer ;
 `;
 
 const TableHeadcell = styled(Table.HeaderCell)`
     border-color : ${theme.colors.elementBackground} !important;
-`;
-
-const ButtonEdit = styled(Button)`
-    color : ${theme.colors.fontBlack} !important;
-    background : ${theme.colors.buttonEdit} !important;
-    font-family : 'Kanit', sans-serif !important;
 `;
 
 const TableCell = styled(Table.Cell)`
@@ -52,11 +47,24 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
-    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer'} , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer'}]),
+    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 1234} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 5678 } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 9101}]),
     withProps({
       pageTitle: 'Welcome to PowerHR Admin',
     }),
-    withLayout
+    withLayout,
+    withHandlers({
+        handleClickModal: props => (fname , lname , idcard , position) => {            
+            return(
+                <Modal.Content>
+                    <Modal.Description>
+                        <p>ชื๋อ : {fname} นามสกุล : {lname} ตำแหน่ง : {position}</p>
+                        <p>เลขบัตรประชาชน : {idcard}</p>
+                        <p>รานละเอียด / เหตุผลแบล็คลิสต์ : {}</p>
+                    </Modal.Description>
+                </Modal.Content>
+            )
+        }
+    })
   )
     
 let blacklist_name = 'Blacklist (ผู้สมัครไม่ผ่านการคัดเลือก)'
@@ -64,8 +72,7 @@ let button_name = 'เพิ่มรายชื่อ'
 let link = '/blacklist/addBlacklist'
 export default enhance((props) => 
     <Div>
-        {console.log(props.list)}
-        {TextHeaderTable(blacklist_name , `จำนวนรายชื่อทั้งหมด ${props.list.length} รายชื่อ` , button_name , link)}
+        {TextHeaderTable(blacklist_name , `${props.list.length}` , button_name , 'รายชื่อ' , link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -87,15 +94,27 @@ export default enhance((props) =>
                 {props.list.map( (data , i) => {
                     return (
                         <TableRow key={i}>
-                            <TableCell>
-                                <center>{data.fname}</center>
-                            </TableCell>
-                            <TableCell>
-                                <center>{data.lname}</center>
-                            </TableCell>
-                            <TableCell>
-                                <center>{data.posi}</center>
-                            </TableCell>
+                            <Modal trigger={
+                                <TableCell>
+                                    <center>{data.fname}</center>
+                                </TableCell>
+                            }>
+                                {props.handleClickModal(data.fname , data.lname , data.idcard , data.posi)}
+                            </Modal>
+                            <Modal trigger={
+                                <TableCell>
+                                    <center>{data.lname}</center>
+                                </TableCell>
+                            }>
+                                {props.handleClickModal(data.fname , data.lname , data.idcard , data.posi)}
+                            </Modal>
+                            <Modal trigger={
+                                <TableCell>
+                                    <center>{data.posi}</center>
+                                </TableCell>
+                            }>
+                                {props.handleClickModal(data.fname , data.lname , data.idcard , data.posi)}
+                            </Modal>
                             <TableCell>
                                 <center>
                                     <Modal 
