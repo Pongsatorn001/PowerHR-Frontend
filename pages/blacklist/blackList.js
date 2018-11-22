@@ -1,9 +1,8 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps , withState , withHandlers } from 'recompose'
+import { compose, withProps , withState , withHandlers , lifecycle} from 'recompose'
 import styled from 'styled-components'
 import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
-import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
 
@@ -24,6 +23,9 @@ const TableRow = styled(Table.Row)`
     border-color : ${theme.colors.elementBackground} ;
     background: ${theme.colors.elementBackground} ;
     cursor : pointer ;
+    &:hover {
+        background : #ff84a12b !important;
+    };
 `;
 
 const TableHeadcell = styled(Table.HeaderCell)`
@@ -47,29 +49,39 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
-    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 1234} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 5678 } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 9101}]),
+    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 'ทำงานดีเกินไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 'ทำงานดีเกินไป' } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 'ทำงานดีเกินไป'}]),
+    withState('open' , 'setOpen' , false),
     withProps({
       pageTitle: 'Welcome to PowerHR Admin',
     }),
     withLayout,
     withHandlers({
-        handleClickModal: props => (fname , lname , idcard , position) => {            
+        handleClickModal: props => (idcard , position) => {            
             return(
                 <Modal.Content>
                     <Modal.Description>
-                        <p>ชื๋อ : {fname} นามสกุล : {lname} ตำแหน่ง : {position}</p>
-                        <p>เลขบัตรประชาชน : {idcard}</p>
-                        <p>รานละเอียด / เหตุผลแบล็คลิสต์ : {}</p>
+                        <p>ตำแหน่ง : {position}</p>
+                        <p>รานละเอียด / เหตุผลแบล็คลิสต์ : {idcard}</p>
                     </Modal.Description>
                 </Modal.Content>
             )
+        },
+        handleModalOpen: props => () => event => {
+            props.setOpen(true)
+        },
+        handleModalClose: props => () => event => {
+            props.setOpen(false)
+        },
+        handleDeleteBlacklist: props => () => event => {
+            props.setOpen(false)
         }
-    })
-  )
+    }),
+)
     
 let blacklist_name = 'Blacklist (ผู้สมัครไม่ผ่านการคัดเลือก)'
 let button_name = 'เพิ่มรายชื่อ'
 let link = '/blacklist/addBlacklist'
+
 export default enhance((props) => 
     <Div>
         {TextHeaderTable(blacklist_name , `${props.list.length}` , button_name , 'รายชื่อ' , link)}
@@ -98,28 +110,31 @@ export default enhance((props) =>
                                 <TableCell>
                                     <center>{data.fname}</center>
                                 </TableCell>
-                            }>
-                                {props.handleClickModal(data.fname , data.lname , data.idcard , data.posi)}
+                            }closeIcon size='small'>
+                                <HeaderContent icon='user times' content={`Blacklist : คุณ ${data.fname} ${data.lname}`} />
+                                {props.handleClickModal(data.idcard , data.posi)}
                             </Modal>
                             <Modal trigger={
                                 <TableCell>
                                     <center>{data.lname}</center>
                                 </TableCell>
-                            }>
-                                {props.handleClickModal(data.fname , data.lname , data.idcard , data.posi)}
+                            }closeIcon size='small'>
+                                <HeaderContent icon='user times' content={`Blacklist : คุณ ${data.fname} ${data.lname}`} />
+                                {props.handleClickModal(data.idcard , data.posi)}
                             </Modal>
                             <Modal trigger={
                                 <TableCell>
                                     <center>{data.posi}</center>
                                 </TableCell>
-                            }>
-                                {props.handleClickModal(data.fname , data.lname , data.idcard , data.posi)}
+                            }closeIcon size='small'>
+                                <HeaderContent icon='user times' content={`Blacklist : คุณ ${data.fname} ${data.lname}`} />
+                                {props.handleClickModal(data.idcard , data.posi)}
                             </Modal>
                             <TableCell>
                                 <center>
                                     <Modal 
                                         trigger={
-                                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                            <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen()}>
                                                 <Button.Content visible content='ลบ'/>
                                                 <Button.Content hidden >
                                                     <Icon name='trash alternate' />
@@ -127,18 +142,20 @@ export default enhance((props) =>
                                             </ButtonAdd>
                                         }
                                         size="tiny"
+                                        onClose={props.handleModalClose()}
+                                        closeIcon
                                     >
                                         <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
-                                            <Modal.Content>
-                                                <p>
-                                                    คุณต้องการลบข้อมูล {data.fname} {data.lname} ตำแหน่ง {data.posi} ใช่หรือไม่ ?
-                                                </p>
-                                            </Modal.Content>
+                                        <Modal.Content>
+                                            <p>
+                                                คุณต้องการลบข้อมูล {data.fname} {data.lname} ตำแหน่ง {data.posi} ใช่หรือไม่ ?
+                                            </p>
+                                        </Modal.Content>
                                         <Modal.Actions>
-                                            <ButtonAdd>
+                                            <ButtonAdd onClick={props.handleModalClose()} >
                                                 <Icon name='remove' /> ยกเลิก
                                             </ButtonAdd>
-                                            <ButtonAdd color='green'>
+                                            <ButtonAdd color='green' onClick={props.handleDeleteBlacklist(i)}>
                                                 <Icon name='checkmark' /> ตกลง
                                             </ButtonAdd>
                                         </Modal.Actions>
@@ -150,5 +167,7 @@ export default enhance((props) =>
                 })}
             </TableBody>
         </TablePosition>
+        
     </Div>
+    
 );
