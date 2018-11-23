@@ -78,7 +78,7 @@ const enhance = compose(
     }),
 )
     
-let blacklist_name = 'Blacklist (ผู้สมัครไม่ผ่านการคัดเลือก)'
+let blacklist_name = 'Blacklist (แบล็คลิสต์)'
 let button_name = 'เพิ่มรายชื่อ'
 let link = '/blacklist/addBlacklist'
 
@@ -167,7 +167,5 @@ export default enhance((props) =>
                 })}
             </TableBody>
         </TablePosition>
-        
     </Div>
-    
 );
