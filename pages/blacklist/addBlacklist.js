@@ -4,6 +4,8 @@ import { compose, withProps } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Input , Button , Icon , TextArea } from 'semantic-ui-react'
+import { Breadcrumb2Page } from '../../components/Breadcrumb'
+
 
 const Div = styled.div `
   position : relative ;
@@ -11,6 +13,7 @@ const Div = styled.div `
   box-shadow : rgb(204, 204, 204) 0px 1px 2px;
   margin-right : 13px;
   font-family : 'Kanit', sans-serif !important;
+  margin-top : 20px ;
 `
 const DivButton = styled.div`
   padding-top : 20px !important ;
@@ -33,39 +36,48 @@ const enhance = compose(
 )
   
 export default enhance(() => 
-    <Div>
-        <center>{TextHeader('Add Blacklist ( เพิ่มผู้สมัครไม่ผ่านการคัดเลือก )')}</center>
-        <DivForm>
-            <Form>
-                <Form.Group widths='equal'>
+    <div>
+        {Breadcrumb2Page('Blacklist' , 'Add Blacklist' , '/blacklist/blackList')}
+        <Div>
+            <center>{TextHeader('Add Blacklist ( เพิ่มรายชื่อแบล็คลิสต์ )')}</center>
+            <DivForm>
+                <Form>
+                    <Form.Group widths='equal'>
+                        <Form.Field
+                            id='form-input-control-first-name'
+                            control={Input}
+                            label='ชื่อจริง'
+                            placeholder='ชื่อจริง'
+                        />
+                        <Form.Field
+                            id='form-input-control-last-name'
+                            control={Input}
+                            label='นามสกุล'
+                            placeholder='นามสกุล'
+                        />
+                    </Form.Group>
                     <Form.Field
-                        id='form-input-control-first-name'
+                        type="number"
                         control={Input}
-                        label='ชื่อจริง'
-                        placeholder='ชื่อจริง'
+                        label='เลขบัตรประจำตัวประชาชน'
+                        placeholder='เลขบัตรประจำตัวประชาชน'
                     />
                     <Form.Field
-                        id='form-input-control-last-name'
-                        control={Input}
-                        label='นามสกุล'
-                        placeholder='นามสกุล'
+                        id='form-textarea-control-opinion'
+                        control={TextArea}
+                        label='รายละเอียด/เหตุผล'
+                        placeholder='รายละเอียดหรือเหตุผลในการติด Blacklist'
                     />
-                </Form.Group>
-                <Form.Field
-                    id='form-textarea-control-opinion'
-                    control={TextArea}
-                    label='รายละเอียด/เหตุผล'
-                    placeholder='รายละเอียดหรือเหตุผลในการติด Blacklist'
-                />
-                <DivButton>
-                    <ButtonText floated='right' positive>
-                        <Icon name='checkmark' /> บันทึก
-                    </ButtonText>
-                    <ButtonText floated='right' href="javascript:history.back()">
-                        <Icon name='times' /> ยกเลิก
-                    </ButtonText>
-                </DivButton>
-            </Form>
-        </DivForm>
-    </Div>
+                    <DivButton>
+                        <ButtonText floated='right' positive>
+                            <Icon name='checkmark' /> บันทึก
+                        </ButtonText>
+                        <ButtonText floated='right' href="javascript:history.back()">
+                            <Icon name='times' /> ยกเลิก
+                        </ButtonText>
+                    </DivButton>
+                </Form>
+            </DivForm>
+        </Div>
+    </div>
 );

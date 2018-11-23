@@ -4,13 +4,14 @@ import { compose, withProps } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Input , Button , Icon} from 'semantic-ui-react'
-
+import { Breadcrumb2Page } from '../../components/Breadcrumb'
 
 const Div = styled.div `
   position : relative ;
   background : rgb(255, 255, 255);
   box-shadow : rgb(204, 204, 204) 0px 1px 2px;
   margin-right : 13px;
+  margin-top : 20px ;
 `
 const DivForm = styled.div`
   padding-top : 40px !important ;
@@ -34,23 +35,26 @@ const enhance = compose(
 )
   
 export default enhance((props) => 
-  <Div>
-    <center>{TextHeader('Edit Positions ( แก้ไขตำแหน่ง )')}</center>
-    <DivForm>
-      <Form>
-        <Form.Field>
-          <label>ชื่อตำแหน่งที่ต้องการแก้ไข : </label>
-          <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ' value={props.url.query.name}/>
-          <DivButton>
-            <ButtonText floated='right' positive>
-              <Icon name='checkmark' /> บันทึก
-            </ButtonText>
-            <ButtonText floated='right' href="javascript:history.back()">
-              <Icon name='times' /> ยกเลิก
-            </ButtonText>
-          </DivButton>
-        </Form.Field>
-      </Form>
-    </DivForm>
-  </Div>
+  <div>
+    {Breadcrumb2Page('Position' , 'Edit Position' , '/position/position')}
+    <Div>
+      <center>{TextHeader('Edit Positions ( แก้ไขตำแหน่ง )')}</center>
+      <DivForm>
+        <Form>
+          <Form.Field>
+            <label>ชื่อตำแหน่งที่ต้องการแก้ไข : </label>
+            <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ' value={props.url.query.name}/>
+            <DivButton>
+              <ButtonText floated='right' positive>
+                <Icon name='checkmark' /> บันทึก
+              </ButtonText>
+              <ButtonText floated='right' href="javascript:history.back()">
+                <Icon name='times' /> ยกเลิก
+              </ButtonText>
+            </DivButton>
+          </Form.Field>
+        </Form>
+      </DivForm>
+    </Div>
+  </div>
 );
