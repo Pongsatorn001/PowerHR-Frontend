@@ -3,14 +3,14 @@ import { withLayout } from '../../hoc'
 import { compose, withProps } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
-import { Form , Button , Icon, Accordion, Input, Select , options} from 'semantic-ui-react'
+import { Form , Button , Icon, Accordion, Input, Select , options, Label} from 'semantic-ui-react'
 import theme from '../../theme/default'
 
 
 const Div = styled.div `
   position : relative ;
-  background : rgb(255, 255, 255);
-  box-shadow : rgb(204, 204, 204) 0px 1px 2px;
+  background : ${theme.colors.elementBackground}
+  box-shadow : ${theme.colors.boxShadow} ;
   margin-right : 13px;
 `;
 
@@ -19,8 +19,8 @@ const IconLine = styled(Icon)`
 `;
 
 const SizeForm = styled(Form)`
-  width: 50% !important;
-  margin-left: 25% !important;
+  width: 58% !important;
+  margin-left: 21% !important;
 `;
 
 const BtnSelectFile = styled(Button)`
@@ -52,9 +52,9 @@ const ButtonText = styled(Button)`
 `;
 
 const HR = styled.hr`
-  width: 83% !important;
-  margin-top: -2.9% !important;
-  margin-left: 17% !important;
+  width: 84.5% !important;
+  margin-top: -2.5% !important;
+  margin-left: 15% !important;
 `;
 
 const SizeInput = styled(Form.Input)`
@@ -68,6 +68,12 @@ const SizeSelect = styled(Form.Select)`
 const SizeAccordion = styled(Accordion)`
   font-size : 16px !important;
 `;
+
+const Options = [
+  { key: 'p', text: 'ผ่านการสัมภาษณ์', value: 'past' },
+  { key: 'w', text: 'รอการสัมภาษณ์', value: 'waiting ' },
+  { key: 'b', text: 'Blacklist', value: 'blacklist' },
+];
 
 const enhance = compose(
   withProps({
@@ -99,6 +105,8 @@ export default enhance(() =>
         </Form.Group>
         <Form.Group widths='equal'>
           <SizeInput
+            maxlength={10}
+            type='number'
             fluid
             id='id-card'
             label='เลขบัตรประจำตัวประชาชน :'
@@ -116,26 +124,28 @@ export default enhance(() =>
             fluid
             id='positons'
             label='ตำแหน่ง :'
-            placeholder='กรุณาพิมพ์ตำแหน่ง'
+            placeholder='เลือกตำแหน่ง'
           />
           <SizeSelect
             fluid
             id='status'
             label='สถานะ :'
-            placeholder='กรุณาพิมพ์สถานะ'
+            options={Options}
+            placeholder='เลือกพิมพ์สถานะ'
+            
           />
         </Form.Group>
         <Form.Group widths='equal'>
-          <SizeInput
-            type='file' 
-            action
-            fluid
-            id='id-card'
-            label='ไฟล์ข้อมูลส่วนตัว ( .PDF ) :'
-            placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'>
-            <input />
-            <Button type='file'>เลือกไฟล์</Button>
-          </SizeInput>
+          <SizeInput 
+            id="file" 
+            type="file"
+            label='ไฟล์ประวัติผู้สมัคร :'
+            placeholder='กรุณาเลือกไฟล์ประวัติผู้สมัคร'
+          />
+          {/* <label for="file" class="ui icon button" >
+            เลือกไฟล์
+          </label> */}
+          
         </Form.Group>
         <SizeAccordion  panels={panels} /> <HR/>
         <DivButton>

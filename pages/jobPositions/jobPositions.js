@@ -64,7 +64,7 @@ const ButtonAdd = styled(Button)`
 
 
 
-let job_pos_name = 'Job Positions (ตำแหน่งงานที่เปิดรับสมัคร)'
+let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร ( Job Positions )'
 let job_pos_des = `ตำแหน่ง`
 let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
 let link ='/jobPositions/addJobPositions'

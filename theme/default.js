@@ -27,7 +27,7 @@ const colors = {
     dropArea: '#c6fcff',
 
 
-    ping: '#FF6B82',
+    ping: '#ff84a1',
     fontBlack : '#000000',
     textTitle: '#464646',
     gray: '#a2a2a2',

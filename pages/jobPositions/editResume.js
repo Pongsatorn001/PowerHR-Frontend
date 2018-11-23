@@ -19,8 +19,8 @@ const IconLine = styled(Icon)`
 `;
 
 const SizeForm = styled(Form)`
-  width: 50% !important;
-  margin-left: 25% !important;
+  width: 58% !important;
+  margin-left: 21% !important;
 `;
 
 const BtnSelectFile = styled(Button)`

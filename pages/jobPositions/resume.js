@@ -5,12 +5,12 @@ import theme from '../../theme/default';
 import styled from 'styled-components';
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
-import { Table , Button , Icon , Modal , Divider , Grid , TextSpan , Select , Image , Header , Comment , Form , Rating } from 'semantic-ui-react'
+import { Table , Breadcrumb , Button , Icon , Modal , Divider , Grid , Input , Select , Header , Comment , Form } from 'semantic-ui-react'
 
 const Div = styled.div `
     position : relative ;
-    background : rgb(255, 255, 255);
-    box-shadow : rgb(204, 204, 204) 0px 1px 2px;
+    background : ${theme.colors.elementBackground};
+    box-shadow : ${theme.colors.boxShadow};
     margin-right : 13px;
 `;
 
@@ -19,30 +19,30 @@ const TablePosition = styled(Table)`
     padding-right : 50px !important;
     padding-bottom : 20px !important;
     border: none !important;
-    background: #fff !important;
+    background: ${theme.colors.elementBackground} !important;
 `;
 
 const TableHeadcell = styled(Table.HeaderCell)`
-    border-color : #fff !important;
+    border-color : ${theme.colors.elementBackground} !important;
 `;
 
 const TableBody = styled(Table.Body)`
-    background: #fff !important;
+    background: ${theme.colors.elementBackground} !important;
     border-top-width: 100px !important;
 `;
 
 const TableRow = styled(Table.Row)`
-    border-color : #fff ;
-    background: #fff ;
+    border-color : ${theme.colors.elementBackground} ;
+    background: ${theme.colors.elementBackground} ;
 `;
 
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
 `;
 
-const ButtonEdit = styled(Button)`
-    color : #000 !important;
-    background : #fff700 !important;
+const ButtonEdit = styled(Button)` 
+    color : ${theme.colors.fontBlack} !important;
+    background : ${theme.colors.buttonEdit} !important;
     font-family : 'Kanit', sans-serif !important;
 `;
 
@@ -62,8 +62,10 @@ const options = [
 ];
 
 const TextHeader = styled(Header)`
+    font-weight: 500 !important;
     font-size: 20px !important;
-    width: 114% !important;
+    width: 100% !important;
+    font-family: 'Kanit', sans-serif !important;
 `;
 
 
@@ -81,7 +83,28 @@ const MarginComment = styled(Comment.Group)`
 `;
 
 const ColorModelHeader = styled(Modal.Header)`
-    background-color: ${theme.colors.gray}
+    font-weight: 500 !important;
+    font-family: 'Kanit', sans-serif !important;
+    color: ${theme.colors.elementBackground} !important;
+    background-color: ${theme.colors.ping} !important;
+`;
+
+const HeaderContent = styled(Header)`
+    font-family : 'Kanit', sans-serif !important;
+`
+
+const ButtonClose = styled(Button)`
+    font-family : 'Kanit', sans-serif !important;
+`;
+
+const Sizeiframe = styled.iframe`
+    width: 100% !important;
+    height: 500px !important;
+    border: 0 !important;
+`;
+
+const EditComment = styled(Input)`
+    width: 100% !important;
 `;
 
 const enhance = compose(
@@ -89,24 +112,27 @@ const enhance = compose(
         pageTitle: 'Resume'
     }),
     withLayout,
-    withState('list','setList',[{id: '001', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอกการสัมภาษณ์'},{id: '002', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านกการสัมภาษณ์'}]),
-    withState('closeModel','setCloseModel',true),
-    withHandlers({
-        handleOnClickCancel: props => l => event => {
-            props.setCloseModel(l)
-            props.setCloseModel(false)
-        },
-    })
+    withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอกการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านกการสัมภาษณ์'}]),
+    withState('comment','setComment',[{nameComment: 'HR', textComment: 'คุณสมบัติทั่วไปผ่าน'},{nameComment: 'Leader', textComment: 'เรียกสัมภาษณ์ได้เลย'}]),
 );
 
 
-let job_pos_name = 'ประวัติผู้สมัคร'
+let job_pos_name = 'ประวัติผู้สมัคร ( Resume )'
 let job_pos_des = 'คน'
 let job_button_name = 'เพิ่มประวัติผู้สมัคร'
 let link ='/jobPositions/addResume'
 
 export default enhance( (props)=> 
-    <Div>
+    <div>
+        <Breadcrumb size='large'>
+            <Link href='/jobPositions/jobPositions'>
+                <Breadcrumb.Section link>ตำแหน่งงานที่เปิดรับสมัคร</Breadcrumb.Section>
+            </Link>
+            <Breadcrumb.Divider icon='right chevron' />
+            <Breadcrumb.Section active>ประวัติผู้สมัคร</Breadcrumb.Section>
+        </Breadcrumb>
+        <Divider hidden />
+        <Div>
         {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link)}
         <TablePosition striped>
             <Table.Header>
@@ -133,88 +159,106 @@ export default enhance( (props)=>
             </Table.Header>
             <TableBody>
                 {
-                    props.list.map( (l)=>
-                        <TableRow key={l.id}>
+                    props.list.map( (dataResume)=>
+                        <TableRow key={dataResume.id}>
                             <TableCell>
-                                <center>{l.id}</center>
+                                <center>{dataResume.id}</center>
                             </TableCell>
                             <TableCell>
-                                <Modal trigger={<center>{l.name}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{l.name}&nbsp; {l.lastName}</ColorModelHeader>
-                                        <Modal.Content image scrolling>
-                                            <Image src='https://s.isanook.com/hm/0/rp/r/w700/ya0xa0m1w0/aHR0cHM6Ly9zLmlzYW5vb2suY29tL2htLzAvdWQvMS84MDY5L21haW5fb2ZmaWNlLmpwZw==.jpg' fluid/>
+                                <Modal trigger={<center><p link>{dataResume.name}</p></center>}>
+                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                        <Modal.Content>
+                                            <Sizeiframe src={dataResume.file}></Sizeiframe>
                                         </Modal.Content>
                                         <Modal.Description>
                                             <MarginGrid columns={2}>
                                                 <Grid.Column>
-                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR <Rating icon='star' defaultRating={0} maxRating={4} /></p>
+                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR </p>
                                                     
                                                     <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={options}/>
                                                 </Grid.Column>
                                                 <Grid.Column>
-                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader <Rating icon='star' defaultRating={3} maxRating={4} /></p>
+                                                    <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader </p>
                                                     <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={options}/>
                                                 </Grid.Column>
                                             </MarginGrid>
                                             <MarginComment>
-                                                <Header as='h3' dividing>
-                                                    Comments
-                                                </Header>
-
-                                                <Comment>
-                                                    <Comment.Avatar src='https://i1.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1' />
-                                                    <Comment.Content>
-                                                        <Comment.Author as='a'>HR</Comment.Author>
-                                                        <Comment.Metadata>
-                                                        <div>Today at 5:42PM</div>
-                                                        </Comment.Metadata>
-                                                        <Comment.Text>คุณสมบัติทั่วไปผ่าน !!</Comment.Text>
-                                                        <Comment.Actions>
-                                                            <Comment.Action>แก้ไข</Comment.Action>
-                                                            <Comment.Action>ลบ</Comment.Action>
-                                                        </Comment.Actions>
-                                                    </Comment.Content>
-                                                </Comment>
-
-                                                <Comment>
-                                                    <Comment.Avatar src='https://i1.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1' />
-                                                    <Comment.Content>
-                                                        <Comment.Author as='a'>Leader</Comment.Author>
-                                                        <Comment.Metadata>
-                                                            <div>Yesterday at 12:30AM</div>
-                                                        </Comment.Metadata>
-                                                        <Comment.Text>
-                                                            <p>เดี่ยวลองสัมภาษณ์ดู ^_^</p>
-                                                        </Comment.Text>
-                                                        <Comment.Actions>
-                                                            <Comment.Action>แก้ไข</Comment.Action>
-                                                            <Comment.Action>ลบ</Comment.Action>
-                                                        </Comment.Actions>
-                                                    </Comment.Content>
-                                                </Comment>
-
-                                                <Form reply>
-                                                    <SizeTextInput placeholder="แสดงความคิดเห็น"/>
-                                                </Form>
-                                                <Divider hidden />
+                                                <TextHeader as='h3' dividing> ความคิดเห็นทั้งหมด </TextHeader>
+                                                        {
+                                                            props.comment.map( (dataComment) =>
+                                                                <Comment>
+                                                                    <Comment.Avatar src='https://i1.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1' />
+                                                                        <Comment.Content>
+                                                                            <Comment.Author as='a'>{dataComment.nameComment}</Comment.Author>
+                                                                                <Comment.Metadata>
+                                                                                    <div>Today at 5:42PM</div>
+                                                                                </Comment.Metadata>
+                                                                                <Comment.Text>{dataComment.textComment}</Comment.Text>
+                                                                                    <Comment.Actions>
+                                                                                        <Comment.Action>
+                                                                                            <Modal trigger={<p>แก้ไข</p>} size="tiny" closeIcon centered={false}>
+                                                                                                <Header icon='archive' content='แก้ไขความคิดเห็น' />
+                                                                                                <Modal.Content>
+                                                                                                    <p>
+                                                                                                        แสดงความคิดเห็น: <br/>
+                                                                                                        <EditComment placeholder='แสดงความคิดเห็น' defaultValue={dataComment.textComment} />
+                                                                                                    </p>
+                                                                                                </Modal.Content>
+                                                                                                <Modal.Actions>
+                                                                                                <Button color='red'>
+                                                                                                    <Icon name='remove' /> ยกเลิก
+                                                                                                </Button>
+                                                                                                <Button color='green'>
+                                                                                                    <Icon name='checkmark' /> ตกลง
+                                                                                                </Button>
+                                                                                                </Modal.Actions>
+                                                                                            </Modal>
+                                                                                        </Comment.Action>
+                                                                                        <Comment.Action>
+                                                                                            <Modal trigger={<p>ลบ</p>} size="tiny" closeIcon centered={false}>
+                                                                                                <Header icon='archive' content='ลบความคิดเห็นใช่หรือไม่ ?' />
+                                                                                                <Modal.Content>
+                                                                                                    <p>
+                                                                                                        คุณต้องการลบข้อมูลความเห็น: <b>" {dataComment.textComment} "</b> ใช่หรือไม่ ?
+                                                                                                    </p>
+                                                                                                </Modal.Content>
+                                                                                                <Modal.Actions>
+                                                                                                <Button color='red'>
+                                                                                                    <Icon name='remove' /> ยกเลิก
+                                                                                                </Button>
+                                                                                                <Button color='green'>
+                                                                                                    <Icon name='checkmark' /> ตกลง
+                                                                                                </Button>
+                                                                                                </Modal.Actions>
+                                                                                            </Modal>
+                                                                                        </Comment.Action>
+                                                                                    </Comment.Actions>
+                                                                        </Comment.Content>
+                                                                </Comment>
+                                                            )
+                                                        }
+                                                    <Form reply>
+                                                        <SizeTextInput placeholder="แสดงความคิดเห็น"/>
+                                                    </Form>
+                                                    <Divider hidden />
                                             </MarginComment>
                                         </Modal.Description>
                                         <Divider hidden />
                                     <Modal.Actions>
-                                    <Button onClick={props.handleOnClickCancel(l)}>
+                                    <ButtonClose>
                                         <Icon name='close' /> ปิด 
-                                    </Button>
+                                    </ButtonClose>
                                     </Modal.Actions>
                                 </Modal>
                             </TableCell>
                             <TableCell>
-                                <center>{l.lastName}</center>
+                                <center>{dataResume.lastName}</center>
                             </TableCell>
                             <TableCell>
-                                <center>{l.rate}</center>
+                                <center>{dataResume.rate}</center>
                             </TableCell>
                             <TableCell>
-                                <center>{l.status}</center>
+                                <center>{dataResume.status}</center>
                             </TableCell>
                             <TableCell>
                                 <center>
@@ -226,18 +270,39 @@ export default enhance( (props)=>
                                             </Button.Content>
                                         </ButtonEdit>
                                     </Link>
-                                    <ButtonAdd animated='fade' size='mini' color="youtube">
-                                        <Button.Content visible content='ลบ'/>
-                                        <Button.Content hidden >
-                                            <Icon name='trash alternate' />
-                                        </Button.Content>
-                                    </ButtonAdd>
-                                </center>
+                                        <Modal 
+                                            trigger={
+                                                <ButtonAdd animated='fade' size='mini' color="youtube">
+                                                    <Button.Content visible content='ลบ'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='trash alternate' />
+                                                    </Button.Content>
+                                                </ButtonAdd>
+                                            }
+                                            size="tiny"
+                                        >
+                                            <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครใช่หรือไม่ ?' />
+                                                <Modal.Content>
+                                                    <p>
+                                                        คุณต้องการลบข้อมูล {dataResume.name} {dataResume.lastName} ใช่หรือไม่ ?
+                                                    </p>
+                                                </Modal.Content>
+                                            <Modal.Actions>
+                                                <ButtonAdd>
+                                                    <Icon name='remove' /> ยกเลิก
+                                                </ButtonAdd>
+                                                <ButtonAdd color='green'>
+                                                    <Icon name='checkmark' /> ตกลง
+                                                </ButtonAdd>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </center>
                             </TableCell>
                         </TableRow>
                     )
                 }
             </TableBody>
         </TablePosition>
-    </Div>
+        </Div>
+    </div>
 )
