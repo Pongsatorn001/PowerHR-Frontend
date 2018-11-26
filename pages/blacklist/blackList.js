@@ -50,7 +50,6 @@ const HeaderContent = styled(Header)`
 
 const enhance = compose(
     withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 'ทำงานดีเกินไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 'ทำงานดีเกินไป' } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 'ทำงานดีเกินไป'}]),
-    withState('open' , 'setOpen' , false),
     withProps({
       pageTitle: 'Welcome to PowerHR Admin',
     }),
@@ -66,15 +65,6 @@ const enhance = compose(
                 </Modal.Content>
             )
         },
-        handleModalOpen: props => () => event => {
-            props.setOpen(true)
-        },
-        handleModalClose: props => () => event => {
-            props.setOpen(false)
-        },
-        handleDeleteBlacklist: props => () => event => {
-            props.setOpen(false)
-        }
     }),
 )
     
@@ -134,7 +124,7 @@ export default enhance((props) =>
                                 <center>
                                     <Modal 
                                         trigger={
-                                            <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen()}>
+                                            <ButtonAdd animated='fade' size='mini' color="youtube">
                                                 <Button.Content visible content='ลบ'/>
                                                 <Button.Content hidden >
                                                     <Icon name='trash alternate' />
@@ -142,7 +132,6 @@ export default enhance((props) =>
                                             </ButtonAdd>
                                         }
                                         size="tiny"
-                                        onClose={props.handleModalClose()}
                                         closeIcon
                                     >
                                         <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
@@ -152,11 +141,8 @@ export default enhance((props) =>
                                             </p>
                                         </Modal.Content>
                                         <Modal.Actions>
-                                            <ButtonAdd onClick={props.handleModalClose()} >
-                                                <Icon name='remove' /> ยกเลิก
-                                            </ButtonAdd>
-                                            <ButtonAdd color='green' onClick={props.handleDeleteBlacklist(i)}>
-                                                <Icon name='checkmark' /> ตกลง
+                                            <ButtonAdd color='green'>
+                                                <Icon name='checkmark' /> ยืนยัน
                                             </ButtonAdd>
                                         </Modal.Actions>
                                     </Modal>
