@@ -12,7 +12,7 @@ const enhance = compose(
         pageTitle: 'Job Positions'
     }),
     withLayout,
-    withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'Fontend Developer', ReceivingNumber: '5'}]),
+    withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'UX/UI Design', ReceivingNumber: '5'}]),
     withState('open' , 'setOpen' , false),
     withHandlers({
         handleModalOpen: props => () => event => {
@@ -108,19 +108,19 @@ export default enhance( (props)=>
                 {
                     props.list.map( (data,i)=> {
                         return (
-                            <TableRow key={i}>
+                            <TableRow key={i}>                          
                                     <TableCell>
-                                        <Link href="../resume/resume">
+                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{i+1}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href="../resume/resume">
+                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{data.nameJobPositions}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href="../resume/resume">
+                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{data.ReceivingNumber}</center>
                                         </Link>
                                     </TableCell>

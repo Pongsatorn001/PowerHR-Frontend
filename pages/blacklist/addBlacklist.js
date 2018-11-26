@@ -41,9 +41,16 @@ const enhance = compose(
     withHandlers({
         handleOptionFnameInput: props => (fname , keyData) => {
             let fnameData = fname.map( (data , i) => {
-                return(
-                    <option value={data.fname} key={i} />
-                )
+                if (i === 0) {                    
+                    return(
+                        <option value={data.fname} key={i}/>
+                    )
+                }
+                else{
+                    return(
+                        <option value={data.fname} key={i} />
+                    )
+                }
             })
             return fnameData
         },
@@ -95,7 +102,6 @@ const enhance = compose(
   
 export default enhance((props) => 
     <div>
-        {console.log(props.firstname , props.lastname , props.idcard)}
         {Breadcrumb2Page('Blacklist' , 'Add Blacklist' , '/blacklist/blackList')}
         <Div>
             <center>{TextHeader('Add Blacklist ( เพิ่มรายชื่อแบล็คลิสต์ )')}</center>

@@ -121,7 +121,7 @@ const enhance = compose(
         handleClickModal: props => () => {            
             return(
                 <Modal.Description>
-                    <MarginGrid columns={2}>
+                    <MarginGrid colu    mns={2}>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR </p>
                                 <Form>
@@ -223,7 +223,7 @@ export default enhance( (props)=>
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
         <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.position)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -328,7 +328,7 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <Link href={{ pathname:'/resume/editResume', query: { nameResume : dataResume.name }}}>
+                                    <Link href={{ pathname:'/resume/editResume', query: { id : dataResume.id }}}>
                                         <ButtonEdit animated='fade' size='mini'>
                                             <Button.Content visible content='แก้ไข'/>
                                             <Button.Content hidden >

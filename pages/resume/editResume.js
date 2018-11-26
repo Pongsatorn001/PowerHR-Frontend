@@ -1,6 +1,6 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps , withState , lifecycle} from 'recompose'
+import { compose, withProps , withState , withHandlers} from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Button , Icon, Accordion, Divider } from 'semantic-ui-react'
@@ -71,7 +71,6 @@ const SizeAccordion = styled(Accordion)`
 `;
 
 const enhance = compose(
-  withState('dataedit' , 'setDataedit'),
   withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์'}]),
   withProps({
     pageTitle: 'Add Position'
@@ -88,71 +87,80 @@ export default enhance((props) =>
       <center>
         <IconLine name="window minimize outline"/>
       </center>
-      <SizeForm>
-          <Form.Group widths='equal'>
-            <SizeInput
-              fluid
-              id='name'
-              label='ชื่อ :'
-              placeholder='กรุณาพิมพ์ชื่อ'
-            />
-            <SizeInput
-              fluid
-              id='last-name'
-              label='นามสกุล :'
-              placeholder='กรุณาพิมพ์นามสกุล'
-            />
-          </Form.Group>
-          <Form.Group widths='equal'>
-            <SizeInput
-              fluid
-              id='id-card'
-              label='เลขบัตรประจำตัวประชาชน :'
-              placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'
-            />
-            <SizeInput
-              fluid
-              id='Rate'
-              label='Rate :'
-              placeholder='กรุณาพิมพ์ Rate'
-            />
-          </Form.Group>
-          <Form.Group widths='equal'>
-            <SizeSelect
-              fluid
-              id='positons'
-              label='ตำแหน่ง :'
-              placeholder='กรุณาพิมพ์ตำแหน่ง'
-            />
-            <SizeSelect
-              fluid
-              id='status'
-              label='สถานะ :'
-              placeholder='กรุณาพิมพ์สถานะ'
-            />
-          </Form.Group>
-          <Form.Group widths='equal'>
-            <SizeInput
-              type='file' 
-              action
-              fluid
-              id='id-card'
-              label='ไฟล์ข้อมูลส่วนตัว ( .PDF ) :'
-              placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'>
-              <input />
-              <Button type='file'>เลือกไฟล์</Button>
-            </SizeInput>
-          </Form.Group>
-          <SizeAccordion  panels={panels} /> <HR/>
-          <DivButton>
-              <ButtonText floated='right' positive>
-                <Icon name='checkmark' /> บันทึก
-              </ButtonText>
-              <ButtonText floated='right'>
-                <Icon name='times' /> ยกเลิก
-              </ButtonText>
-          </DivButton>
-        </SizeForm>
+      {props.list.map( (data , i) => {
+        if (data.id === props.url.query.id) {
+          return(
+            <SizeForm>
+              <Form.Group widths='equal'>
+                <SizeInput
+                  fluid
+                  id='name'
+                  label='ชื่อ :'
+                  placeholder='กรุณาพิมพ์ชื่อ'
+                  defaultValue={data.name}
+                />
+                <SizeInput
+                  fluid
+                  id='last-name'
+                  label='นามสกุล :'
+                  placeholder='กรุณาพิมพ์นามสกุล'
+                  defaultValue={data.lastName}
+                />
+              </Form.Group>
+              <Form.Group widths='equal'>
+                <SizeInput
+                  fluid
+                  id='id-card'
+                  label='เลขบัตรประจำตัวประชาชน :'
+                  placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'
+                />
+                <SizeInput
+                  fluid
+                  id='Rate'
+                  label='Rate :'
+                  placeholder='กรุณาพิมพ์ Rate'
+                  defaultValue={data.rate}
+                />
+              </Form.Group>
+              <Form.Group widths='equal'>
+                <SizeSelect
+                  fluid
+                  id='positons'
+                  label='ตำแหน่ง :'
+                  placeholder='กรุณาพิมพ์ตำแหน่ง'
+                />
+                <SizeSelect
+                  fluid
+                  id='status'
+                  label='สถานะ :'
+                  placeholder='กรุณาพิมพ์สถานะ'
+                />
+              </Form.Group>
+              <Form.Group widths='equal'>
+                <SizeInput
+                  type='file' 
+                  action
+                  fluid
+                  id='id-card'
+                  label='ไฟล์ข้อมูลส่วนตัว ( .PDF ) :'
+                  placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'>
+                  <input />
+                  <Button type='file'>เลือกไฟล์</Button>
+                </SizeInput>
+              </Form.Group>
+              <SizeAccordion  panels={panels} /> <HR/>
+              <DivButton>
+                  <ButtonText floated='right' positive>
+                    <Icon name='checkmark' /> บันทึก
+                  </ButtonText>
+                  <ButtonText floated='right'>
+                    <Icon name='times' /> ยกเลิก
+                  </ButtonText>
+              </DivButton>
+            </SizeForm>
+          )
+        }        
+      })}
     </Div>
   </div>
 );
