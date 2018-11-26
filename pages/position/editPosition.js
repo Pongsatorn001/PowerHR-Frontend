@@ -1,6 +1,6 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps } from 'recompose'
+import { compose, withProps, withState , withHandlers } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Input , Button , Icon} from 'semantic-ui-react'
@@ -28,10 +28,23 @@ const ButtonText = styled(Button)`
 `
 
 const enhance = compose(
+  withState('list' , 'setlist' , ['Fontend Developer' , 'Backend Developer' , 'Fullstack Developer' , 'Design UX/UI' , 'Tester']),
   withProps({
     pageTitle: 'Edit Position'
   }),
-  withLayout
+  withLayout,
+  withHandlers({
+    setEdit: props => () => {
+      const name = props.url.query.name
+      let editData
+      props.list.map( data => {
+        if (data === name) {
+          return editData = data
+        }
+      })
+      return editData
+    }
+  })
 )
   
 export default enhance((props) => 
@@ -43,7 +56,7 @@ export default enhance((props) =>
         <Form>
           <Form.Field>
             <label>ชื่อตำแหน่งที่ต้องการแก้ไข : </label>
-            <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ' value={props.url.query.name}/>
+            <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ' value={props.setEdit()}/>
             <DivButton>
               <ButtonText floated='right' positive>
                 <Icon name='checkmark' /> บันทึก
