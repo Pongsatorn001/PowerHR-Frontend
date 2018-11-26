@@ -72,6 +72,7 @@ const SizeAccordion = styled(Accordion)`
 
 const enhance = compose(
   withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์'}]),
+  withState('option','setOption',[{ key: 'w', text: 'รอการสัมภาษณ์', value: 'waiting ' }, { key: 'p', text: 'ผ่านการสัมภาษณ์', value: 'past' } , { key: 'n', text: 'ไม่ผ่านการสัมภาษณ์', value: 'noPast' }]),
   withProps({
     pageTitle: 'Add Position'
   }),
@@ -123,17 +124,20 @@ export default enhance((props) =>
                 />
               </Form.Group>
               <Form.Group widths='equal'>
-                <SizeSelect
+                <SizeInput
                   fluid
                   id='positons'
                   label='ตำแหน่ง :'
-                  placeholder='กรุณาพิมพ์ตำแหน่ง'
+                  placeholder='เลือกตำแหน่ง'
+                  defaultValue={props.url.query.position}
                 />
                 <SizeSelect
                   fluid
                   id='status'
                   label='สถานะ :'
-                  placeholder='กรุณาพิมพ์สถานะ'
+                  options={props.option}
+                  placeholder='เลือกสถานะ'
+                  defaultValue={props.option[0].value}
                 />
               </Form.Group>
               <Form.Group widths='equal'>

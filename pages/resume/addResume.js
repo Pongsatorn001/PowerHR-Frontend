@@ -120,12 +120,12 @@ export default enhance((props) =>
             />
           </Form.Group>
           <Form.Group widths='equal'>
-            <SizeSelect
+            <SizeInput
               fluid
               id='positons'
               label='ตำแหน่ง :'
               placeholder='เลือกตำแหน่ง'
-              options={props.list}
+              defaultValue={props.url.query.position}
             />
             <SizeSelect
               fluid
