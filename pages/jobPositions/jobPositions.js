@@ -3,8 +3,9 @@ import { withLayout } from '../../hoc'
 import { compose, withProps , withState , withHandlers} from 'recompose'
 import styled from 'styled-components'
 import Link from 'next/link'
-import { Button , Icon , Table } from 'semantic-ui-react'
+import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import { TextHeaderTable } from '../../components/TextHeader'
+import theme from '../../theme/default';
 
 const enhance = compose(
     withProps({
@@ -12,12 +13,18 @@ const enhance = compose(
     }),
     withLayout,
     withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'Fontend Developer', ReceivingNumber: '5'}]),
-    withState('closeModel','setCloseModel',false),
+    withState('open' , 'setOpen' , false),
     withHandlers({
-        handleOnClickCancel: props => l => event => {
-            props.setCloseModel(false)
+        handleModalOpen: props => () => event => {
+            props.setOpen(true)
         },
-    })
+        handleModalClose: props => () => event => {
+            props.setOpen(false)
+        },
+        handleDeleteJobPositions: props => () => event => {
+            props.setOpen(false)
+        }
+    }),
 )
 
 const TablePosition = styled(Table)`
@@ -25,17 +32,21 @@ const TablePosition = styled(Table)`
     padding-right : 50px !important;
     padding-bottom : 20px !important;
     border: none !important;
-    background: #fff !important;
+    background: ${theme.colors.elementBackground} !important;
 `;
 
 const TableBody = styled(Table.Body)`
-    background: #fff !important;
+    background: ${theme.colors.elementBackground} !important;
     border-top-width: 100px !important;
 `;
 
 const TableRow = styled(Table.Row)`
-    border-color : #fff ;
-    background: #fff ;
+    border-color : ${theme.colors.elementBackground} ;
+    background: ${theme.colors.elementBackground} ;
+    cursor : pointer ;
+    &:hover {
+        background : #ff84a12b !important;
+    };
 `;
 
 const TableHeadcell = styled(Table.HeaderCell)`
@@ -59,6 +70,10 @@ const ButtonEdit = styled(Button)`
 `;
 
 const ButtonAdd = styled(Button)`
+    font-family : 'Kanit', sans-serif !important;
+`;
+
+const HeaderContent = styled(Header)`
     font-family : 'Kanit', sans-serif !important;
 `;
 
@@ -91,38 +106,67 @@ export default enhance( (props)=>
             </Table.Header>
             <TableBody>
                 {
-                    props.list.map( (l)=>
-                        <TableRow key={l.id}>
-                            <TableCell>
-                                <center>{l.id}</center>
-                            </TableCell>
-                            <TableCell>
-                                <Link href="/jobPositions/resume">
-                                    <center>{l.nameJobPositions}</center>
-                                </Link>
-                            </TableCell>
-                            <TableCell>
-                                <center>{l.ReceivingNumber}</center>
-                            </TableCell>
-                            <TableCell>
-                                <center>
-                                    <Link href="/jobPositions/editJobPositions">
-                                        <ButtonEdit animated='fade' size='mini'>
-                                            <Button.Content visible content='แก้ไข'/>
-                                            <Button.Content hidden >
-                                                <Icon name='edit' />
-                                            </Button.Content>
-                                        </ButtonEdit>
-                                    </Link>
-                                    <ButtonAdd animated='fade' size='mini' color="youtube">
-                                        <Button.Content visible content='ลบ'/>
-                                        <Button.Content hidden >
-                                            <Icon name='trash alternate' />
-                                        </Button.Content>
-                                    </ButtonAdd>
-                                </center>
-                            </TableCell>
-                        </TableRow>
+                    props.list.map( (data,i)=> {
+                        return (
+                            <TableRow key={i}>
+                                    <TableCell>
+                                        <Link href="../resume/resume">
+                                            <center>{i+1}</center>
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Link href="../resume/resume">
+                                            <center>{data.nameJobPositions}</center>
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Link href="../resume/resume">
+                                            <center>{data.ReceivingNumber}</center>
+                                        </Link>
+                                    </TableCell>
+                                
+                                    <TableCell>
+                                    <center>
+                                        <Link href={{ pathname:'/jobPositions/editJobPositions', query: { nameJobPositions : data.nameJobPositions , ReceivingNumber : data.ReceivingNumber }}}>
+                                            <ButtonEdit animated='fade' size='mini'>
+                                                <Button.Content visible content='แก้ไข'/>
+                                                <Button.Content hidden >
+                                                    <Icon name='edit' />
+                                                </Button.Content>
+                                            </ButtonEdit>
+                                        </Link>
+                                        <Modal 
+                                                trigger={
+                                                    <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen()}>
+                                                        <Button.Content visible content='ลบ'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='trash alternate' />
+                                                        </Button.Content>
+                                                    </ButtonAdd>
+                                                }
+                                                size="tiny"
+                                                // onClose={props.handleModalClose()}
+                                                closeIcon
+                                            >
+                                                <HeaderContent icon='archive' content='ลบตำแหน่งงานที่เปิดรับสมัคร' />
+                                                    <Modal.Content>
+                                                        <p>
+                                                            คุณต้องการลบตำแหน่ง <b> {data.nameJobPositions} </b> ใช่หรือไม่ ?
+                                                        </p>
+                                                    </Modal.Content>
+                                                <Modal.Actions>
+                                                    <ButtonAdd onClick={props.handleModalClose()}>
+                                                        <Icon name='remove' /> ยกเลิก
+                                                    </ButtonAdd>
+                                                    <ButtonAdd color='green' onClick={props.handleDeleteJobPositions(i)}>
+                                                        <Icon name='checkmark' /> ตกลง
+                                                    </ButtonAdd>
+                                                </Modal.Actions>
+                                            </Modal>
+                                    </center>
+                                </TableCell>
+                            </TableRow>
+                        )}
                     )
                 }
             </TableBody>
