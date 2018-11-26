@@ -71,7 +71,8 @@ const SizeAccordion = styled(Accordion)`
 `;
 
 const enhance = compose(
-  withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์'}]),
+  withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์' , idcard: '1-2855-55211-51-4'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์' , idcard: '1-2855-55211-51-4'}]),
+  withState('jobPositions' , 'setjobPositions' , [{ key: 'Fontend Developer', text: 'Fontend Developer', value: 'Fontend Developer' }, { key: 'Backend Developer', text: 'Backend Developer', value: 'Backend Developer' } , { key: 'Design UX/UI', text: 'Design UX/UI', value: 'Design UX/UI' }]),
   withState('option','setOption',[{ key: 'w', text: 'รอการสัมภาษณ์', value: 'waiting ' }, { key: 'p', text: 'ผ่านการสัมภาษณ์', value: 'past' } , { key: 'n', text: 'ไม่ผ่านการสัมภาษณ์', value: 'noPast' }]),
   withProps({
     pageTitle: 'Add Position'
@@ -114,6 +115,7 @@ export default enhance((props) =>
                   id='id-card'
                   label='เลขบัตรประจำตัวประชาชน :'
                   placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'
+                  defaultValue={data.idcard}
                 />
                 <SizeInput
                   fluid
@@ -124,12 +126,13 @@ export default enhance((props) =>
                 />
               </Form.Group>
               <Form.Group widths='equal'>
-                <SizeInput
+                <SizeSelect
                   fluid
                   id='positons'
                   label='ตำแหน่ง :'
+                  options={props.jobPositions}
                   placeholder='เลือกตำแหน่ง'
-                  defaultValue={props.url.query.position}
+                  defaultValue={props.jobPositions[0].value}
                 />
                 <SizeSelect
                   fluid
@@ -142,14 +145,10 @@ export default enhance((props) =>
               </Form.Group>
               <Form.Group widths='equal'>
                 <SizeInput
-                  type='file' 
-                  action
-                  fluid
+                  type='file'
                   id='id-card'
                   label='ไฟล์ข้อมูลส่วนตัว ( .PDF ) :'
-                  placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'>
-                  <input />
-                  <Button type='file'>เลือกไฟล์</Button>
+                  placeholder='กรุณาเลือกไฟล์ประวัติผู้สมัคร'>
                 </SizeInput>
               </Form.Group>
               <SizeAccordion  panels={panels} /> <HR/>

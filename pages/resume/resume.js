@@ -328,7 +328,7 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <Link href={{ pathname:'/resume/editResume', query: { id : dataResume.id }}}>
+                                    <Link href={{ pathname:'/resume/editResume', query: { id : dataResume.id , position: props.url.query.position}}}>
                                         <ButtonEdit animated='fade' size='mini'>
                                             <Button.Content visible content='แก้ไข'/>
                                             <Button.Content hidden >
