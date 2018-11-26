@@ -3,8 +3,9 @@ import { withLayout } from '../../hoc'
 import { compose, withProps } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
-import { Form , Button , Icon } from 'semantic-ui-react'
+import { Form , Button , Icon , Divider} from 'semantic-ui-react'
 import theme from '../../theme/default'
+import { Breadcrumb2Page } from '../../components/Breadcrumb'
 
 
 const Div = styled.div `
@@ -44,28 +45,32 @@ const enhance = compose(
 )
   
 export default enhance(() => 
-  <Div>
-    <center>{TextHeader('เพิ่มตำแหน่งงานที่รับสมัคร ( Job Positions )')}</center>
-    <center>
-      <IconLine name="window minimize outline"/>
-    </center>
-      <SizeForm>
-        <Form.Group widths='equal'>
-          <SizeInput
-            fluid
-            id='nameJobPositions'
-            label='ชื่อตำแหน่งงานที่เปิดรับสมัคร :'
-            placeholder='กรุณาพิมพ์ชื่อตำแหน่งงานที่เปิดรับสมัคร'
-          />
-        </Form.Group>
-        <DivButton>
-            <ButtonText floated='right' positive>
-              <Icon name='checkmark' /> บันทึก
-            </ButtonText>
-            <ButtonText floated='right'>
-              <Icon name='times' /> ยกเลิก
-            </ButtonText>
-        </DivButton>
-      </SizeForm>
-  </Div>
+  <div>
+    {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'เพิ่มตำแหน่งงานที่เปิดรับสมัคร' , '/jobPositions/jobPositions')}
+    <Divider hidden />
+    <Div>
+      <center>{TextHeader('เพิ่มตำแหน่งงานที่รับสมัคร ( Job Positions )')}</center>
+      <center>
+        <IconLine name="window minimize outline"/>
+      </center>
+        <SizeForm>
+          <Form.Group widths='equal'>
+            <SizeInput
+              fluid
+              id='nameJobPositions'
+              label='ชื่อตำแหน่งงานที่เปิดรับสมัคร :'
+              placeholder='กรุณาพิมพ์ชื่อตำแหน่งงานที่เปิดรับสมัคร'
+            />
+          </Form.Group>
+          <DivButton>
+              <ButtonText floated='right' positive>
+                <Icon name='checkmark' /> บันทึก
+              </ButtonText>
+              <ButtonText floated='right' href="javascript:history.back()">
+                <Icon name='times' /> ยกเลิก
+              </ButtonText>
+          </DivButton>
+        </SizeForm>
+    </Div>
+    </div>
 );
