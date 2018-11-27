@@ -59,7 +59,7 @@ const enhance = compose(
     withLayout
 )
 
-let pos_name = 'Positions (ตำแหน่ง)'
+let pos_name = 'ตำแหน่งงานในบริษัท'
 let button_name = 'เพิ่มตำแหน่ง'
 let link = '/position/addPosition'
 

@@ -77,9 +77,7 @@ const HeaderContent = styled(Header)`
     font-family : 'Kanit', sans-serif !important;
 `;
 
-
-
-let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร ( Job Positions )'
+let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร'
 let job_pos_des = `ตำแหน่ง`
 let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
 let link ='/jobPositions/addJobPositions'
@@ -100,7 +98,7 @@ export default enhance( (props)=>
                         <center>จำนวนที่เปิดรับ</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>แก้ไข/ลบ</center>
+                        <center>จัดการข้อมูล</center>
                     </TableHeadcell>
                 </Table.Row>
             </Table.Header>
@@ -115,7 +113,7 @@ export default enhance( (props)=>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
+                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{data.nameJobPositions}</center>
                                         </Link>
                                     </TableCell>

@@ -58,18 +58,6 @@ const SizeAccordion = styled(Accordion)`
   font-size : 16px !important;
 `;
 
-const panels = [
-  {
-    key: 'details',
-    title: 'BlackList',
-    content: {
-      as: Form.TextArea,
-      label: 'รายละเอียด Blacklist :',
-      placeholder: 'กรุณาพิมพ์รายละเอียดการติด Blacklist',
-    },
-  },
-];
-
 const enhance = compose(
   withProps({
     pageTitle: 'Add Position'
@@ -152,7 +140,6 @@ export default enhance((props) =>
             </label> */}
             
           </Form.Group>
-          <SizeAccordion  panels={panels} /> <HR/>
           <DivButton>
               <ButtonText floated='right' positive>
                 <Icon name='checkmark' /> บันทึก

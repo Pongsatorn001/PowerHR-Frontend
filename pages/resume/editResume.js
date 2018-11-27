@@ -3,7 +3,7 @@ import { withLayout } from '../../hoc'
 import { compose, withProps , withState , withHandlers} from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
-import { Form , Button , Icon, Accordion, Divider } from 'semantic-ui-react'
+import { Form , Button , Icon, Accordion, Divider , Modal , Header , TextArea } from 'semantic-ui-react'
 import theme from '../../theme/default'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 
@@ -77,7 +77,51 @@ const enhance = compose(
   withProps({
     pageTitle: 'Add Position'
   }),
-  withLayout
+  withLayout,
+  withHandlers({
+    handleClickModal : props => (data) => {
+      return(
+          <Modal.Content>
+            <SizeForm>
+              <Form.Group widths='equal'>
+                <SizeInput
+                    id='name'
+                    fluid
+                    label='ชื่อ :'
+                    placeholder='กรุณาพิมพ์ชื่อ'
+                    defaultValue={data.name}
+                />
+                <SizeInput
+                    id='lastname'
+                    fluid
+                    label='นามสกุล :'
+                    placeholder='กรุณาพิมพ์นามสกุล'
+                    defaultValue={data.lastName}
+                />
+              </Form.Group>
+              <Form.Group widths='equal'>
+                <SizeInput
+                    fluid
+                    id='id-card'
+                    label='เลขบัตรประจำตัวประชาชน :'
+                    placeholder='กรุณาพิมพ์เลขบัตรประจำตัวประชาชน'
+                    defaultValue={data.idcard}
+                  />
+              </Form.Group>
+              <Form.Group widths='equal'>
+                <SizeInput
+                    fluid
+                    id='id-card'
+                    label='รายละเอียด/เหตุผล :'
+                    placeholder='รายละเอียดหรือเหตุผลในการติดแบล็กลิส'
+                    control={TextArea}
+                  />
+              </Form.Group>
+            </SizeForm>
+          </Modal.Content>
+      )
+    },
+  })
 )
   
 export default enhance((props) => 
@@ -151,7 +195,19 @@ export default enhance((props) =>
                   placeholder='กรุณาเลือกไฟล์ประวัติผู้สมัคร'>
                 </SizeInput>
               </Form.Group>
-              <SizeAccordion  panels={panels} /> <HR/>
+              <Modal trigger={<Button color='red' >แบล็กลิส</Button>} closeIcon>
+                <Header icon='archive' content='แบล็กลิสผู้สมัคร' />
+                {props.handleClickModal(data)}
+                <Modal.Actions>
+                  <ButtonText floated='right' positive>
+                      <Icon name='checkmark' /> บันทึก
+                  </ButtonText>
+                  <ButtonText floated='right'>
+                      <Icon name='times' /> ยกเลิก
+                  </ButtonText>
+                  <Divider hidden />
+                </Modal.Actions>
+              </Modal>
               <DivButton>
                   <ButtonText floated='right' positive>
                     <Icon name='checkmark' /> บันทึก

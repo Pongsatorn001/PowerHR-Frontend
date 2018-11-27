@@ -68,8 +68,8 @@ const enhance = compose(
     }),
 )
     
-let blacklist_name = 'Blacklist (แบล็คลิสต์)'
-let button_name = 'เพิ่มรายชื่อ'
+let blacklist_name = 'แบล็คลิสต์'
+let button_name = 'เพิ่มรายชื่อแบล็คลิสต์'
 let link = '/blacklist/addBlacklist'
 
 export default enhance((props) => 
@@ -101,7 +101,7 @@ export default enhance((props) =>
                                     <center>{data.fname}</center>
                                 </TableCell>
                             }closeIcon size='small'>
-                                <HeaderContent icon='user times' content={`Blacklist : คุณ ${data.fname} ${data.lname}`} />
+                                <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.fname} ${data.lname}`} />
                                 {props.handleClickModal(data.idcard , data.posi)}
                             </Modal>
                             <Modal trigger={
@@ -109,7 +109,7 @@ export default enhance((props) =>
                                     <center>{data.lname}</center>
                                 </TableCell>
                             }closeIcon size='small'>
-                                <HeaderContent icon='user times' content={`Blacklist : คุณ ${data.fname} ${data.lname}`} />
+                                <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.fname} ${data.lname}`} />
                                 {props.handleClickModal(data.idcard , data.posi)}
                             </Modal>
                             <Modal trigger={
@@ -117,7 +117,7 @@ export default enhance((props) =>
                                     <center>{data.posi}</center>
                                 </TableCell>
                             }closeIcon size='small'>
-                                <HeaderContent icon='user times' content={`Blacklist : คุณ ${data.fname} ${data.lname}`} />
+                                <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.fname} ${data.lname}`} />
                                 {props.handleClickModal(data.idcard , data.posi)}
                             </Modal>
                             <TableCell>

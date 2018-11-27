@@ -5,7 +5,7 @@ import theme from '../../theme/default';
 import styled from 'styled-components';
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
-import { Table , Breadcrumb , Button , Icon , Modal , Divider , Grid , Input , Select , Header , Comment , Form , Radio } from 'semantic-ui-react'
+import { Table , Breadcrumb , Button , Icon , Modal , Divider , Grid , Input , Select , Header , Comment , Form , Radio , value } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 
 const Div = styled.div `
@@ -111,39 +111,55 @@ const enhance = compose(
         pageTitle: 'Resume'
     }),
     withLayout,
+    withState('redio' , 'setRedio' , true),
     withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์'}]),
     withState('comment','setComment',[{nameComment: 'HR', textComment: 'คุณสมบัติทั่วไปผ่าน'},{nameComment: 'Leader', textComment: 'เรียกสัมภาษณ์ได้เลย'}]),
-    withState(''),
     withHandlers({
-        handleChange : props => () => event => {
-            
+        handleClickChange : props => () => event => {
+            props.setRedio(false)
         },
         handleClickModal: props => () => {            
             return(
                 <Modal.Description>
-                    <MarginGrid colu    mns={2}>
+                    <MarginGrid columns={2}>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR </p>
                                 <Form>
-                                    <Form.Field>
-                                        <Radio 
+                                    <Form.Group>
+                                        <Form.Field 
                                             label='ผ่านการสัมภาษณ์' 
-                                            value='this'
-                                            
+                                            control='input' 
+                                            type='radio'
+                                            name='htmlRadios'
                                         />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Radio 
-                                            label='ผ่านการสัมภาษณ์' 
-                                            value='that'
+                                        <Form.Field 
+                                            label='ไม่ผ่านการสัมภาษณ์' 
+                                            control='input'
+                                            type='radio'
+                                            name='htmlRadios' 
                                         />
-                                    </Form.Field>
+                                    </Form.Group>
                                 </Form>
                             {/* <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={props.option}></SelectJob> */}
                         </Grid.Column>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader </p>
-                            <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={props.option}/>
+                            <Form>
+                                    <Form.Group>
+                                        <Form.Field 
+                                                label='ผ่านการสัมภาษณ์' 
+                                                control='input' 
+                                                type='radio'
+                                                name='htmlRadios'
+                                            />
+                                            <Form.Field 
+                                                label='ไม่ผ่านการสัมภาษณ์' 
+                                                control='input'
+                                                type='radio'
+                                                name='htmlRadios' 
+                                            />
+                                        </Form.Group>
+                                </Form>
                         </Grid.Column>
                     </MarginGrid>
                     <MarginComment>
@@ -213,7 +229,7 @@ const enhance = compose(
 );
 
 
-let job_pos_name = 'ประวัติผู้สมัคร ( Resume )'
+let job_pos_name = 'ประวัติผู้สมัคร'
 let job_pos_des = 'คน'
 let job_button_name = 'เพิ่มประวัติผู้สมัคร'
 let link ='/resume/addResume'
@@ -243,7 +259,7 @@ export default enhance( (props)=>
                         <center>สถานะ</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>แก้ไข/ลบ</center>
+                        <center>จัดการข้อมูล</center>
                     </TableHeadcell>
                 </Table.Row>
             </Table.Header>
@@ -268,9 +284,9 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <Modal trigger={<center>{dataResume.name}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                    <ColorModelHeader>ประวัติ : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                     <Modal.Content>
-                                        <Sizeiframe src={dataResume.file}></Sizeiframe>
+                                        <center src={dataResume.file}></center>
                                     </Modal.Content>
                                     {props.handleClickModal()}
                                     <Divider hidden />

@@ -27,6 +27,19 @@ const ButtonText = styled(Button)`
   font-family : 'Kanit', sans-serif !important;
 `
 
+const IconLine = styled(Icon)`
+  font-size: 35px !important;
+`;
+
+const SizeInput = styled(Form.Input)`
+  font-size : 16px !important;
+`;
+
+const SizeForm = styled(Form)`
+  width: 70% !important;
+  margin-left: 15% !important;
+`;
+
 const enhance = compose(
   withState('list' , 'setlist' , ['Fontend Developer' , 'Backend Developer' , 'Fullstack Developer' , 'Design UX/UI' , 'Tester']),
   withProps({
@@ -49,14 +62,22 @@ const enhance = compose(
   
 export default enhance((props) => 
   <div>
-    {Breadcrumb2Page('Position' , 'Edit Position' , '/position/position')}
+    {Breadcrumb2Page('ตำแหน่งงานในบริษัท' , 'แก้ไขตำแหน่งงานในบริษัท' , '/position/position')}
     <Div>
-      <center>{TextHeader('Edit Positions ( แก้ไขตำแหน่ง )')}</center>
-      <DivForm>
-        <Form>
+      <center>{TextHeader('แก้ไขตำแหน่งในบริษัท')}</center>
+      <center>
+        <IconLine name="window minimize outline"/>
+      </center>
+      <div>
+        <SizeForm>
           <Form.Field>
-            <label>ชื่อตำแหน่งที่ต้องการแก้ไข : </label>
-            <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ' value={props.setEdit()}/>
+              <SizeInput
+                fluid
+                id='namePositions'
+                label='ชื่อตำแหน่งที่ต้องการแก้ไข :'
+                placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'
+                value={props.setEdit()}
+              />
             <DivButton>
               <ButtonText floated='right' positive>
                 <Icon name='checkmark' /> บันทึก
@@ -66,8 +87,8 @@ export default enhance((props) =>
               </ButtonText>
             </DivButton>
           </Form.Field>
-        </Form>
-      </DivForm>
+        </SizeForm>
+      </div>
     </Div>
   </div>
 );

@@ -22,11 +22,19 @@ const DivButton = styled.div`
 const ButtonText = styled(Button)`
   font-family : 'Kanit', sans-serif !important;
 `
-const DivForm = styled.div`
-  padding-top : 40px !important ;
-  margin-left : 15% !important ;
-  margin-right : 15% !important ;
-`
+
+const IconLine = styled(Icon)`
+  font-size: 35px !important;
+`;
+
+const SizeForm = styled(Form)`
+  width: 58% !important;
+  margin-left: 21% !important;
+`;
+
+const SizeInput = styled(Form.Input)`
+  font-size : 16px !important;
+`;
 
 const enhance = compose(
     withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 1234 , des: 'ทำงานดีเกินไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 5678 , des: 'ทำงานดีเกินไป' } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 9876 , des: 'ทำงานดีเกินไป'}]),
@@ -102,13 +110,15 @@ const enhance = compose(
   
 export default enhance((props) => 
     <div>
-        {Breadcrumb2Page('Blacklist' , 'Add Blacklist' , '/blacklist/blackList')}
+        {Breadcrumb2Page('แบล็คลิสต์' , 'เพิ่มรายชื่อแบล็คลิสต์' , '/blacklist/blackList')}
         <Div>
-            <center>{TextHeader('Add Blacklist ( เพิ่มรายชื่อแบล็คลิสต์ )')}</center>
-            <DivForm>
-                <Form>
+            <center>{TextHeader('เพิ่มรายชื่อแบล็คลิสต์')}</center>
+            <center>
+                <IconLine name="window minimize outline"/>
+            </center>
+                <SizeForm>
                     <Form.Group widths='equal'>
-                        <Form.Field
+                        <SizeInput
                             id='form-input-control-first-name'
                             control={Input}
                             label='ชื่อจริง :'
@@ -121,7 +131,7 @@ export default enhance((props) =>
                         <datalist id="firstname">
                             {props.handleOptionFnameInput(props.list)}
                         </datalist>
-                        <Form.Field
+                        <SizeInput
                             id='form-input-control-last-name'
                             control={Input}
                             label='นามสกุล :'
@@ -135,7 +145,7 @@ export default enhance((props) =>
                             {props.handleOptionLnameInput(props.list)}
                         </datalist>
                     </Form.Group>
-                    <Form.Field
+                    <SizeInput
                         type="number"
                         control={Input}
                         label='เลขบัตรประจำตัวประชาชน :'
@@ -148,11 +158,11 @@ export default enhance((props) =>
                     <datalist id="idcard">
                         {props.handleOptionIdcardInput(props.list)}
                     </datalist>
-                    <Form.Field
+                    <SizeInput
                         id='form-textarea-control-opinion'
                         control={TextArea}
                         label='รายละเอียด/เหตุผล :'
-                        placeholder='รายละเอียดหรือเหตุผลในการติด Blacklist'
+                        placeholder='รายละเอียดหรือเหตุผลในการติดแบล็คลิสต์'
                     />
                     <DivButton>
                         <ButtonText floated='right' positive>
@@ -162,8 +172,7 @@ export default enhance((props) =>
                             <Icon name='times' /> ยกเลิก
                         </ButtonText>
                     </DivButton>
-                </Form>
-            </DivForm>
+                </SizeForm>
         </Div>
     </div>
 );
