@@ -49,7 +49,7 @@ export default enhance(() =>
     {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'เพิ่มตำแหน่งงานที่เปิดรับสมัคร' , '/jobPositions/jobPositions')}
     <Divider hidden />
     <Div>
-      <center>{TextHeader('เพิ่มตำแหน่งงานที่รับสมัคร ( Job Positions )')}</center>
+      <center>{TextHeader('เพิ่มตำแหน่งงานที่รับสมัคร')}</center>
       <center>
         <IconLine name="window minimize outline"/>
       </center>

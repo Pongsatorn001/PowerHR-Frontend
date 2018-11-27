@@ -58,24 +58,13 @@ const SizeAccordion = styled(Accordion)`
   font-size : 16px !important;
 `;
 
-const panels = [
-  {
-    key: 'details',
-    title: 'BlackList',
-    content: {
-      as: Form.TextArea,
-      label: 'รายละเอียด Blacklist :',
-      placeholder: 'กรุณาพิมพ์รายละเอียดการติด Blacklist',
-    },
-  },
-];
-
 const enhance = compose(
   withProps({
     pageTitle: 'Add Position'
   }),
   withLayout,
-  withState('option','setOption',[{ key: 'w', text: 'รอการสัมภาษณ์', value: 'waiting ' }, { key: 'p', text: 'ผ่านการสัมภาษณ์', value: 'past' } , { key: 'n', text: 'ไม่ผ่านการสัมภาษณ์', value: 'noPast' },  { key: 'b', text: 'Blacklist', value: 'blacklist' },]),
+  withState('list' , 'setlist' , [{ key: 'fd', text: 'Fontend Developer', value: 'Fontend Developer ' }, { key: 'Backend Developer', text: 'Backend Developer', value: 'Backend Developer' } , { key: 'Design UX/UI', text: 'Design UX/UI', value: 'Design UX/UI' }]),
+  withState('option','setOption',[{ key: 'w', text: 'รอการสัมภาษณ์', value: 'waiting ' }, { key: 'p', text: 'ผ่านการสัมภาษณ์', value: 'past' } , { key: 'n', text: 'ไม่ผ่านการสัมภาษณ์', value: 'noPast' }]),
 )
   
 export default enhance((props) => 
@@ -119,11 +108,12 @@ export default enhance((props) =>
             />
           </Form.Group>
           <Form.Group widths='equal'>
-            <SizeSelect
+            <SizeInput
               fluid
               id='positons'
               label='ตำแหน่ง :'
               placeholder='เลือกตำแหน่ง'
+              defaultValue={props.url.query.position}
             />
             <SizeSelect
               fluid
@@ -131,6 +121,7 @@ export default enhance((props) =>
               label='สถานะ :'
               options={props.option}
               placeholder='เลือกสถานะ'
+              defaultValue={props.option[0].value}
             />
             
             
@@ -149,7 +140,6 @@ export default enhance((props) =>
             </label> */}
             
           </Form.Group>
-          <SizeAccordion  panels={panels} /> <HR/>
           <DivButton>
               <ButtonText floated='right' positive>
                 <Icon name='checkmark' /> บันทึก

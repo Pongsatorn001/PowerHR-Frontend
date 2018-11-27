@@ -59,7 +59,7 @@ const enhance = compose(
     withLayout
 )
 
-let pos_name = 'Positions (ตำแหน่ง)'
+let pos_name = 'ตำแหน่งงานในบริษัท'
 let button_name = 'เพิ่มตำแหน่ง'
 let link = '/position/addPosition'
 
@@ -110,6 +110,7 @@ export default enhance( (props)=>
                                             </ButtonAdd>
                                         }
                                         size="tiny"
+                                        closeIcon
                                     >
                                         <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
                                             <Modal.Content>
@@ -118,11 +119,8 @@ export default enhance( (props)=>
                                                 </p>
                                             </Modal.Content>
                                         <Modal.Actions>
-                                            <ButtonAdd>
-                                                <Icon name='remove' /> ยกเลิก
-                                            </ButtonAdd>
                                             <ButtonAdd color='green'>
-                                                <Icon name='checkmark' /> ตกลง
+                                                <Icon name='checkmark' /> ยืนยัน
                                             </ButtonAdd>
                                         </Modal.Actions>
                                     </Modal>

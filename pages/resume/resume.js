@@ -5,7 +5,7 @@ import theme from '../../theme/default';
 import styled from 'styled-components';
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
-import { Table , Breadcrumb , Button , Icon , Modal , Divider , Grid , Input , Select , Header , Comment , Form , Radio } from 'semantic-ui-react'
+import { Table , Breadcrumb , Button , Icon , Modal , Divider , Grid , Input , Select , Header , Comment , Form , Radio , value } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 
 const Div = styled.div `
@@ -111,12 +111,12 @@ const enhance = compose(
         pageTitle: 'Resume'
     }),
     withLayout,
+    withState('redio' , 'setRedio' , true),
     withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์'}]),
     withState('comment','setComment',[{nameComment: 'HR', textComment: 'คุณสมบัติทั่วไปผ่าน'},{nameComment: 'Leader', textComment: 'เรียกสัมภาษณ์ได้เลย'}]),
-    withState(''),
     withHandlers({
-        handleChange : props => () => event => {
-            
+        handleClickChange : props => () => event => {
+            props.setRedio(false)
         },
         handleClickModal: props => () => {            
             return(
@@ -125,25 +125,41 @@ const enhance = compose(
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR </p>
                                 <Form>
-                                    <Form.Field>
-                                        <Radio 
+                                    <Form.Group>
+                                        <Form.Field 
                                             label='ผ่านการสัมภาษณ์' 
-                                            value='this'
-                                            
+                                            control='input' 
+                                            type='radio'
+                                            name='htmlRadios'
                                         />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Radio 
-                                            label='ผ่านการสัมภาษณ์' 
-                                            value='that'
+                                        <Form.Field 
+                                            label='ไม่ผ่านการสัมภาษณ์' 
+                                            control='input'
+                                            type='radio'
+                                            name='htmlRadios' 
                                         />
-                                    </Form.Field>
+                                    </Form.Group>
                                 </Form>
                             {/* <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={props.option}></SelectJob> */}
                         </Grid.Column>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader </p>
-                            <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={props.option}/>
+                            <Form>
+                                    <Form.Group>
+                                        <Form.Field 
+                                                label='ผ่านการสัมภาษณ์' 
+                                                control='input' 
+                                                type='radio'
+                                                name='htmlRadios'
+                                            />
+                                            <Form.Field 
+                                                label='ไม่ผ่านการสัมภาษณ์' 
+                                                control='input'
+                                                type='radio'
+                                                name='htmlRadios' 
+                                            />
+                                        </Form.Group>
+                                </Form>
                         </Grid.Column>
                     </MarginGrid>
                     <MarginComment>
@@ -213,7 +229,7 @@ const enhance = compose(
 );
 
 
-let job_pos_name = 'ประวัติผู้สมัคร ( Resume )'
+let job_pos_name = 'ประวัติผู้สมัคร'
 let job_pos_des = 'คน'
 let job_button_name = 'เพิ่มประวัติผู้สมัคร'
 let link ='/resume/addResume'
@@ -223,7 +239,7 @@ export default enhance( (props)=>
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
         <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.position)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -243,7 +259,7 @@ export default enhance( (props)=>
                         <center>สถานะ</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>แก้ไข/ลบ</center>
+                        <center>จัดการข้อมูล</center>
                     </TableHeadcell>
                 </Table.Row>
             </Table.Header>
@@ -268,9 +284,9 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <Modal trigger={<center>{dataResume.name}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                    <ColorModelHeader>ประวัติ : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                     <Modal.Content>
-                                        <Sizeiframe src={dataResume.file}></Sizeiframe>
+                                        <center src={dataResume.file}></center>
                                     </Modal.Content>
                                     {props.handleClickModal()}
                                     <Divider hidden />
@@ -328,7 +344,7 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <Link href={{ pathname:'/resume/editResume', query: { nameResume : dataResume.name }}}>
+                                    <Link href={{ pathname:'/resume/editResume', query: { id : dataResume.id , position: props.url.query.position}}}>
                                         <ButtonEdit animated='fade' size='mini'>
                                             <Button.Content visible content='แก้ไข'/>
                                             <Button.Content hidden >

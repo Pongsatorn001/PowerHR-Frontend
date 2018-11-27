@@ -8,6 +8,7 @@ export default class MyDocument extends Document {
     const props = await Document.getInitialProps(ctx)
     return props
   }
+  
 
   render () {
     const sheet = new ServerStyleSheet()

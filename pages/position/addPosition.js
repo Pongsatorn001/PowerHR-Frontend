@@ -14,11 +14,6 @@ const Div = styled.div `
   margin-right : 13px;
   margin-top : 20px ;
 `
-const DivForm = styled.div`
-  padding-top : 40px !important ;
-  margin-left : 30% !important ;
-  margin-right : 30% !important ;
-`
 
 const DivButton = styled.div`
   padding-top : 20px !important ;
@@ -27,6 +22,18 @@ const DivButton = styled.div`
 const ButtonText = styled(Button)`
   font-family : 'Kanit', sans-serif !important;
 `
+const IconLine = styled(Icon)`
+  font-size: 35px !important;
+`;
+
+const SizeInput = styled(Form.Input)`
+  font-size : 16px !important;
+`;
+
+const SizeForm = styled(Form)`
+  width: 70% !important;
+  margin-left: 15% !important;
+`;
 
 const enhance = compose(
   withProps({
@@ -37,14 +44,21 @@ const enhance = compose(
   
 export default enhance(() => 
   <div>
-    {Breadcrumb2Page('Position' , 'Add Position' , '/position/position')}
+    {Breadcrumb2Page('ตำแหน่งงานในบริษัท' , 'เพิ่มตำแหน่งงานในบริษัท' , '/position/position')}
     <Div>
-      <center>{TextHeader('Add Positions ( เพิ่มตำแหน่ง )')}</center>
-      <DivForm>
-        <Form>
+      <center>{TextHeader('เพิ่มตำแหน่งงานในบริษัท')}</center>
+      <center>
+        <IconLine name="window minimize outline"/>
+      </center>
+      <div>
+        <SizeForm>
           <Form.Field>
-            <label>ชื่อตำแหน่งที่ต้องการเพิ่ม : </label>
-            <Input placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'/>
+            <SizeInput
+                fluid
+                id='namePositions'
+                label='ชื่อตำแหน่งที่ต้องการเพิ่ม :'
+                placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'
+              />
             <DivButton>
               <ButtonText floated='right' positive>
                 <Icon name='checkmark' /> บันทึก
@@ -54,8 +68,8 @@ export default enhance(() =>
               </ButtonText>
             </DivButton>
           </Form.Field>
-        </Form>
-      </DivForm>
+        </SizeForm>
+      </div>
     </Div>
   </div>
 );

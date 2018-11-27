@@ -12,7 +12,7 @@ const enhance = compose(
         pageTitle: 'Job Positions'
     }),
     withLayout,
-    withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'Fontend Developer', ReceivingNumber: '5'}]),
+    withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'UX/UI Design', ReceivingNumber: '5'}]),
     withState('open' , 'setOpen' , false),
     withHandlers({
         handleModalOpen: props => () => event => {
@@ -77,9 +77,7 @@ const HeaderContent = styled(Header)`
     font-family : 'Kanit', sans-serif !important;
 `;
 
-
-
-let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร ( Job Positions )'
+let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร'
 let job_pos_des = `ตำแหน่ง`
 let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
 let link ='/jobPositions/addJobPositions'
@@ -100,7 +98,7 @@ export default enhance( (props)=>
                         <center>จำนวนที่เปิดรับ</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>แก้ไข/ลบ</center>
+                        <center>จัดการข้อมูล</center>
                     </TableHeadcell>
                 </Table.Row>
             </Table.Header>
@@ -108,19 +106,19 @@ export default enhance( (props)=>
                 {
                     props.list.map( (data,i)=> {
                         return (
-                            <TableRow key={i}>
+                            <TableRow key={i}>                          
                                     <TableCell>
-                                        <Link href="../resume/resume">
+                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{i+1}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href="../resume/resume">
+                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{data.nameJobPositions}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href="../resume/resume">
+                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
                                             <center>{data.ReceivingNumber}</center>
                                         </Link>
                                     </TableCell>
