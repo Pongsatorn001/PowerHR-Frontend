@@ -10,24 +10,20 @@ const SegmentHeader = styled(Segment) `
 `;
 
 const TextHeader = styled(Header)`
-    margin-bottom : 14px !important;
+    margin-bottom : 6px !important;
     font-family: 'Kanit', sans-serif !important;
-`;
-
-const Text = styled.text `
-    color : white !important;
-    font-size : 16px !important;
-    margin-right : 8px !important;
 `;
 
 const Icons = styled(Icon) `
     font-size: 2em !important;
-    color : white 
+    color : white ;
+    padding-top : 5px ;
+    margin-right: -10px !important;
 `;
 
 const DropdownButton = styled(Dropdown)`
     margin-left : 4px !important;  
-    color : white
+    color : white ;
 `;
 
 const DropdownMenu = styled(Dropdown.Menu)`
@@ -41,15 +37,14 @@ export default (props) => (
     <div>
         <SegmentHeader clearing >
             <TextHeader as='h4' floated='right'>
-                <div>
-                    <Text>Welcome,</Text>
-                    <Icons name='user circle'/>
-                    <DropdownButton simple item text={name} >
-                        <DropdownMenu>
-                            <Dropdown.Item icon='sign-out' text="Logout" />
-                        </DropdownMenu>
-                    </DropdownButton>
-                </div>
+                <DropdownButton simple item text={name} >
+                    <DropdownMenu>
+                        <Dropdown.Item icon='sign-out' text="Logout" />
+                    </DropdownMenu>
+                </DropdownButton>
+            </TextHeader>
+            <TextHeader as='h4' floated='right'>
+                <Icons name='user circle'/>
             </TextHeader>
         </SegmentHeader>
     </div>
