@@ -133,8 +133,9 @@ export default enhance((props) =>
               type="file"
               label='ไฟล์ประวัติผู้สมัคร :'
               placeholder='กรุณาเลือกไฟล์ประวัติผู้สมัคร'
+              accept="application/pdf"
             />
-
+  
             {/* <label for="file" class="ui icon button" >
               เลือกไฟล์
             </label> */}
