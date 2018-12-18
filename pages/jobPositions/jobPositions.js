@@ -1,31 +1,12 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps , withState , withHandlers} from 'recompose'
+import { compose, withProps , withState , withHandlers , lifecycle } from 'recompose'
 import styled from 'styled-components'
 import Link from 'next/link'
 import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
-
-const enhance = compose(
-    withProps({
-        pageTitle: 'Job Positions'
-    }),
-    withLayout,
-    withState('list','setList',[{id: '001', nameJobPositions: 'Fontend Developer', ReceivingNumber: '2'},{id: '002', nameJobPositions: 'UX/UI Design', ReceivingNumber: '5'}]),
-    withState('open' , 'setOpen' , false),
-    withHandlers({
-        handleModalOpen: props => () => event => {
-            props.setOpen(true)
-        },
-        handleModalClose: props => () => event => {
-            props.setOpen(false)
-        },
-        handleDeleteJobPositions: props => () => event => {
-            props.setOpen(false)
-        }
-    }),
-)
+import axios from 'axios'
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -77,6 +58,56 @@ const HeaderContent = styled(Header)`
     font-family : 'Kanit', sans-serif !important;
 `;
 
+const enhance = compose(
+    withProps({
+        pageTitle: 'Job Positions'
+    }),
+    withLayout,
+    withState('list','setList',[]),
+    withState('open' , 'setOpen' , false),
+    withState('positionName','setPositionName',[]),
+    withHandlers({
+        handleModalOpen: props => () => event => {
+            props.setOpen(true)
+        },
+        handleModalClose: props => () => event => {
+            props.setOpen(false)
+        },
+        handleDeleteJobPositions: props => () => event => {
+            props.setOpen(false)
+        },
+        handleNamePosition: props => (id) => event => {
+            const url = `http://localhost:4000/positions/${id}`
+            axios.get(url)
+            .then( data => {
+                props.setPositionName(data)
+            })
+            .catch( err => {
+                console.log(err);
+            })
+        }
+    }),
+    lifecycle({
+        async componentDidMount(){
+            const url = 'http://localhost:4000/job_position'
+            const job_position = await axios.get(url)
+            this.props.setList(job_position.data)
+            let position = []
+            job_position.data.map( data => {
+                const url = `http://localhost:4000/positions/${data.positions_id}`
+                axios.get(url)
+                .then( res => {
+                    res.data.map( data => {
+                        return position.push(data.position_name)
+                    })
+                    this.props.setPositionName(position)
+                })
+            })
+            
+        }
+    })
+)
+
 let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร'
 let job_pos_des = `ตำแหน่ง`
 let job_button_name = 'เพิ่มตำแหน่งงานที่เปิดรับ'
@@ -114,12 +145,12 @@ export default enhance( (props)=>
                                     </TableCell>
                                     <TableCell>
                                         <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
-                                            <center>{data.nameJobPositions}</center>
+                                            <center>{props.positionName[i]}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
                                     <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
-                                            <center>{data.ReceivingNumber}</center>
+                                            <center>{data.value}</center>
                                         </Link>
                                     </TableCell>
                                 

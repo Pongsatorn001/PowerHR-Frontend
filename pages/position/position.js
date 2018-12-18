@@ -1,11 +1,13 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps , withState , withHandlers } from 'recompose'
+import { compose, withProps , withState , lifecycle , withHandlers } from 'recompose'
 import styled from 'styled-components'
 import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
+import axios from 'axios'
+import { Breadcrumb2Page } from '../../components/Breadcrumb'
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -34,7 +36,9 @@ const ButtonEdit = styled(Button)`
     background : ${theme.colors.buttonEdit} !important;
     font-family : 'Kanit', sans-serif !important;
 `;
-
+const ButtonText = styled(Button)`
+  font-family : 'Kanit', sans-serif !important;
+`
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
 `
@@ -43,6 +47,7 @@ const Div = styled.div `
     background : ${theme.colors.elementBackground};
     box-shadow : ${theme.colors.boxShadow};
     margin-right : 13px;
+    margin-top : 20px ;
 `
 const ButtonAdd = styled(Button)`
     font-family : 'Kanit', sans-serif !important;
@@ -52,84 +57,130 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
-    withState('list' , 'setlist' , ['Fontend Developer' , 'Backend Developer' , 'Fullstack Developer' , 'Design UX/UI' , 'Tester']),
+    withState('list' , 'setlist' , []),
+    withState('headerName' , 'setHeaderName'),
+    withState('open' , 'setOpen' , false),
+    withState('idList' , 'setIdList'),
+    withState('departmentName' , 'setDepartmentName'),
     withProps({
         pageTitle: 'Positions'
     }),
-    withLayout
+    withLayout,
+    lifecycle({
+        async componentDidMount(){
+            const url = `http://localhost:4000/joinDepartment/${this.props.url.query.id}`
+            const res = await axios.get(url)
+            this.props.setlist(res.data)
+
+            const urlDepartment = `http://localhost:4000/departments/${this.props.url.query.id}`
+            const response = await axios.get(urlDepartment)
+            this.props.setDepartmentName(response.data[0].department_name)            
+        },
+
+    }),
+    withHandlers({
+        handleDeletePositionName: props => () => event => {
+            const id = props.idList
+            const url = `http://localhost:4000/positions/${id}`
+            axios.delete(url)
+            .then( res => {
+                const url = 'http://localhost:4000/positions'
+                axios.get(url)
+                .then( response => {
+                    props.setlist(response.data)
+                    props.setOpen(false)
+                })
+                .catch( err => {
+                    console.log(err);
+                })
+            })
+            .catch( err => {
+                console.log(err);
+            })
+        },
+        handleModalOpen: props => (foo , name , id) => event => {
+            props.setOpen(foo)
+            props.setHeaderName(name)
+            props.setIdList(id)
+        }
+    })
 )
 
-let pos_name = 'ตำแหน่งงานในบริษัท'
 let button_name = 'เพิ่มตำแหน่ง'
 let link = '/position/addPosition'
 
-export default enhance( (props)=> 
-    <Div>
-        {TextHeaderTable(pos_name , `${props.list.length}` , button_name , 'ตำแหน่ง' , link)}
-        <TablePosition striped>
-            <Table.Header>
-                <Table.Row>
-                    <TableHeadcell>
-                        <center>รหัส</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>ตำแหน่ง</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>จัดการข้อมูล</center>
-                    </TableHeadcell>
-                </Table.Row>
-            </Table.Header>
-            <TableBody>
-                {props.list.map( (data , i) => {
-                    return (
-                        <TableRow key={i}>
-                            <TableCell>
-                                <center>{i + 1}</center>
-                            </TableCell>
-                            <TableCell>
-                                <center>{data}</center>
-                            </TableCell>
-                            <TableCell>
-                                <center>
-                                    <Link href={{ pathname: '/position/editPosition', query: { name : data } }}>
-                                        <ButtonEdit animated='fade' size='mini'>
-                                            <Button.Content visible content='แก้ไข'/>
-                                            <Button.Content hidden >
-                                                <Icon name='edit' />
-                                            </Button.Content>
-                                        </ButtonEdit>
-                                    </Link>
-                                    <Modal 
-                                        trigger={
-                                            <ButtonAdd animated='fade' size='mini' color="youtube">
-                                                <Button.Content visible content='ลบ'/>
+export default enhance( (props)=>
+    <div>
+        {Breadcrumb2Page('แผนกงานในบริษัท' , 'เพิ่มตำแหน่งงานในแผนก' , `/departments/departments`)}
+        <Div>
+            {TextHeaderTable(`ตำแหน่งงานในแผนก ${props.departmentName}` , `${props.list.length}` , button_name , 'ตำแหน่ง' , link , props.url.query.id)}
+            <TablePosition striped>
+                <Table.Header>
+                    <Table.Row>
+                        <TableHeadcell>
+                            <center>รหัส</center>
+                        </TableHeadcell>
+                        <TableHeadcell>
+                            <center>ตำแหน่ง</center>
+                        </TableHeadcell>
+                        <TableHeadcell>
+                            <center>จัดการข้อมูล</center>
+                        </TableHeadcell>
+                    </Table.Row>
+                </Table.Header>
+                <TableBody>
+                    {props.list.map( (data , i) => {
+                        return (
+                            <TableRow key={i}>
+                                <TableCell>
+                                    <center>{i + 1}</center>
+                                </TableCell>
+                                <TableCell>
+                                    <center>{data.position_name}</center>
+                                </TableCell>
+                                <TableCell>
+                                    <center>
+                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.id } }}>
+                                            <ButtonEdit animated='fade' size='mini'>
+                                                <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
-                                                    <Icon name='trash alternate' />
+                                                    <Icon name='edit' />
                                                 </Button.Content>
-                                            </ButtonAdd>
-                                        }
-                                        size="tiny"
-                                        closeIcon
-                                    >
-                                        <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
-                                            <Modal.Content>
-                                                <p>
-                                                    คุณต้องการลบข้อมูลตำแหน่งงาน {data} ใช่หรือไม่ ?
-                                                </p>
-                                            </Modal.Content>
-                                        <Modal.Actions>
-                                            <ButtonAdd color='green'>
-                                                <Icon name='checkmark' /> ยืนยัน
-                                            </ButtonAdd>
-                                        </Modal.Actions>
-                                    </Modal>
-                                </center>
-                            </TableCell>
-                        </TableRow>
-                    )
-                })}
-            </TableBody>
-        </TablePosition>
-    </Div>
+                                            </ButtonEdit>
+                                        </Link>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)}>
+                                            <Button.Content visible content='ลบ'/>
+                                            <Button.Content hidden >
+                                                <Icon name='trash alternate' />
+                                            </Button.Content>
+                                        </ButtonAdd>
+                                        <Modal 
+                                            size="tiny"
+                                            open={props.open}
+                                            dimmer="blurring"
+                                        >
+                                            <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                                <Modal.Content>
+                                                    <p>
+                                                        คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                    </p>
+                                                </Modal.Content>
+                                            <Modal.Actions>
+                                                <ButtonText  onClick={props.handleModalOpen(false)}>
+                                                    <Icon name='times' /> ยกเลิก
+                                                </ButtonText>
+                                                <ButtonAdd color='green' onClick={props.handleDeletePositionName()}>
+                                                    <Icon name='checkmark' /> ยืนยัน
+                                                </ButtonAdd>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </center>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    })}
+                </TableBody>
+            </TablePosition>
+        </Div>
+    </div>
 )   

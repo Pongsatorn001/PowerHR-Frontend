@@ -4,7 +4,7 @@ import { Breadcrumb } from 'semantic-ui-react'
 
 export const Breadcrumb2Page = (home , pre , path) => (
     <Breadcrumb size='large'>
-        <Link href={'javascript:history.back()'}>
+        <Link href={path}>
             <Breadcrumb.Section link>{home}</Breadcrumb.Section>
         </Link>
         <Breadcrumb.Divider icon='right chevron' />

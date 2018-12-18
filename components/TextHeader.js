@@ -35,13 +35,16 @@ export  const TextHeader = (name) => {
 }
 
 export const TextHeaderTable = (name , descrip , button ,  positions , link , queryData) => {
+    if (queryData !== undefined) {
+        link = { pathname : `${link}` , query : { data : queryData}}
+    }
     return (
         <div>
             <HeaderName as='h1' floated='left'>
                 {name}&nbsp;<Small>( จำนวนทั้งหมด {descrip} {positions} )</Small>
             </HeaderName>
             <HeaderButtonAdd as='h2' floated='right'>
-                <Link href={{ pathname : `${link}` , query : { position : queryData}}}>
+                <Link href={link}>
                     <ButtonAdd positive animated='fade' size='medium'>
                         <Button.Content visible>
                             {button}

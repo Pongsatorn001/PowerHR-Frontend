@@ -1,10 +1,11 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps, withState , withHandlers } from 'recompose'
+import { compose, withProps, withState , lifecycle , withHandlers } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
-import { Form , Input , Button , Icon} from 'semantic-ui-react'
+import { Form , Button , Icon} from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
+import axios from 'axios'
 
 const Div = styled.div `
   position : relative ;
@@ -13,12 +14,6 @@ const Div = styled.div `
   margin-right : 13px;
   margin-top : 20px ;
 `
-const DivForm = styled.div`
-  padding-top : 40px !important ;
-  margin-left : 30%  !important ;
-  margin-right : 30%  !important ;
-`
-
 const DivButton = styled.div`
   padding-top : 20px !important ;
   padding-bottom : 60px !important ;
@@ -41,21 +36,39 @@ const SizeForm = styled(Form)`
 `;
 
 const enhance = compose(
-  withState('list' , 'setlist' , ['Fontend Developer' , 'Backend Developer' , 'Fullstack Developer' , 'Design UX/UI' , 'Tester']),
+  withState('position_name' , 'setPosition_Name'),
   withProps({
     pageTitle: 'Edit Position'
   }),
   withLayout,
+  lifecycle({
+    async componentDidMount(){
+      const url = `http://localhost:4000/positions/${this.props.url.query.id}`
+      const res = await axios.get(url)
+      res.data.map( data => {        
+        this.props.setPosition_Name(data.position_name)
+      })  
+    }
+  }),
   withHandlers({
-    setEdit: props => () => {
-      const name = props.url.query.name
-      let editData
-      props.list.map( data => {
-        if (data === name) {
-          return editData = data
-        }
+    handleSavePositionName : props => (id) => event => {
+      const url = `http://localhost:4000/positions/${id}`
+      axios.put(url , {
+        id : id ,
+        position_name : props.position_name
       })
-      return editData
+      .then( res => {
+        console.log(res);
+        setTimeout(() => {
+          javascript:history.back()
+        }, 2000);
+      })
+      .catch( err => {
+        console.log(err);
+      })
+    },
+    handleInputData: props => () => event => {
+      props.setPosition_Name(event.target.value)      
     }
   })
 )
@@ -76,10 +89,11 @@ export default enhance((props) =>
                 id='namePositions'
                 label='ชื่อตำแหน่งที่ต้องการแก้ไข :'
                 placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'
-                value={props.setEdit()}
+                defaultValue={props.position_name}
+                onChange={props.handleInputData()}
               />
             <DivButton>
-              <ButtonText floated='right' positive>
+              <ButtonText floated='right' positive onClick={props.handleSavePositionName(props.url.query.id)}>
                 <Icon name='checkmark' /> บันทึก
               </ButtonText>
               <ButtonText floated='right' href="javascript:history.back()">
