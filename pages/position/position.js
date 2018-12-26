@@ -16,7 +16,12 @@ const TablePosition = styled(Table)`
     border: none !important;
     background: ${theme.colors.elementBackground} !important;
 `;
-
+const Panal = styled.p`
+  font-size: 18px !important;
+`
+const IconModal = styled(Icon)`
+  font-size: 55px !important;
+`;
 const TableBody = styled(Table.Body)`
     background: ${theme.colors.elementBackground} !important;
     border-top-width: 100px !important;
@@ -60,6 +65,8 @@ const enhance = compose(
     withState('list' , 'setlist' , []),
     withState('headerName' , 'setHeaderName'),
     withState('open' , 'setOpen' , false),
+    withState('modalShow' , 'setModalShow' , false),
+    withState('delSuccess' , 'setDelsucces' , false),
     withState('idList' , 'setIdList'),
     withState('departmentName' , 'setDepartmentName'),
     withProps({
@@ -84,11 +91,12 @@ const enhance = compose(
             const url = `http://localhost:4000/positions/${id}`
             axios.delete(url)
             .then( res => {
-                const url = 'http://localhost:4000/positions'
+                const url = `http://localhost:4000/joinDepartment/${props.url.query.id}`
                 axios.get(url)
                 .then( response => {
                     props.setlist(response.data)
                     props.setOpen(false)
+                    props.setDelsucces(true)
                 })
                 .catch( err => {
                     console.log(err);
@@ -102,6 +110,56 @@ const enhance = compose(
             props.setOpen(foo)
             props.setHeaderName(name)
             props.setIdList(id)
+            props.setModalShow(false)
+            props.setDelsucces(false)
+        },
+        handleModalShow: props => (setModal) => {                        
+            if (props.modalShow === true) {
+                return(
+                    <Modal 
+                        size="tiny"
+                        open={props.modalShow}
+                        dimmer="blurring"
+                    >
+                        <Modal.Content>
+                            <center>
+                            <IconModal name="info circle"/><br/><br/>
+                            <Panal>
+                                ไม่สามารถลบข้อมูลตำแหน่งงาน {props.headerName} นี้ได้<br/>
+                                เนื่องจากยังมีการเรียกใช้ข้อมูลตำแหน่งงานนี้อยู่ <br/>
+                            </Panal>
+                            <ButtonAdd color='youtube' onClick={setModal}>
+                                <Icon name='close' /> ปิด
+                            </ButtonAdd>
+                            </center>
+                        </Modal.Content>
+                    </Modal>
+                )
+            }
+            if (props.delSuccess === true) {
+                return(
+                    <Modal 
+                        size="tiny"
+                        open={props.delSuccess}
+                        dimmer="blurring"
+                      >
+                        <Modal.Content>
+                            <center>
+                                <IconModal name="info circle"/><br/><br/>
+                                    <Panal>
+                                        ลบตำแหน่งงาน {props.headerName} สำเร็จ<br/>
+                                    </Panal>
+                                <ButtonAdd positive onClick={setModal}>
+                                    <Icon name='checkmark' /> ตกลง
+                                </ButtonAdd>
+                            </center>
+                        </Modal.Content>
+                    </Modal>
+                )
+            }
+            else{
+                return null
+            }
         }
     })
 )
@@ -128,6 +186,7 @@ export default enhance( (props)=>
                         </TableHeadcell>
                     </Table.Row>
                 </Table.Header>
+                {props.handleModalShow(props.handleModalOpen())}
                 <TableBody>
                     {props.list.map( (data , i) => {
                         return (

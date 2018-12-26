@@ -14,8 +14,19 @@ const TablePosition = styled(Table)`
     padding-bottom : 20px !important;
     border: none !important;
     background: ${theme.colors.elementBackground} !important;
-`;
-
+`
+const Panal = styled.p`
+  font-size: 18px !important;
+`
+const IconModal = styled(Icon)`
+  font-size: 55px !important;
+`
+const ModalHeader = styled(Modal.Header)`
+    font-family : 'Kanit', sans-serif !important;
+    background : #ff6b82 !important;
+    color : #fff !important;
+    font-size: 18px;
+`
 const TableBody = styled(Table.Body)`
     background: ${theme.colors.elementBackground} !important;
     border-top-width: 100px !important;
@@ -49,7 +60,11 @@ const ButtonEdit = styled(Button)`
     background : #fff700 !important;
     font-family : 'Kanit', sans-serif !important;
 `;
-
+const ButtonDescription = styled(Button)`
+    color : #fff !important;
+    background : #0086cb !important;
+    font-family : 'Kanit', sans-serif !important;
+`;
 const ButtonAdd = styled(Button)`
     font-family : 'Kanit', sans-serif !important;
 `;
@@ -59,51 +74,114 @@ const HeaderContent = styled(Header)`
 `;
 
 const enhance = compose(
+    withState('list','setList',[]),
+    withState('headerName' , 'setHeaderName'),
+    withState('open' , 'setOpen' , false),
+    withState('modalShow' , 'setModalShow' , false),
+    withState('delSuccess' , 'setDelsucces' , false),
+    withState('watchDescrip' , 'setWatchDescrip' , false),
+    withState('idList' , 'setIdList'),
+    withState('value' , 'setvalue'),
+    withState('startdate' , 'setstartdate'),
+    withState('enddate' , 'setenddate'),
+    withState('description' , 'setdescription'),
+    withState('positionName','setPositionName',[]),
+    withState('department_name' , 'setdepartment_name'),
     withProps({
         pageTitle: 'Job Positions'
     }),
     withLayout,
-    withState('list','setList',[]),
-    withState('open' , 'setOpen' , false),
-    withState('positionName','setPositionName',[]),
+    lifecycle({
+        async componentDidMount(){
+            const url = 'http://localhost:4000/joinPositionAndDepartment'
+            const res = await axios.get(url)
+            this.props.setList(res.data)             
+        }
+    }),
     withHandlers({
-        handleModalOpen: props => () => event => {
-            props.setOpen(true)
+        handleModalOpen: props => (foo , name , id) => event => {
+            props.setOpen(foo)
+            props.setHeaderName(name)
+            props.setIdList(id)
+            props.setModalShow(false)
+            props.setDelsucces(false)
         },
-        handleModalClose: props => () => event => {
-            props.setOpen(false)
+        handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name) => event => {
+            props.setWatchDescrip(bool)
+            props.setHeaderName(name)
+            props.setvalue(value)
+            props.setstartdate(startdate)
+            props.setenddate(enddate)
+            props.setdescription(description)
+            props.setdepartment_name(department_name)
         },
-        handleDeleteJobPositions: props => () => event => {
-            props.setOpen(false)
-        },
-        handleNamePosition: props => (id) => event => {
-            const url = `http://localhost:4000/positions/${id}`
-            axios.get(url)
-            .then( data => {
-                props.setPositionName(data)
+        handleDeleteJob_Position: props => () => event => {
+            const id = props.idList
+            const url = `http://localhost:4000/job_position/${id}`
+            axios.delete(url)
+            .then( res => {
+                const urlUpdateData = `http://localhost:4000/joinPositionAndDepartment`
+                axios.get(urlUpdateData)
+                .then( response => {
+                    props.setList(response.data)
+                    props.setOpen(false)
+                    props.setDelsucces(true)
+                })
+                .catch( err => {
+                    console.log(err);
+                })
             })
             .catch( err => {
                 console.log(err);
             })
-        }
-    }),
-    lifecycle({
-        async componentDidMount(){
-            const url = 'http://localhost:4000/job_position'
-            const job_position = await axios.get(url)
-            this.props.setList(job_position.data)
-            let position = []
-            job_position.data.map( data => {
-                const url = `http://localhost:4000/positions/${data.positions_id}`
-                axios.get(url)
-                .then( res => {
-                    res.data.map( data => {
-                        return position.push(data.position_name)
-                    })
-                    this.props.setPositionName(position)
-                })
-            })
-            
+        },
+        handleModalShow: props => (setModal) => {                        
+            if (props.modalShow === true) {
+                return(
+                    <Modal 
+                        size="tiny"
+                        open={props.modalShow}
+                        dimmer="blurring"
+                    >
+                        <Modal.Content>
+                            <center>
+                            <IconModal name="info circle"/><br/><br/>
+                            <Panal>
+                                ไม่สามารถลบข้อมูลตำแหน่งงาน {props.headerName} ที่เปิดรับนี้ได้<br/>
+                                เนื่องจากยังมีการเรียกใช้ข้อมูลตำแหน่งงานที่เปิดรับนี้อยู่ <br/>
+                            </Panal>
+                            <ButtonAdd color='youtube' onClick={setModal}>
+                                <Icon name='close' /> ปิด
+                            </ButtonAdd>
+                            </center>
+                        </Modal.Content>
+                    </Modal>
+                )
+            }
+            if (props.delSuccess === true) {
+                return(
+                    <Modal 
+                        size="tiny"
+                        open={props.delSuccess}
+                        dimmer="blurring"
+                      >
+                        <Modal.Content>
+                            <center>
+                                <IconModal name="info circle"/><br/><br/>
+                                    <Panal>
+                                        ลบตำแหน่งงาน {props.headerName} ที่เปิดรับสำเร็จ<br/>
+                                    </Panal>
+                                <ButtonAdd positive onClick={setModal}>
+                                    <Icon name='checkmark' /> ตกลง
+                                </ButtonAdd>
+                            </center>
+                        </Modal.Content>
+                    </Modal>
+                )
+            }
+            else{
+                return null
+            }
         }
     })
 )
@@ -133,30 +211,59 @@ export default enhance( (props)=>
                     </TableHeadcell>
                 </Table.Row>
             </Table.Header>
+            {props.handleModalShow(props.handleModalOpen())}
             <TableBody>
                 {
                     props.list.map( (data,i)=> {
                         return (
                             <TableRow key={i}>                          
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
+                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
                                             <center>{i+1}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
-                                            <center>{props.positionName[i]}</center>
+                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
+                                            <center>{data.position_name}</center>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.nameJobPositions}}}>
+                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
                                             <center>{data.value}</center>
                                         </Link>
                                     </TableCell>
-                                
+                                    {console.log()}
                                     <TableCell>
                                     <center>
-                                        <Link href={{ pathname:'/jobPositions/editJobPositions', query: { nameJobPositions : data.nameJobPositions , ReceivingNumber : data.ReceivingNumber }}}>
+                                        <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name)}>
+                                            <Button.Content visible content='ดูรายละเอียด'/>
+                                            <Button.Content hidden >
+                                                <Icon name='search' />
+                                            </Button.Content>
+                                        </ButtonDescription>
+                                        <Modal 
+                                            size="tiny"
+                                            open={props.watchDescrip}
+                                            dimmer="blurring"
+                                        >
+                                            <ModalHeader>รายละเอียดตำแหน่ง {props.headerName}</ModalHeader>
+                                            <Modal.Content>
+                                                <span>
+                                                    จำนวนที่เปิดรับสมัคร : <label>{props.value} ตำแหน่ง</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    แผนกที่ทำการเปิดรับสมัคร : <label>{props.department_name}</label><br/><br/>
+                                                    วันที่เปิดรับสมัคร : <label>{props.startdate}</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    วันที่สิ้นสุดการรับสมัคร : <label>{props.enddate}</label><br/><br/>
+                                                    รายละเอียดตำแหน่งงาน : <br/>
+                                                    <p dangerouslySetInnerHTML={{ __html: props.description }} />
+                                                </span><br/><br/>
+                                                <center>
+                                                    <ButtonAdd onClick={props.handleModalDescription(false)}>
+                                                        <Icon name='close' /> ปิด
+                                                    </ButtonAdd>
+                                                </center>
+                                            </Modal.Content>
+                                        </Modal>
+                                        <Link href={{ pathname:'/jobPositions/editJobPositions', query: { id : data.id }}}>
                                             <ButtonEdit animated='fade' size='mini'>
                                                 <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
@@ -164,34 +271,32 @@ export default enhance( (props)=>
                                                 </Button.Content>
                                             </ButtonEdit>
                                         </Link>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)}>
+                                            <Button.Content visible content='ลบ'/>
+                                            <Button.Content hidden >
+                                                <Icon name='trash alternate' />
+                                            </Button.Content>
+                                        </ButtonAdd>
                                         <Modal 
-                                                trigger={
-                                                    <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen()}>
-                                                        <Button.Content visible content='ลบ'/>
-                                                        <Button.Content hidden >
-                                                            <Icon name='trash alternate' />
-                                                        </Button.Content>
-                                                    </ButtonAdd>
-                                                }
-                                                size="tiny"
-                                                // onClose={props.handleModalClose()}
-                                                closeIcon
-                                            >
-                                                <HeaderContent icon='archive' content='ลบตำแหน่งงานที่เปิดรับสมัคร' />
-                                                    <Modal.Content>
-                                                        <p>
-                                                            คุณต้องการลบตำแหน่ง <b> {data.nameJobPositions} </b> ใช่หรือไม่ ?
-                                                        </p>
-                                                    </Modal.Content>
-                                                <Modal.Actions>
-                                                    <ButtonAdd onClick={props.handleModalClose()}>
-                                                        <Icon name='remove' /> ยกเลิก
-                                                    </ButtonAdd>
-                                                    <ButtonAdd color='green' onClick={props.handleDeleteJobPositions(i)}>
-                                                        <Icon name='checkmark' /> ตกลง
-                                                    </ButtonAdd>
-                                                </Modal.Actions>
-                                            </Modal>
+                                            size="tiny"
+                                            open={props.open}
+                                            dimmer="blurring"
+                                        >
+                                            <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                                <Modal.Content>
+                                                    <p>
+                                                        คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                    </p>
+                                                </Modal.Content>
+                                            <Modal.Actions>
+                                                <ButtonAdd  onClick={props.handleModalOpen(false)}>
+                                                    <Icon name='times' /> ยกเลิก
+                                                </ButtonAdd>
+                                                <ButtonAdd color='green' onClick={props.handleDeleteJob_Position()}>
+                                                    <Icon name='checkmark' /> ยืนยัน
+                                                </ButtonAdd>
+                                            </Modal.Actions>
+                                        </Modal>
                                     </center>
                                 </TableCell>
                             </TableRow>
