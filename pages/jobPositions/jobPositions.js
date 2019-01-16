@@ -82,6 +82,7 @@ const enhance = compose(
     withState('watchDescrip' , 'setWatchDescrip' , false),
     withState('idList' , 'setIdList'),
     withState('value' , 'setvalue'),
+    withState("rate" , "setRate"),
     withState('startdate' , 'setstartdate'),
     withState('enddate' , 'setenddate'),
     withState('description' , 'setdescription'),
@@ -106,14 +107,25 @@ const enhance = compose(
             props.setModalShow(false)
             props.setDelsucces(false)
         },
-        handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name) => event => {
+        handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name , rate) => event => {
+           if (bool === true) {
+            const localStartDate = startdate.split('-')
+            const localEndDate = enddate.split('-')
+            const result_start = new Date(Date.UTC(localStartDate[0],localStartDate[1],localStartDate[2]));
+            const result_end = new Date(Date.UTC(localEndDate[0],localEndDate[1],localEndDate[2]));
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             props.setWatchDescrip(bool)
             props.setHeaderName(name)
             props.setvalue(value)
-            props.setstartdate(startdate)
-            props.setenddate(enddate)
+            props.setstartdate(result_start.toLocaleDateString('th-TH', options))
+            props.setenddate(result_end.toLocaleDateString('th-TH', options))
             props.setdescription(description)
             props.setdepartment_name(department_name)
+            props.setRate(rate)
+           }
+           else{
+            props.setWatchDescrip(bool)
+           }
         },
         handleDeleteJob_Position: props => () => event => {
             const id = props.idList
@@ -235,7 +247,7 @@ export default enhance( (props)=>
                                     {console.log()}
                                     <TableCell>
                                     <center>
-                                        <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name)}>
+                                        <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name , data.rate)}>
                                             <Button.Content visible content='ดูรายละเอียด'/>
                                             <Button.Content hidden >
                                                 <Icon name='search' />
@@ -249,10 +261,11 @@ export default enhance( (props)=>
                                             <ModalHeader>รายละเอียดตำแหน่ง {props.headerName}</ModalHeader>
                                             <Modal.Content>
                                                 <span>
-                                                    จำนวนที่เปิดรับสมัคร : <label>{props.value} ตำแหน่ง</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    จำนวนที่เปิดรับสมัคร : <label>{props.value} ตำแหน่ง</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     แผนกที่ทำการเปิดรับสมัคร : <label>{props.department_name}</label><br/><br/>
-                                                    วันที่เปิดรับสมัคร : <label>{props.startdate}</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    วันที่เปิดรับสมัคร : <label>{props.startdate}</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                     วันที่สิ้นสุดการรับสมัคร : <label>{props.enddate}</label><br/><br/>
+                                                    ค่าตอบแทน : <label>{props.rate}</label><br/><br/>
                                                     รายละเอียดตำแหน่งงาน : <br/>
                                                     <p dangerouslySetInnerHTML={{ __html: props.description }} />
                                                 </span><br/><br/>

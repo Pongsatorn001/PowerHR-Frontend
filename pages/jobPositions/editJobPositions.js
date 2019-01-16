@@ -55,6 +55,7 @@ const enhance = compose(
   withState("position" , "setPosition"),
   withState("department" , "setDepartment"),
   withState("value" , "setValue"),
+  withState("rate" , "setRate"),
   withState("description" , "setDescription"),
   withState('open' , 'setOpen' , false),
   withState('modal' , 'setModal' , false),
@@ -73,9 +74,18 @@ const enhance = compose(
       const url = 'http://localhost:4000/positions'
       const res =  await axios.get(url)
       this.props.setlist(res.data)
-      console.log(this.props.url.query.id);
       
-      ///http://localhost:4000/job_position/:id
+      const urlGetByID = `http://localhost:4000/job_position/${this.props.url.query.id}`
+      const resJobData =  await axios.get(urlGetByID)
+      this.props.setRate(resJobData.data[0].rate)
+      this.props.setValue(resJobData.data[0].value)
+      this.props.setDefaultDepartment(resJobData.data[0].department_name)
+      this.props.setDefaultPosition(resJobData.data[0].position_name)
+      this.props.setDefaultTime(resJobData.data[0].startdate)
+      this.props.setTimeAfter(resJobData.data[0].enddate)
+      this.props.setDescription(resJobData.data[0].description.split('<br/>').join('\n'))
+      console.log(resJobData.data);
+      
       let check = []
       res.data.map( data => {
         check.push(data.position_name)
@@ -96,27 +106,14 @@ const enhance = compose(
       const resDepartment = await axios.get(urlDepartment)
       this.props.setlistDepartment(resDepartment.data)
           
-      //set datepicker
-      const time = new Date();
-      const date = time.getDate()
-      const month = time.getMonth()
-      const year = time.getFullYear()
-      this.props.setDefaultTime(year + "-" + month + "-" + date)
-      this.props.setTimeAfter(year + "-" + month + "-" + date)
     }
   }),
   withHandlers({
     handleTimerAfter: props => () => event => {
       props.setTimeAfter(event.target.value)
-      const time = new Date();
-      const date = time.getDate()
-      const month = time.getMonth()
-      const year = time.getFullYear()
-      props.setDefaultTime(year + "-" + month + "-" + date)
     },
     handleTimerBefore: props => () => event => {
       props.setTimeBefore(event.target.value)
-      props.setTimeAfter(event.target.value)
     },
     handleInputPosition: props => () => {      
       if (props.list === undefined) {
@@ -196,21 +193,27 @@ const enhance = compose(
     handleInputDescription: props => () => event => { 
       props.setDescription(event.target.value)
     },
+    handleInputRate: props => () => event => { 
+      props.setRate(event.target.value)
+    },
     handleSaveData: props => () => event => {
       let check = props.job_position.indexOf(props.position)
       let have = props.checklist.indexOf(props.position)  
       let description_data = props.description.split('\n').join("<br/>")
-      if (check === -1 && have !== -1 && props.defaultName !== props.positions_id) {
+      console.log(props.positions_id , description_data , props.value ,  props.timeBefore , props.timeAfter , props.rate);
+      
+      if (check === -1 && have !== -1) {
         props.setModal(true)
         props.setOpen(true)
         props.setDefaultName(props.positions_id)
-        const url = 'http://localhost:4000/job_position'
+        const url = `http://localhost:4000/job_position/${props.url.query.id}`
         axios.post(url , {
           positions_id : props.positions_id,
           description : description_data,
           value : props.value,
           startdate : props.timeBefore,
-          enddate : props.timeAfter
+          enddate : props.timeAfter,
+          rate : props.rate
         })
         .then( res => {
           console.log(res)
@@ -279,7 +282,7 @@ export default enhance((props) =>
     {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'เพิ่มตำแหน่งงานที่เปิดรับสมัคร' , '/jobPositions/jobPositions')}
     <Divider hidden />
     <Div>
-      <center>{TextHeader('เพิ่มตำแหน่งงานที่รับสมัคร')}</center>
+      <center>{TextHeader('แก้ไขตำแหน่งงานที่รับสมัคร')}</center>
       <center>
       <IconLine name="window minimize outline"/>
       </center>
@@ -298,11 +301,9 @@ export default enhance((props) =>
               defaultValue={props.defaultDepartment}
               onKeyUp={props.handleInputDepartmentName()}
             />
-          </Form.Group>
-          <datalist id="department_name">
-            {props.handleInputDepartment()}
-          </datalist>
-          <Form.Group widths='equal'>
+            <datalist id="department_name">
+              {props.handleInputDepartment()}
+            </datalist>
             <SizeInput
               fluid
               control={Input}
@@ -318,6 +319,8 @@ export default enhance((props) =>
             <datalist id="data">
               {props.handleInputPosition()}
             </datalist>
+          </Form.Group>
+          <Form.Group widths='equal'>
             <SizeInput
               fluid
               id='nameJobPositions'
@@ -325,6 +328,17 @@ export default enhance((props) =>
               placeholder='กรุณาระบุจำนวนที่เปิดรับ'
               onKeyUp={props.handleInputValue()}
               type="number"
+              defaultValue={props.value}
+              required
+            />
+            <SizeInput
+              fluid
+              id='nameJobPositions'
+              label='ค่าตอบแทน :'
+              placeholder='กรุณาระบุจำนวนค่าตอบแทน'
+              onKeyUp={props.handleInputRate()}
+              type="text"
+              defaultValue={props.rate}
               required
             />
           </Form.Group>
@@ -335,7 +349,7 @@ export default enhance((props) =>
               id='nameJobPositions'
               label='วันที่เปิดการรับสมัคร :'
               type="date"
-              min={props.defaultTime}
+              value={props.defaultTime}
               onChange={props.handleTimerBefore()}
               required
             />
@@ -344,7 +358,7 @@ export default enhance((props) =>
               id='nameJobPositions'
               label='วันที่ปิดการรับสมัคร :'
               type="date"
-              min={props.timeAfter}
+              value={props.timeAfter}
               onChange={props.handleTimerAfter()}
               required
             />
@@ -352,8 +366,9 @@ export default enhance((props) =>
           <FormTextArea 
             label='รายละเอียดตำแหน่งงาน :' 
             placeholder='กรุณาระบุรายละเอียดของตำแหน่งงาน ( ตัวอย่าง 1. พัฒนา website ด้วย React ) '
-            onKeyUp={props.handleInputDescription()}
+            onChange={props.handleInputDescription()}
             required 
+            value={props.description}
           />
           <DivButton>
               <ButtonText floated='right' positive onClick={props.handleSaveData()}>

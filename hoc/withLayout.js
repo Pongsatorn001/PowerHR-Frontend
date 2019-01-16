@@ -17,9 +17,12 @@ const ContentWrapper = styled(Box) `
     padding: ${theme.dimens.xl} ${theme.dimens.md} ${theme.dimens.md} ${theme.dimens.xl} ;
     backgroud-color: lightgray;
 `
+const enhance = compose(
+    withApp,
+)
 
 export default function withLayout(WrappedComponent) {
-    return ((props) => (
+    return enhance((props) => (
         <div>
             <AppMenubar {...props}/>
             <PageWrapper alignStretch>

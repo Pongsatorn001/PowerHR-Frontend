@@ -4,7 +4,6 @@ import { compose, withProps , withHandlers , withState , lifecycle} from 'recomp
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Button , Icon , Divider , Input , Modal } from 'semantic-ui-react'
-import theme from '../../theme/default'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import axios from 'axios'
 
@@ -55,6 +54,7 @@ const enhance = compose(
   withState("position" , "setPosition"),
   withState("department" , "setDepartment"),
   withState("value" , "setValue"),
+  withState("rate" , "setRate"),
   withState("description" , "setDescription"),
   withState('open' , 'setOpen' , false),
   withState('modal' , 'setModal' , false),
@@ -91,7 +91,6 @@ const enhance = compose(
       const urlDepartment = 'http://localhost:4000/departments'
       const resDepartment = await axios.get(urlDepartment)
       this.props.setlistDepartment(resDepartment.data)  
-          
       
       //set datepicker
       const time = new Date();
@@ -194,6 +193,9 @@ const enhance = compose(
     handleInputDescription: props => () => event => { 
       props.setDescription(event.target.value)
     },
+    handleInputRate: props => () => event => { 
+      props.setRate(event.target.value)      
+    },
     handleSaveData: props => () => event => {
       let check = props.job_position.indexOf(props.position)
       let have = props.checklist.indexOf(props.position)  
@@ -208,7 +210,8 @@ const enhance = compose(
           description : description_data,
           value : props.value,
           startdate : props.timeBefore,
-          enddate : props.timeAfter
+          enddate : props.timeAfter,
+          rate : props.rate
         })
         .then( res => {
           console.log(res)
@@ -234,7 +237,7 @@ const enhance = compose(
           >
             <Modal.Content>
               <center>
-\                <IconModal name="info circle"/><br/><br/>
+                <IconModal name="info circle"/><br/><br/>
                 <Panal>
                   ไม่สามารถเพิ่มตำแหน่งงานที่เปิดรับ {props.position_name} ได้<br/>
                   เนื่องจากมีข้อมูลอยู่ในระบบแล้วหรือข้อมูลไม่ถูกต้อง <br/>กรุณากรอกชื่อตำแหน่งงานที่เปิดรับใหม่อีกครั้ง !!
@@ -280,7 +283,7 @@ export default enhance((props) =>
       <center>{TextHeader('เพิ่มตำแหน่งงานที่รับสมัคร')}</center>
       <center>
         <IconLine name="window minimize outline"/>
-      </center>{console.log(props.defaultDepartment)}
+      </center>
         <SizeForm>
           <Form.Group widths='2'>
             <SizeInput
@@ -296,11 +299,9 @@ export default enhance((props) =>
               defaultValue={props.defaultDepartment}
               onKeyUp={props.handleInputDepartmentName()}
             />
-          </Form.Group>
-          <datalist id="department_name">
-            {props.handleInputDepartment()}
-          </datalist>
-          <Form.Group widths='equal'>
+            <datalist id="department_name">
+              {props.handleInputDepartment()}
+            </datalist>
             <SizeInput
               fluid
               control={Input}
@@ -316,6 +317,8 @@ export default enhance((props) =>
             <datalist id="data">
               {props.handleInputPosition()}
             </datalist>
+          </Form.Group>
+          <Form.Group widths='equal'>
             <SizeInput
               fluid
               id='nameJobPositions'
@@ -323,6 +326,15 @@ export default enhance((props) =>
               placeholder='กรุณาระบุจำนวนที่เปิดรับ'
               onKeyUp={props.handleInputValue()}
               type="number"
+              required
+            />
+            <SizeInput
+              fluid
+              id='nameJobPositions'
+              label='ค่าตอบแทน :'
+              placeholder='กรุณาระบุจำนวนค่าตอบแทน'
+              onKeyUp={props.handleInputRate()}
+              type="text"
               required
             />
           </Form.Group>
