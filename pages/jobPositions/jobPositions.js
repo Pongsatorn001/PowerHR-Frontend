@@ -111,8 +111,8 @@ const enhance = compose(
            if (bool === true) {
             const localStartDate = startdate.split('-')
             const localEndDate = enddate.split('-')
-            const result_start = new Date(Date.UTC(localStartDate[0],localStartDate[1],localStartDate[2]));
-            const result_end = new Date(Date.UTC(localEndDate[0],localEndDate[1],localEndDate[2]));
+            const result_start = new Date(Date.UTC(localStartDate[0],localStartDate[1]-1,localStartDate[2]));
+            const result_end = new Date(Date.UTC(localEndDate[0],localEndDate[1]-1,localEndDate[2]));
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             props.setWatchDescrip(bool)
             props.setHeaderName(name)

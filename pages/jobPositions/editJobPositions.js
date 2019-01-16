@@ -79,28 +79,31 @@ const enhance = compose(
       const resJobData =  await axios.get(urlGetByID)
       this.props.setRate(resJobData.data[0].rate)
       this.props.setValue(resJobData.data[0].value)
-      this.props.setDefaultDepartment(resJobData.data[0].department_name)
-      this.props.setDefaultPosition(resJobData.data[0].position_name)
-      this.props.setDefaultTime(resJobData.data[0].startdate)
+      this.props.setDepartment(resJobData.data[0].department_name)
+      this.props.setPosition(resJobData.data[0].position_name)
+      this.props.setTimeBefore(resJobData.data[0].startdate)
       this.props.setTimeAfter(resJobData.data[0].enddate)
       this.props.setDescription(resJobData.data[0].description.split('<br/>').join('\n'))
-      console.log(resJobData.data);
+      this.props.setPositions_id(resJobData.data[0].positions_id)      
       
       let check = []
       res.data.map( data => {
         check.push(data.position_name)
       })
+      
       this.props.setChecklist(check)
       
       //get data in position and jobposition api
       const urlJob_position = 'http://localhost:4000/joinPosition'
       const resJobposition = await axios.get(urlJob_position)
       let data = []
+      let id_position = []
       resJobposition.data.map( response => {
         data.push(response.position_name)
+
       })
       this.props.setJob_position(data)
-
+      
       // get data in department api
       const urlDepartment = 'http://localhost:4000/departments'
       const resDepartment = await axios.get(urlDepartment)
@@ -197,17 +200,15 @@ const enhance = compose(
       props.setRate(event.target.value)
     },
     handleSaveData: props => () => event => {
-      let check = props.job_position.indexOf(props.position)
       let have = props.checklist.indexOf(props.position)  
       let description_data = props.description.split('\n').join("<br/>")
-      console.log(props.positions_id , description_data , props.value ,  props.timeBefore , props.timeAfter , props.rate);
       
-      if (check === -1 && have !== -1) {
+      if (have !== -1) {
         props.setModal(true)
         props.setOpen(true)
         props.setDefaultName(props.positions_id)
         const url = `http://localhost:4000/job_position/${props.url.query.id}`
-        axios.post(url , {
+        axios.put(url , {
           positions_id : props.positions_id,
           description : description_data,
           value : props.value,
@@ -216,7 +217,9 @@ const enhance = compose(
           rate : props.rate
         })
         .then( res => {
-          console.log(res)
+          setTimeout(() => {
+            history.back()
+          }, 2000);
         })
         .catch( err => {
           console.log(err);
@@ -241,8 +244,8 @@ const enhance = compose(
               <center>
                 <IconModal name="info circle"/><br/><br/>
                 <Panal>
-                  ไม่สามารถเพิ่มตำแหน่งงานที่เปิดรับ {props.position_name} ได้<br/>
-                  เนื่องจากมีข้อมูลอยู่ในระบบแล้วหรือข้อมูลไม่ถูกต้อง <br/>กรุณากรอกชื่อตำแหน่งงานที่เปิดรับใหม่อีกครั้ง !!
+                  ไม่สามารถแก้ไขตำแหน่งงานที่เปิดรับได้<br/>
+                  เนื่องจากข้อมูลไม่ถูกต้อง <br/>กรุณากรอกชื่อตำแหน่งงานที่เปิดรับใหม่อีกครั้ง !!
                 </Panal>
                 <ButtonAdd color='youtube' onClick={setModal}>
                     <Icon name='close' /> ปิด
@@ -263,7 +266,7 @@ const enhance = compose(
               <center>
                 <IconModal name="info circle"/><br/><br/>
                 <Panal>
-                  เพิ่มตำแหน่งงานที่เปิดรับ {props.position_name} สำเร็จ<br/>
+                  แก้ไขตำแหน่งงานที่เปิดรับสำเร็จ<br/>
                 </Panal>
                 <ButtonAdd positive onClick={setModal}>
                     <Icon name='checkmark' /> ตกลง
@@ -298,7 +301,7 @@ export default enhance((props) =>
               list="department_name"
               required
               autoFocus
-              defaultValue={props.defaultDepartment}
+              defaultValue={props.department}
               onKeyUp={props.handleInputDepartmentName()}
             />
             <datalist id="department_name">
@@ -313,7 +316,7 @@ export default enhance((props) =>
               name="position_name"
               list="data"
               required
-              defaultValue={props.defaultPosition}
+              defaultValue={props.position}
               onKeyUp={props.handleInputPositionName()}
             />
             <datalist id="data">
@@ -349,7 +352,7 @@ export default enhance((props) =>
               id='nameJobPositions'
               label='วันที่เปิดการรับสมัคร :'
               type="date"
-              value={props.defaultTime}
+              value={props.timeBefore}
               onChange={props.handleTimerBefore()}
               required
             />

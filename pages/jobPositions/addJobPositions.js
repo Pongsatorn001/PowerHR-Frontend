@@ -109,7 +109,7 @@ const enhance = compose(
       const date = time.getDate()
       const month = time.getMonth()
       const year = time.getFullYear()
-      props.setDefaultTime(year + "-" + month + "-" + date)
+      props.setDefaultTime(year + "-" + month + "-" + date)      
     },
     handleTimerBefore: props => () => event => {
       props.setTimeBefore(event.target.value)
