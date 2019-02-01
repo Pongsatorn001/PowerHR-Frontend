@@ -2,8 +2,6 @@ import React from 'react'
 import { withLayout } from '../hoc'
 import { compose, withProps , withHandlers } from 'recompose'
 import styled from 'styled-components'
-import { ToastContainer, toast } from 'react-toastify';
-
 
 const H1 = styled.h1 `
   padding-top : 18px;
@@ -28,26 +26,6 @@ const enhance = compose(
 export default enhance(() => 
   <div>
     <center>
-    <ToastContainer
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnVisibilityChange
-      draggable
-      pauseOnHover
-    />
-    <ToastContainer />
-      <button onClick={()=>{ toast('🦄 Wow so easy!', {
-position: "top-right",
-autoClose: 5000,
-hideProgressBar: false,
-closeOnClick: true,
-pauseOnHover: true,
-draggable: true
-}); }}>click</button>
       <H1>Welcome To PowerHR</H1>
     </center>
   </div>

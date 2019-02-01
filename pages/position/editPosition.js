@@ -70,7 +70,8 @@ const enhance = compose(
         this.props.setDefaultData(data.position_name)
         department_id = data.department_id
       })
-
+      console.log(res.data);
+      
       const urlDepartment = `http://localhost:4000/departments/${department_id}`
       const response_des = await axios.get(urlDepartment)
       this.props.setDepartmentName(response_des.data[0].department_name)      

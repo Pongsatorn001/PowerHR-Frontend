@@ -87,8 +87,8 @@ const enhance = compose(
     }),
     withHandlers({
         handleDeletePositionName: props => () => event => {
-            const id = props.idList
-            const url = `http://localhost:4000/positions/${id}`
+            const id = props.idList            
+            const url = `http://localhost:4000/positions/${id}`            
             axios.delete(url)
             .then( res => {
                 const url = `http://localhost:4000/joinDepartment/${props.url.query.id}`
@@ -103,13 +103,13 @@ const enhance = compose(
                 })
             })
             .catch( err => {
-                console.log(err);
+                props.setModalShow(true)
             })
         },
         handleModalOpen: props => (foo , name , id) => event => {
             props.setOpen(foo)
             props.setHeaderName(name)
-            props.setIdList(id)
+            props.setIdList(id)            
             props.setModalShow(false)
             props.setDelsucces(false)
         },
@@ -199,7 +199,7 @@ export default enhance( (props)=>
                                 </TableCell>
                                 <TableCell>
                                     <center>
-                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.id } }}>
+                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.positions_id } }}>
                                             <ButtonEdit animated='fade' size='mini'>
                                                 <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
@@ -207,7 +207,7 @@ export default enhance( (props)=>
                                                 </Button.Content>
                                             </ButtonEdit>
                                         </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)}>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.positions_id)}>
                                             <Button.Content visible content='ลบ'/>
                                             <Button.Content hidden >
                                                 <Icon name='trash alternate' />
