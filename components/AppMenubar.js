@@ -79,6 +79,11 @@ export default (props) => (
                     name='แผนกงานในบริษัท'
                 />
             </Link>
+            <Link href={`/user/user`}>
+                <MenuItem
+                    name='เพิ่มผู้ใช้งานในระบบ'
+                />
+            </Link>
         </MenuBar>
     </div>
 )

@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { Form , Button , Icon , Modal } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import {firebase} from '../../firebase/index'
 
 const Div = styled.div `
   position : relative ;
@@ -42,6 +44,8 @@ const SizeForm = styled(Form)`
 `;
 
 const enhance = compose(
+  withLayout,
+  inject('authStore'),
   withState('department_name' , 'setDepartment_Name'),
   withState('all_Department' , 'setAll_Department'),
   withState('open' , 'setOpen' , false),
@@ -49,7 +53,11 @@ const enhance = compose(
   withProps({
     pageTitle: 'Add Departments'
   }),
-  withLayout,
+  withHandlers({
+    // initDepartment: props => () => {
+    //   firebase.database().once('department/' + response.user.uid).set(result)
+    // }
+  }),
   lifecycle({
     async componentDidMount(){
       const url = `http://localhost:4000/departments`
@@ -135,7 +143,8 @@ const enhance = compose(
         )
       }
     }
-  })
+  }),
+  observer
 )
   
 export default enhance((props) => 

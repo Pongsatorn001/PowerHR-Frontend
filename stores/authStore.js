@@ -8,38 +8,46 @@ let store = null
 
 class AuthStore {
 
-  @observable accessToken = null
   @observable currentUser = null
   @observable userData = null
+  @observable error = null
 
   constructor(isServer) {
-    this.accessToken = storejs.get('accessToken')
+    this.error = storejs.get('error')
     this.currentUser = storejs.get('currentUser')
     this.userData = storejs.get('userData')
   }
 
-  @action createUser(data , idcard){
-    const result = {
-      firstname : data.firstName,
-      lastname : data.lastName,
-      email : data.email,
-      password : data.password,
-      idcard : idcard
-    }
+  @action async createUser(data){
     auth
     .createUserWithEmailAndPassword(data.email, data.password)
     .then(response => {
+      const result = {
+        name : data.name,
+        email : data.email,
+        password : data.password,
+        role : data.role,
+        uid : response.user.uid
+      }
       firebase.database().ref('users/' + response.user.uid).set(result)
-      storejs.set('currentUser' , response.user)
-      storejs.set('idcard', idcard)
-      storejs.set('accessToken', response.user.uid)
-      storejs.set('userData', result)
-      return window.location.href = '/'
-      
+      window.location.href = "/user/user"
     })
     .catch(error => {
-        alert(error.message)               
+      data.setOpen(true)
+      data.setMessageLog(error.message)
     })
+  }
+
+  @action async updateUser(data , uid){
+    const result = {
+      name : data.name,
+      email : data.email,
+      password : data.password,
+      role : data.role,
+      uid : uid
+    }
+    firebase.database().ref('users/' + uid).update(result)
+    window.location.href = "/user/user"
   }
 
   @action async login(response,email){    
