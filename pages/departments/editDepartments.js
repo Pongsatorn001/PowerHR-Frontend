@@ -5,7 +5,8 @@ import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Button , Icon , Modal } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
-import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const Div = styled.div `
   position : relative ;
@@ -42,6 +43,8 @@ const SizeForm = styled(Form)`
 `;
 
 const enhance = compose(
+  withLayout,
+  inject('authStore'),
   withState('department_name' , 'setDepartment_Name'),
   withState('all_Department' , 'setAll_Department'),
   withState('defaultData' ,'setDefaultData'),
@@ -50,50 +53,43 @@ const enhance = compose(
   withProps({
     pageTitle: 'Edit Departments'
   }),
-  withLayout,
+  withHandlers({
+    initDepartmentData: props => () => {
+      firebase.database().ref("departments/" + props.url.query.id)
+      .once("value").then( snapshot => {
+          let result = Object.assign(snapshot.val())          
+          props.setDepartment_Name(result.department_name)
+          props.setDefaultData(result.department_name)
+      })
+    }
+  }),
   lifecycle({
     async componentDidMount(){
-      const url = `http://localhost:4000/departments/${this.props.url.query.id}`
-      const res = await axios.get(url)
-      res.data.map( data => {        
-        this.props.setDepartment_Name(data.department_name)
-        this.props.setDefaultData(data.department_name)
-      }) 
-      const urlall = `http://localhost:4000/departments`
-      const response = await axios.get(urlall)
-      let department = []
-      response.data.map( data => {
-        department.push(data.department_name)
-      })
-      this.props.setAll_Department(department) 
+      await this.props.initDepartmentData()
     }
   }),
   withHandlers({
     handleSaveDepartmentName : props => (id) => event => {
-      let check = props.all_Department.indexOf(props.department_name)
-      let space = props.department_name.split(' ').join('*')
-      let validate = space.indexOf('*')
-      if (check === -1 && validate === -1 || props.defaultData === props.department_name) {
-        props.setModal(true)
+      if (props.department_name) {
+        firebase.database()
+        .ref("departments")
+        .orderByChild("department_name")
+        .equalTo(props.department_name)
+        .once("value").then( snapshot => {
+            if (snapshot.val() && props.department_name !== props.defaultData) {
+              props.setOpen(true)
+            }
+            else{
+              firebase.database().ref('departments/' + props.url.query.id).update({ department_name : props.department_name });
+              props.setOpen(true)
+              props.setModal(true)
+            }
+        })
+    }
+    else{
         props.setOpen(true)
-        const url = `http://localhost:4000/departments/${id}`
-        axios.put(url , {
-          id : id ,
-          department_name : props.department_name
-        })
-        .then( res => {
-          console.log(res);
-          setTimeout(() => {
-            history.back()
-          }, 3000);
-        })
-        .catch( err => {
-          console.log(err);
-        })
-      }
-      else{
-        props.setOpen(true)
-      }
+        props.setMessageLog('กรุณากรอกข้อมูลให้ครบถ้วน !')
+    }
     },
     handleInputData: props => () => event => {
       props.setDepartment_Name(event.target.value)      
@@ -137,7 +133,7 @@ const enhance = compose(
                   <Panal>
                     แก้ไขแผนก {props.department_name} สำเร็จ<br/>
                   </Panal>
-                  <ButtonAdd positive onClick={setModal}>
+                  <ButtonAdd positive onClick={() => window.location.href = '/departments/departments'}>
                       <Icon name='checkmark' /> ตกลง
                   </ButtonAdd>
                 </center>

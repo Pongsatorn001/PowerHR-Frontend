@@ -8,6 +8,8 @@ import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
 import axios from 'axios'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -62,6 +64,8 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
+    withLayout,
+    inject('authStore'),
     withState('list' , 'setlist' , []),
     withState('headerName' , 'setHeaderName'),
     withState('open' , 'setOpen' , false),
@@ -72,39 +76,43 @@ const enhance = compose(
     withProps({
         pageTitle: 'Positions'
     }),
-    withLayout,
+    withHandlers({
+        initDepartmentData: props => () => {
+            firebase.database().ref("departments/" + props.url.query.id)
+            .once("value").then( snapshot => {
+                let result = Object.assign(snapshot.val())          
+                props.setDepartmentName(result.department_name)
+            })
+        },
+        initPositionInDepartment: props => () => {
+            firebase.database()
+            .ref("positions")
+            .orderByChild("department_id")
+            .equalTo(props.url.query.id)
+            .once("value").then( snapshot => {
+                props.setlist(Object.values(snapshot.val()))
+            })
+        }
+    }),
     lifecycle({
         async componentDidMount(){
-            const url = `http://localhost:4000/joinDepartment/${this.props.url.query.id}`
-            const res = await axios.get(url)
-            this.props.setlist(res.data)
-
-            const urlDepartment = `http://localhost:4000/departments/${this.props.url.query.id}`
-            const response = await axios.get(urlDepartment)
-            this.props.setDepartmentName(response.data[0].department_name)            
+            await this.props.initDepartmentData()       
+            await this.props.initPositionInDepartment()     
         },
 
     }),
     withHandlers({
         handleDeletePositionName: props => () => event => {
-            const id = props.idList            
-            const url = `http://localhost:4000/positions/${id}`            
-            axios.delete(url)
-            .then( res => {
-                const url = `http://localhost:4000/joinDepartment/${props.url.query.id}`
-                axios.get(url)
-                .then( response => {
-                    props.setlist(response.data)
-                    props.setOpen(false)
-                    props.setDelsucces(true)
-                })
-                .catch( err => {
-                    console.log(err);
-                })
+            const deleteUser = firebase.database().ref('positions/' + props.idList);
+            deleteUser.remove()
+            .then(function() {
+                props.initDepartmentData()
+                props.initPositionInDepartment()
+                props.setOpen(false)
             })
-            .catch( err => {
-                props.setModalShow(true)
-            })
+            .catch(function(error) {
+                console.log("Remove failed: " + error.message)
+            });
         },
         handleModalOpen: props => (foo , name , id) => event => {
             props.setOpen(foo)
@@ -161,7 +169,8 @@ const enhance = compose(
                 return null
             }
         }
-    })
+    }),
+    observer
 )
 
 let button_name = 'เพิ่มตำแหน่ง'
@@ -199,7 +208,7 @@ export default enhance( (props)=>
                                 </TableCell>
                                 <TableCell>
                                     <center>
-                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.positions_id } }}>
+                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.position_id } }}>
                                             <ButtonEdit animated='fade' size='mini'>
                                                 <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
@@ -207,7 +216,7 @@ export default enhance( (props)=>
                                                 </Button.Content>
                                             </ButtonEdit>
                                         </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.positions_id)}>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.position_id)}>
                                             <Button.Content visible content='ลบ'/>
                                             <Button.Content hidden >
                                                 <Icon name='trash alternate' />

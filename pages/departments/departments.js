@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
 import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const Panal = styled.p`
   font-size: 18px !important;
@@ -33,8 +35,17 @@ const TableRow = styled(Table.Row)`
         background : #ff84a12b !important;
     };
 `;
+const TableNotData = styled(Table.Row)`
+    border-color : ${theme.colors.elementBackground} ;
+    background: ${theme.colors.elementBackground} ;
+`;
 const TableHeadcell = styled(Table.HeaderCell)`
     border-color : ${theme.colors.elementBackground} !important;
+`;
+const HeaderNoneData = styled(Table.HeaderCell)`
+    border-color : ${theme.colors.elementBackground} !important;
+    padding-top : 3% !important;
+    padding-bottom : 3% !important;
 `;
 const ButtonEdit = styled(Button)`
     color : ${theme.colors.fontBlack} !important;
@@ -61,7 +72,10 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
+    withLayout,
+    inject('authStore'),
     withState('list' , 'setlist' , []),
+    withState('noneData' , 'setNoneData' , false),
     withState('headerName' , 'setHeaderName'),
     withState('open' , 'setOpen' , false),
     withState('modalShow' , 'setModalShow' , false),
@@ -71,48 +85,41 @@ const enhance = compose(
     withProps({
         pageTitle: 'Departments'
     }),
-    withLayout,
+    withHandlers({
+        initGetDepartment: props => () => {
+            let department = firebase.database().ref().child('departments')
+            .once("value")
+            .then( snapshot => {
+                if (snapshot.val()) {
+                    props.setlist(Object.values(snapshot.val()))
+                    props.setNoneData(false)
+                }
+                else{
+                    props.setNoneData(true)
+                }
+            })
+            .catch( err => {
+                console.log(err , 'err');
+            })
+        }
+    }),
     lifecycle({
         async componentDidMount(){
-            const url = 'http://localhost:4000/departments'
-            const res = await axios.get(url)
-            this.props.setlist(res.data)            
+            await this.props.initGetDepartment()
+            console.log(this.props.authStore);                   
         },
     }),
     withHandlers({
         handleDeleteDepartmentName: props => () => event => {
-            const id = props.idList
-            const urlCheck = `http://localhost:4000/joinDepartment/${id}`
-            axios.get(urlCheck)
-            .then( res => {
-                let data = res.data.length
-                if (data === 0) {
-                    const url = `http://localhost:4000/departments/${id}`
-                    axios.delete(url)
-                    .then( res => {
-                        const url = 'http://localhost:4000/departments'
-                        axios.get(url)
-                        .then( response => {
-                            props.setlist(response.data)
-                            props.setOpen(false)
-                            props.setDelsucces(true)
-                        })
-                        .catch( err => {
-                            console.log(err);
-                        })
-                    })
-                    .catch( err => {
-                        console.log(err);
-                    })
-                }
-                else{
-                    props.setOpen(false)
-                    props.setModalShow(true)
-                }
+            const deleteUser = firebase.database().ref('departments/' + props.idList);
+            deleteUser.remove()
+            .then(function() {
+                props.initGetDepartment()
+                props.setOpen(false)
             })
-            .catch( err => {
-                console.log(err);
-            })
+            .catch(function(error) {
+                console.log("Remove failed: " + error.message)
+            });
         },
         handleModalOpen: props => (foo , name , id) => event => {
             props.setOpen(foo)
@@ -169,7 +176,8 @@ const enhance = compose(
                 return null
             }
         }
-    })
+    }),
+    observer
 )
 
 let department_name = 'แผนกงานในบริษัท'
@@ -195,60 +203,70 @@ export default enhance( (props)=>
             </Table.Header>
             {props.handleModalShow(props.handleModalOpen())}
             <TableBody>
-                {props.list.map( (data , i) => {
-                    return (
-                        <TableRow key={i}>
-                            <TableCell>
-                                <Link href={{ pathname : '../position/position' , query : { id : data.id }}}>
-                                    <center>{i + 1}</center>
-                                </Link>
-                            </TableCell>
-                            <TableCell>
-                                <Link href={{ pathname : '../position/position' , query : { id : data.id}}}>
-                                    <center>{data.department_name}</center>
-                                </Link>
-                            </TableCell>
-                            <TableCell>
-                                <center>
-                                    <Link href={{ pathname: '/departments/editDepartments', query: { id : data.id } }}>
-                                        <ButtonEdit animated='fade' size='mini'>
-                                            <Button.Content visible content='แก้ไข'/>
-                                            <Button.Content hidden >
-                                                <Icon name='edit' />
-                                             </Button.Content>
-                                        </ButtonEdit>
-                                    </Link>
-                                    <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.department_name,data.id)}>
-                                        <Button.Content visible content='ลบ'/>
-                                        <Button.Content hidden >
-                                            <Icon name='trash alternate' />
-                                        </Button.Content>
-                                    </ButtonAdd>
-                                    <Modal 
-                                        size="tiny"
-                                        open={props.open}
-                                        dimmer="blurring"
-                                    >
-                                        <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
-                                            <Modal.Content>
-                                                <p>
-                                                    คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
-                                                </p>
-                                            </Modal.Content>
-                                        <Modal.Actions>
-                                            <ButtonText  onClick={props.handleModalOpen(false)}>
-                                                <Icon name='times' /> ยกเลิก
-                                            </ButtonText>
-                                            <ButtonAdd color='green' onClick={props.handleDeleteDepartmentName()}>
-                                                <Icon name='checkmark' /> ยืนยัน
-                                            </ButtonAdd>
-                                        </Modal.Actions>
-                                    </Modal>
-                                </center>
-                            </TableCell>
-                        </TableRow>
-                    )
-                })}
+                {
+                    !props.noneData
+                        ?   props.list.map( (data , i) => {
+                                return (
+                                    <TableRow key={i}>
+                                        <TableCell>
+                                            <Link href={{ pathname : '../position/position' , query : { id : data.department_id }}}>
+                                                <center>{i + 1}</center>
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Link href={{ pathname : '../position/position' , query : { id : data.department_id }}}>
+                                                <center>{data.department_name}</center>
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <center>
+                                                <Link href={{ pathname: '/departments/editDepartments', query: { id : data.department_id } }}>
+                                                    <ButtonEdit animated='fade' size='mini'>
+                                                        <Button.Content visible content='แก้ไข'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='edit' />
+                                                        </Button.Content>
+                                                    </ButtonEdit>
+                                                </Link>
+                                                <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.department_name,data.department_id)}>
+                                                    <Button.Content visible content='ลบ'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='trash alternate' />
+                                                    </Button.Content>
+                                                </ButtonAdd>
+                                                <Modal 
+                                                    size="tiny"
+                                                    open={props.open}
+                                                    dimmer="blurring"
+                                                >
+                                                    <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                                        <Modal.Content>
+                                                            <p>
+                                                                คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                            </p>
+                                                        </Modal.Content>
+                                                    <Modal.Actions>
+                                                        <ButtonText  onClick={props.handleModalOpen(false)}>
+                                                            <Icon name='times' /> ยกเลิก
+                                                        </ButtonText>
+                                                        <ButtonAdd color='green' onClick={props.handleDeleteDepartmentName()}>
+                                                            <Icon name='checkmark' /> ยืนยัน
+                                                        </ButtonAdd>
+                                                    </Modal.Actions>
+                                                </Modal>
+                                            </center>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            })
+                        :   <TableNotData>
+                                <HeaderNoneData/>
+                                <HeaderNoneData>
+                                    <center>――――  ไม่มีข้อมูลในระบบ  ――――</center>
+                                </HeaderNoneData>
+                                <HeaderNoneData/>
+                            </TableNotData>
+                }
             </TableBody>
         </TablePosition>
     </Div>

@@ -53,42 +53,36 @@ const enhance = compose(
   withProps({
     pageTitle: 'Add Departments'
   }),
-  withHandlers({
-    // initDepartment: props => () => {
-    //   firebase.database().once('department/' + response.user.uid).set(result)
-    // }
-  }),
   lifecycle({
     async componentDidMount(){
-      const url = `http://localhost:4000/departments`
-      const res = await axios.get(url)
-      let department = []
-      res.data.map( data => {
-        department.push(data.department_name)
-      })
-      this.props.setAll_Department(department) 
+      
     }
   }),
   withHandlers({
     handleInputAddDepartment: props => () => event => {
       props.setDepartment_Name(event.target.value)
     },
-    handleSaveDepartment: props => () => event => {
-      let check = props.all_Department.indexOf(props.department_name)
-      let space = props.department_name.split(' ').join('*')
-      let validate = space.indexOf('*')      
-      if (check === -1 && validate === -1) {
-        props.setModal(true)
-        props.setOpen(true)
-        const url = 'http://localhost:4000/departments'
-        axios.post(url , {
-          department_name : props.department_name
-        })
-        .then( res => {
-          console.log(res)
-        })
-        .catch( err => {
-          console.log(err);
+    handleSaveDepartment: props => () => event => {    
+      if (props.department_name) {
+        firebase.database()
+        .ref("departments")
+        .orderByChild("department_name")
+        .equalTo(props.department_name)
+        .once("value").then( snapshot => {
+          if (!snapshot.val()) {
+            props.setModal(true)
+            props.setOpen(true)
+            let uniqueID = firebase.database().ref().push().key
+            let result = {
+              department_name : props.department_name,
+              date : firebase.database.ServerValue.TIMESTAMP,
+              department_id : uniqueID
+            }
+            firebase.database().ref('departments/' + uniqueID).set(result)
+          }
+          else{
+            props.setOpen(true)
+          }
         })
       }
       else{
@@ -134,7 +128,7 @@ const enhance = compose(
                   <Panal>
                     เพิ่มแผนก {props.department_name} สำเร็จ<br/>
                   </Panal>
-                  <ButtonAdd positive onClick={setModal}>
+                  <ButtonAdd positive onClick={() => window.location.href = '/departments/departments'}>
                       <Icon name='checkmark' /> ตกลง
                   </ButtonAdd>
                 </center>
