@@ -50,19 +50,40 @@ class AuthStore {
     window.location.href = "/user/user"
   }
 
-  @action async login(response,email){    
-    storejs.set('accessToken', response.user.uid);
-    storejs.set('currentUser', response.user);
-    const url = `http://localhost:4000/user/alldata/${email}`
-    const res = await axios.get(url)
-    if (res) {
-      storejs.set('userData', res.data);      
-    }
+  @action async login(props){ 
+    const { email , password } = props  
+    auth.signInWithEmailAndPassword(email, password)
+    .then(response => {
+      firebase.database().ref('users/' + response.user.uid)
+      .once("value").then( snapshot => {
+        console.log(snapshot.val() , response.user , 'log');
+        if (snapshot.val().role !== 'user') {          
+          storejs.set('currentUser', response.user);
+          storejs.set('userData', snapshot.val());
+          window.location.href = '/'
+        }
+        else{
+          auth.signOut()
+          storejs.set('error',null);
+          storejs.set('currentUser', null);
+          storejs.set('userData', null);
+          return alert('ไม่มีผู้ใช้งานนี้อยู่ในระบบ');
+        }
+      })
+    })
+    .catch(error => {
+      const errorCode = error.code;
+      if (errorCode === 'auth/wrong-password') {
+        return alert('รหัสผ่านไม่ถูกต้อง');
+      } else {
+        return alert('อีเมลไม่ถูกต้อง หรือ ไม่มีอยู่ในระบบ');
+      }             
+    })  
   }
 
   @action async logout(){    
     let response = await auth.signOut()
-    storejs.set('accessToken',null);
+    storejs.set('error',null);
     storejs.set('currentUser', null);
     storejs.set('userData', null);
     return window.location.href = '/'

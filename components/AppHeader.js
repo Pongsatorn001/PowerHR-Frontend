@@ -24,6 +24,7 @@ const Icons = styled(Icon) `
 const DropdownButton = styled(Dropdown)`
     margin-left : 4px !important;  
     color : white ;
+    margin-bottom : 10px;
 `;
 
 const DropdownMenu = styled(Dropdown.Menu)`
@@ -37,14 +38,22 @@ export default (props) => (
     <div>
         <SegmentHeader clearing >
             <TextHeader as='h4' floated='right'>
-                <DropdownButton simple item text={name} >
-                    <DropdownMenu>
-                        <Dropdown.Item icon='sign-out' text="Logout" />
-                    </DropdownMenu>
-                </DropdownButton>
+            {
+                props.authStore.userData
+                ?   <DropdownButton simple item text={props.authStore.userData.name}>
+                        <DropdownMenu>
+                            <Dropdown.Item icon='sign-out' text="Logout" onClick={()=> props.authStore.logout()}/>
+                        </DropdownMenu>
+                    </DropdownButton>
+                : null
+            }
             </TextHeader>
             <TextHeader as='h4' floated='right'>
-                <Icons name='user circle'/>
+            {
+                props.authStore.userData 
+                ? null 
+                : <Icons name='user cancel'/>
+            }
             </TextHeader>
         </SegmentHeader>
     </div>

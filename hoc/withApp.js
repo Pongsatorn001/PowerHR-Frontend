@@ -8,7 +8,7 @@ injectGlobal`
   body {
     background : #efecec;
     @import url('https://fonts.googleapis.com/css?family=Kanit');
-    font-family: 'Kanit', sans-serif ;
+    font-family: 'Kanit', sans-serif !important;
   }
 `
 
