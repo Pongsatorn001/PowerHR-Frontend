@@ -169,7 +169,7 @@ let link = '/position/addPosition'
 
 export default enhance( (props)=>
     <div>
-        {Breadcrumb2Page('แผนกงานในบริษัท' , 'เพิ่มตำแหน่งงานในแผนก' , `/departments/departments`)}
+        {Breadcrumb2Page('แผนกงานในบริษัท' , 'ตำแหน่งงานในแผนก' , `/departments/departments`)}
         <Div>
             {TextHeaderTable(`ตำแหน่งงานในแผนก ${props.departmentName}` , `${props.list.length}` , button_name , 'ตำแหน่ง' , link , props.url.query.id)}
             <TablePosition striped>

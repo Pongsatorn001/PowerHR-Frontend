@@ -282,7 +282,7 @@ const enhance = compose(
 
 export default enhance((props) => 
   <div>
-    {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'เพิ่มตำแหน่งงานที่เปิดรับสมัคร' , '/jobPositions/jobPositions')}
+    {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'แก้ไขตำแหน่งงานที่เปิดรับสมัคร' , '/jobPositions/jobPositions')}
     <Divider hidden />
     <Div>
       <center>{TextHeader('แก้ไขตำแหน่งงานที่รับสมัคร')}</center>

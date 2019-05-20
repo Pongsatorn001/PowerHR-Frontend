@@ -133,7 +133,7 @@ const enhance = compose(
                             <center>
                             <IconModal name="info circle"/><br/><br/>
                             <Panal>
-                                ไม่สามารถลบข้อมูลในแผนก {props.headerName} นี้ได้<br/>
+                                ไม่สามารถลบแผนก {props.headerName} นี้ได้<br/>
                                 เนื่องจากมีข้อมูลตำแหน่งงานอยู่ในแผนก <br/>
                             </Panal>
                             <ButtonAdd color='youtube' onClick={setModal}>
@@ -229,10 +229,10 @@ export default enhance( (props)=>
                                         open={props.open}
                                         dimmer="blurring"
                                     >
-                                        <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                        <HeaderContent icon='archive' content='ลบข้อมูลแผนกใช่หรือไม่ ?' />
                                             <Modal.Content>
                                                 <p>
-                                                    คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                    คุณต้องการลบข้อมูลแผนก {props.headerName} ใช่หรือไม่ ?
                                                 </p>
                                             </Modal.Content>
                                         <Modal.Actions>

@@ -40,14 +40,14 @@ export default enhance(() =>
       pauseOnHover
     />
     <ToastContainer />
-      <button onClick={()=>{ toast('🦄 Wow so easy!', {
+      {/* <button onClick={()=>{ toast('🦄 Wow so easy!', {
 position: "top-right",
 autoClose: 5000,
 hideProgressBar: false,
 closeOnClick: true,
 pauseOnHover: true,
 draggable: true
-}); }}>click</button>
+}); }}>click</button> */}
       <H1>Welcome To PowerHR</H1>
     </center>
   </div>

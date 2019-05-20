@@ -40,7 +40,7 @@
     "react-froala-wysiwyg": "^2.7.2",
     "react-select": "^1.1.0",
     "react-sortable-tree": "^1.8.1",
-    "react-toastify": "^4.5.1",
+    "react-toastify": "^4.5.2",
     "react-toastr": "^3.0.0",
     "recompose": "^0.26.0",
     "sass-loader": "^6.0.6",
