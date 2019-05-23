@@ -49,7 +49,7 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
-    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 'ทำงานดีเกินไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 'ทำงานดีเกินไป' } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 'ทำงานดีเกินไป'}]),
+    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 1103701748834 , idcard : 'ไม่มาสัมภาษณ์ในวันและเวลาที่แจ้งไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 1138900764561 , idcard : 'การแต่งกายไม่สุภาพ ไม่มีกิริยามารยาท' } , {fname: 'Gook' , lname : 'Downmon' , posi : 3370982278132 , idcard : 'พูดจาไม่สุภาพ ไม่ตรงต่อเวลาในการเรียกสัมภาษณ์'}]),
     withProps({
       pageTitle: 'Welcome to PowerHR Admin',
     }),
@@ -85,7 +85,7 @@ export default enhance((props) =>
                         <center>นามสกุล</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>ตำแหน่ง</center>
+                        <center>รหัสบัครประชาชน</center>
                     </TableHeadcell>
                     <TableHeadcell>
                         <center>จัดการข้อมูล</center>

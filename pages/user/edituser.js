@@ -154,7 +154,7 @@ const enhance = compose(
               <Panal>
                 แก้ไขข้อมูลผู้ใช้งาน {props.name} สำเร็จ<br/>
               </Panal>
-              <ButtonAdd positive onClick={setModal}>
+              <ButtonAdd positive onClick={() => {javascript:history.back()}}>
                   <Icon name='checkmark' /> ตกลง
               </ButtonAdd>
             </center>

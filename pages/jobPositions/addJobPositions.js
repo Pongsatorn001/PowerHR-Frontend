@@ -3,9 +3,15 @@ import { withLayout } from '../../hoc'
 import { compose, withProps , withHandlers , withState , lifecycle} from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
-import { Form , Button , Icon , Divider , Input , Modal } from 'semantic-ui-react'
+import { Form , Button , Icon , Divider , Input , Modal , Select } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
-import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
+
+const options = [
+  { key: 'Admin', text: 'Admin', value: 'Admin' },
+  { key: 'Leader', text: 'Leader', value: 'Leader' },
+]
 
 const Div = styled.div `
   position : relative ;
@@ -42,14 +48,20 @@ const SizeInput = styled(Form.Input)`
 const FormTextArea = styled(Form.TextArea)`
   font-size : 16px !important;
 `
+const SizeSelect = styled(Form.Field)`
+  font-size : 16px !important;
+`
 
 const enhance = compose(
+  withLayout,
+  inject('authStore'),
+  withState("id" , "setId"),
   withState("timeBefore" , "setTimeBefore"),
   withState("timeAfter" , "setTimeAfter"),
   withState("list" , "setlist"),
   withState("positions_id" , "setPositions_id"),
-  withState("checklist" , "setChecklist"),
-  withState('job_position','setJob_position',[]),
+  withState("position_log_name" , "setPosition_log_name"),
+  withState('department_log_name','setDepartment_log_name'),
   withState("listDepartment" , "setlistDepartment"),
   withState("position" , "setPosition"),
   withState("department" , "setDepartment"),
@@ -60,44 +72,82 @@ const enhance = compose(
   withState('modal' , 'setModal' , false),
   withState('defaultTime' , 'setDefaultTime'),
   withState('defaultName' , 'setDefaultName'),
-  withState('defaultDepartment' , 'setDefaultDepartment'),
-  withState('defaultPosition' , 'setDefaultPosition'),
   withProps({
     pageTitle: 'Add Position'
   }),
-  withLayout,
+  withHandlers({
+    initGetDepartmentData: props => () => {
+      firebase.database().ref('departments')
+      .once("value")
+      .then( snapshot => {
+        if (snapshot.val()) {
+          let data = Object.values(snapshot.val())
+          let result = data.map( res => {
+            const {
+              department_id : key,
+              department_name : text,
+              department_id : value
+            } = res
+            return {"key" : key , "text" : text , "value" : value}
+          })          
+          props.setlistDepartment(result)   
+        }
+      })
+      .catch( err => {
+          console.log(err , 'err');
+      })
+    },
+    initGetPositionByDepartmentID: props => (departmentID) => {
+      firebase.database()
+        .ref("positions")
+        .orderByChild("department_id")
+        .equalTo(departmentID)
+        .once("value").then( snapshot => {
+          let data = Object.values(snapshot.val())
+          let result = data.map( res => {
+            const {
+              position_id : key,
+              position_name : text,
+              position_id : value
+            } = res
+            return {"key" : key , "text" : text , "value" : value}
+          }) 
+          props.setlist(result)
+        })
+    },
+    initGetDepartmentNameById: props => (value) => {
+      firebase.database()
+      .ref("departments")
+      .orderByChild("department_id")
+      .equalTo(value)
+      .once("value").then( snapshot => {
+        let data = Object.values(snapshot.val())
+        data.map( result => {
+          props.setDepartment_log_name(result.department_name)
+        })
+      })
+    },
+    initGetPositionNameById: props => (value) => {
+      firebase.database()
+      .ref("positions")
+      .orderByChild("position_id")
+      .equalTo(value)
+      .once("value").then( snapshot => {
+        let data = Object.values(snapshot.val())
+        data.map( result => {
+          props.setPosition_log_name(result.position_name)
+        })
+      })
+    },
+  }),
   lifecycle({
     async componentDidMount(){
-      //get data in api
-      const url = 'http://localhost:4000/positions'
-      const res =  await axios.get(url)
-      this.props.setlist(res.data)
-
-      let check = []
-      res.data.map( data => {
-        check.push(data.position_name)
-      })
-      this.props.setChecklist(check)
-
-      const urlJob_position = 'http://localhost:4000/joinPosition'
-      const resJobposition = await axios.get(urlJob_position)
-      let data = []
-      resJobposition.data.map( response => {
-        data.push(response.position_name)
-      })
-      this.props.setJob_position(data)
-
-      // get data in department api
-      const urlDepartment = 'http://localhost:4000/departments'
-      const resDepartment = await axios.get(urlDepartment)
-      this.props.setlistDepartment(resDepartment.data)  
-      
+      await this.props.initGetDepartmentData()
       //set datepicker
       const time = new Date();
       const date = time.getDate()
-      const month = time.getMonth()
+      const month = time.getMonth() + 1
       const year = time.getFullYear()
-      
       this.props.setDefaultTime(year + "-" + month + "-" + date)
       this.props.setTimeAfter(year + "-" + month + "-" + date)
     }
@@ -115,77 +165,14 @@ const enhance = compose(
       props.setTimeBefore(event.target.value)
       props.setTimeAfter(event.target.value)
     },
-    handleInputPosition: props => () => {      
-      if (props.list === undefined) {
-        return null
-      }
-      else{
-        let result = props.list.map( data => {
-          return( <option value={data.position_name} key={data.positions_id} />)
-        })
-        return result
-      }
+    handleInputDepartmentName: props => () => (event, {value , name}) => { 
+      props.initGetDepartmentNameById(value)
+      props.initGetPositionByDepartmentID(value)
+      props.setDepartment(value)
     },
-    handleInputDepartment: props => () => {
-      if (props.listDepartment === undefined) {
-        return null
-      }
-      else{
-        let result = props.listDepartment.map( data => {
-          return( <option value={data.department_name} key={data.id} />)
-        })
-        return result
-      }
-    },
-    handleInputDepartmentName: props => () => event => {  
-      props.setDepartment(event.target.value)
-      props.setDefaultDepartment(event.target.value)
-      if (event.keyCode === 8) {
-        props.setDefaultPosition(undefined)
-        const url = 'http://localhost:4000/positions'
-        axios.get(url)
-        .then( res => {
-          props.setlist(res.data)
-        })
-        .catch( err => {
-          console.log(err);
-        })
-      }
-      else{
-        const url = `http://localhost:4000/showDataPositionInDepartment/${event.target.value}`
-        axios.get(url)
-        .then( res => {
-          props.setlist(res.data)
-        })
-        .catch( err => {
-          console.log(err);
-        })
-      }
-    },
-    handleInputPositionName: props => () => event => {  
-      let { list } = props      
-      props.setPosition(event.target.value)
-      if (event.keyCode === 8) {        
-        props.setDefaultDepartment(undefined)
-      }
-      else{
-        list.map( data => {
-          if (data.position_name === event.target.value) {
-            props.setPositions_id(data.positions_id)
-            const url = `http://localhost:4000/positions/${data.positions_id}`
-            axios.get(url)
-            .then( res => {
-              props.setDefaultDepartment(res.data[0].department_name)
-            })
-            .catch( err => {
-              console.log(err);
-            })
-          }
-          else{
-            return null
-          }
-        })
-      }
+    handleInputPositionName: props => () => (event, {value}) => {  
+      props.initGetPositionNameById(value)
+      props.setPosition(value)
     },
     handleInputValue: props => () => event => {  
       props.setValue(event.target.value)
@@ -197,28 +184,38 @@ const enhance = compose(
       props.setRate(event.target.value)      
     },
     handleSaveData: props => () => event => {
-      let check = props.job_position.indexOf(props.position)
-      let have = props.checklist.indexOf(props.position)  
-      let description_data = props.description.split('\n').join("<br/>")
-      if (check === -1 && have !== -1 && props.defaultName !== props.positions_id) {
+      if (props.position && props.description && props.department && props.value && props.rate && props.timeAfter && props.timeBefore) {
+        let description_data = props.description.split('\n').join("<br/>")
         props.setModal(true)
         props.setOpen(true)
-        props.setDefaultName(props.positions_id)
-        const url = 'http://localhost:4000/job_position'
-        axios.post(url , {
-          positions_id : props.positions_id,
-          description : description_data,
+        let uniqueID = firebase.database().ref().push().key
+        let result = {
+          job_position_id : uniqueID,
+          department_id : props.department,
+          position_id : props.position,
           value : props.value,
+          rate : props.rate,
+          description : description_data,
           startdate : props.timeBefore,
           enddate : props.timeAfter,
-          rate : props.rate
-        })
-        .then( res => {
-          console.log(res)
-        })
-        .catch( err => {
-          console.log(err);
-        })
+          date : firebase.database.ServerValue.TIMESTAMP,
+        }
+        firebase.database().ref('job_positions/' + uniqueID).set(result)
+
+        let result_log = {
+          job_position_id : uniqueID,
+          department_id : props.department,
+          department_name : props.department_log_name,
+          position_id : props.position,
+          position_name : props.position_log_name,
+          value : props.value,
+          rate : props.rate,
+          description : description_data,
+          startdate : props.timeBefore,
+          enddate : props.timeAfter,
+          date : firebase.database.ServerValue.TIMESTAMP,
+        }
+        firebase.database().ref('job_positions_log/' + uniqueID).set(result_log)
       }
       else{
         props.setOpen(true)
@@ -261,9 +258,9 @@ const enhance = compose(
               <center>
                 <IconModal name="info circle"/><br/><br/>
                 <Panal>
-                  เพิ่มตำแหน่งงานที่เปิดรับ {props.position_name} สำเร็จ<br/>
+                  เพิ่มตำแหน่งงานที่เปิดรับ {props.position_log_name} สำเร็จ<br/>
                 </Panal>
-                <ButtonAdd positive onClick={setModal}>
+                <ButtonAdd positive onClick={() => {javascript:history.back()}}>
                     <Icon name='checkmark' /> ตกลง
                 </ButtonAdd>
               </center>
@@ -286,37 +283,31 @@ export default enhance((props) =>
       </center>
         <SizeForm>
           <Form.Group widths='2'>
-            <SizeInput
-              fluid
-              control={Input}
-              id='nameJobPositions'
-              label='แผนกที่เปิดรับสมัคร :'
-              placeholder='กรุณาระบุแผนกที่เปิดรับสมัคร'
-              name="department_name"
-              list="department_name"
+            <SizeSelect
+              control={Select} 
+              label='แผนก :' 
+              options={props.listDepartment} 
+              placeholder='แผนก'
+              onChange={props.handleInputDepartmentName()}
+              style={{ 
+                  height: '43px',
+                  marginTop: '-5'
+              }}
               required
-              autoFocus
-              defaultValue={props.defaultDepartment}
-              onKeyUp={props.handleInputDepartmentName()}
             />
-            <datalist id="department_name">
-              {props.handleInputDepartment()}
-            </datalist>
-            <SizeInput
-              fluid
-              control={Input}
-              id='position_name'
-              label='ตำแหน่งที่เปิดรับสมัคร :'
-              placeholder='กรุณาระบุตำแหน่งที่เปิดรับ'
-              name="position_name"
-              list="data"
+            <SizeSelect
+              control={Select} 
+              label='ตำแหน่ง :' 
+              options={props.list} 
+              placeholder='ตำแหน่ง'
+              onChange={props.handleInputPositionName()}
+              style={{ 
+                  height: '43px',
+                  marginTop: '-5'
+              }}
               required
-              defaultValue={props.defaultPosition}
-              onKeyUp={props.handleInputPositionName()}
+              disabled={props.department ? false : true }
             />
-            <datalist id="data">
-              {props.handleInputPosition()}
-            </datalist>
           </Form.Group>
           <Form.Group widths='equal'>
             <SizeInput

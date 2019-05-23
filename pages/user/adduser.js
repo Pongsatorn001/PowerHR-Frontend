@@ -126,9 +126,9 @@ const enhance = compose(
             <center>
               <IconModal name="info circle"/><br/><br/>
               <Panal>
-                เพิ่มตำแหน่ง {props.position_name} สำเร็จ<br/>
+                เพิ่มผู้ใช้งาน {props.name} สำเร็จ<br/>
               </Panal>
-              <ButtonAdd positive onClick={setModal}>
+              <ButtonAdd positive onClick={() => {javascript:history.back()}}>
                   <Icon name='checkmark' /> ตกลง
               </ButtonAdd>
             </center>

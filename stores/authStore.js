@@ -30,7 +30,8 @@ class AuthStore {
         uid : response.user.uid
       }
       firebase.database().ref('users/' + response.user.uid).set(result)
-      window.location.href = "/user/user"
+      data.setOpen(true)
+      data.setModal(true)
     })
     .catch(error => {
       data.setOpen(true)
@@ -47,7 +48,8 @@ class AuthStore {
       uid : uid
     }
     firebase.database().ref('users/' + uid).update(result)
-    window.location.href = "/user/user"
+    data.setOpen(true)
+    data.setModal(true)
   }
 
   @action async login(props){ 

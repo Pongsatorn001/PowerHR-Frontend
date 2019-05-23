@@ -89,6 +89,7 @@ const enhance = compose(
   }),
   withHandlers({
     handleSavePositionName : props => (id) => event => {
+      console.log(props.position_name);
       if (props.position_name) {
         firebase.database()
         .ref("positions")
@@ -137,6 +138,7 @@ const enhance = compose(
       }
     },
     handleInputData: props => () => event => {
+      console.log(event.target.value);
       props.setPosition_Name(event.target.value)      
     },
     handleModalOpen: props => () => event => {
@@ -212,7 +214,7 @@ export default enhance((props) =>
               id='namePositions'
               label='ชื่อตำแหน่งที่ต้องการแก้ไข :'
               placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'
-              defaultValue={props.position_name}
+              value={props.position_name}
               onChange={props.handleInputData()}
               autoFocus
             />

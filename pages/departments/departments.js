@@ -6,7 +6,6 @@ import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
-import axios from 'axios'
 import { inject, observer } from 'mobx-react'
 import { firebase } from '../../firebase/index'
 
@@ -215,7 +214,7 @@ export default enhance( (props)=>
                                         </TableCell>
                                         <TableCell>
                                             <Link href={{ pathname : '../position/position' , query : { id : data.department_id }}}>
-                                                <center>{data.department_name}</center>
+                                                <label style={{ marginLeft : '39%' }}>{data.department_name}</label>
                                             </Link>
                                         </TableCell>
                                         <TableCell>

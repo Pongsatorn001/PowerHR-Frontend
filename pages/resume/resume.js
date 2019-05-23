@@ -239,7 +239,7 @@ export default enhance( (props)=>
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
         <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.position)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.position , true)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -344,42 +344,34 @@ export default enhance( (props)=>
                             </TableCell>
                             <TableCell>
                                 <center>
-                                    <Link href={{ pathname:'/resume/editResume', query: { id : dataResume.id , position: props.url.query.position}}}>
-                                        <ButtonEdit animated='fade' size='mini'>
-                                            <Button.Content visible content='แก้ไข'/>
-                                            <Button.Content hidden >
-                                                <Icon name='edit' />
-                                            </Button.Content>
-                                        </ButtonEdit>
-                                    </Link>
-                                        <Modal 
-                                            trigger={
-                                                <ButtonAdd animated='fade' size='mini' color="youtube">
-                                                    <Button.Content visible content='ลบ'/>
-                                                    <Button.Content hidden >
-                                                        <Icon name='trash alternate' />
-                                                    </Button.Content>
-                                                </ButtonAdd>
-                                            }
-                                            size="tiny"
-                                            closeIcon
-                                        >
-                                            <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัคร' />
-                                                <Modal.Content>
-                                                    <p>
-                                                        คุณต้องการลบข้อมูล <b>{dataResume.name} {dataResume.lastName}</b> ใช่หรือไม่ ?
-                                                    </p>
-                                                </Modal.Content>
-                                            <Modal.Actions>
-                                                <ButtonAdd>
-                                                    <Icon name='remove' /> ยกเลิก
-                                                </ButtonAdd>
-                                                <ButtonAdd color='green'>
-                                                    <Icon name='checkmark' /> ตกลง
-                                                </ButtonAdd>
-                                            </Modal.Actions>
-                                        </Modal>
-                                    </center>
+                                    <Modal 
+                                        trigger={
+                                            <ButtonAdd animated='fade' size='mini' color="youtube">
+                                                <Button.Content visible content='ลบ'/>
+                                                <Button.Content hidden >
+                                                    <Icon name='trash alternate' />
+                                                </Button.Content>
+                                            </ButtonAdd>
+                                        }
+                                        size="tiny"
+                                        closeIcon
+                                    >
+                                        <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัคร' />
+                                            <Modal.Content>
+                                                <p>
+                                                    คุณต้องการลบข้อมูลการสมัครงานของ <b>{dataResume.name} {dataResume.lastName}</b> ใช่หรือไม่ ?
+                                                </p>
+                                            </Modal.Content>
+                                        <Modal.Actions>
+                                            <ButtonAdd>
+                                                <Icon name='remove' /> ยกเลิก
+                                            </ButtonAdd>
+                                            <ButtonAdd color='green'>
+                                                <Icon name='checkmark' /> ตกลง
+                                            </ButtonAdd>
+                                        </Modal.Actions>
+                                    </Modal>
+                                </center>
                             </TableCell>
                         </TableRow>
                     )

@@ -34,7 +34,7 @@ export  const TextHeader = (name) => {
     return <H2>{name}</H2>
 }
 
-export const TextHeaderTable = (name , descrip , button ,  positions , link , queryData) => {
+export const TextHeaderTable = (name , descrip , button ,  positions , link , queryData , bool) => {
     if (queryData !== undefined) {
         link = { pathname : `${link}` , query : { data : queryData}}
     }
@@ -43,18 +43,23 @@ export const TextHeaderTable = (name , descrip , button ,  positions , link , qu
             <HeaderName as='h1' floated='left'>
                 {name}&nbsp;<Small>( จำนวนทั้งหมด {descrip} {positions} )</Small>
             </HeaderName>
-            <HeaderButtonAdd as='h2' floated='right'>
-                <Link href={link}>
-                    <ButtonAdd positive animated='fade' size='medium'>
-                        <Button.Content visible>
-                            {button}
-                        </Button.Content>
-                        <Button.Content hidden>
-                            <IconAdd name='add' />
-                        </Button.Content>
-                    </ButtonAdd>
-                </Link>
-            </HeaderButtonAdd>
+            {console.log(bool , 'bool')}
+            {
+                bool
+                ?   <br/>
+                :   <HeaderButtonAdd as='h2' floated='right'>
+                        <Link href={link}>
+                            <ButtonAdd positive animated='fade' size='medium'>
+                                <Button.Content visible>
+                                    {button}
+                                </Button.Content>
+                                <Button.Content hidden>
+                                    <IconAdd name='add' />
+                                </Button.Content>
+                            </ButtonAdd>
+                        </Link>
+                    </HeaderButtonAdd>
+            }
         </div>
     )
 }

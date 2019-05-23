@@ -7,6 +7,8 @@ import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
 import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -74,6 +76,8 @@ const HeaderContent = styled(Header)`
 `;
 
 const enhance = compose(
+    withLayout,
+    inject('authStore'),
     withState('list','setList',[]),
     withState('headerName' , 'setHeaderName'),
     withState('open' , 'setOpen' , false),
@@ -91,12 +95,18 @@ const enhance = compose(
     withProps({
         pageTitle: 'Job Positions'
     }),
-    withLayout,
+    withHandlers({
+        initGetJobPositionData: props => () => {
+            firebase.database().ref("job_positions_log")
+            .once("value").then( snapshot => {
+                let result = Object.values(snapshot.val()) 
+                props.setList(result)
+            })
+        }
+    }),
     lifecycle({
         async componentDidMount(){
-            const url = 'http://localhost:4000/joinPositionAndDepartment'
-            const res = await axios.get(url)
-            this.props.setList(res.data)             
+            await this.props.initGetJobPositionData()             
         }
     }),
     withHandlers({
@@ -106,6 +116,16 @@ const enhance = compose(
             props.setIdList(id)
             props.setModalShow(false)
             props.setDelsucces(false)
+        },
+        handleCheckDisbledDelete: props => (jpid) => {
+            firebase.database()
+            .ref("apply_jobs")
+            .orderByChild("jpb_position_id")
+            .equalTo(jpid)
+            .once("value").then( snapshot => {
+                let data = Object.values(snapshot.val())
+                console.log(data.job_position_id);
+            })
         },
         handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name , rate) => event => {
             if (bool === true) {
@@ -195,7 +215,8 @@ const enhance = compose(
                 return null
             }
         }
-    })
+    }),
+    observer
 )
 
 let job_pos_name = 'ตำแหน่งงานที่เปิดรับสมัคร'
@@ -210,7 +231,7 @@ export default enhance( (props)=>
             <Table.Header>
                 <Table.Row>
                     <TableHeadcell>
-                        <center>รหัส</center>
+                        <center>แผนกที่เปิดรับ</center>
                     </TableHeadcell>
                     <TableHeadcell>
                         <center>ตำแหน่งงานที่เปิดรับ</center>
@@ -231,12 +252,12 @@ export default enhance( (props)=>
                             <TableRow key={i}>                          
                                     <TableCell>
                                         <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
-                                            <center>{i+1}</center>
+                                        <label style={{ marginLeft : '25%' }}>{data.department_name}</label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
                                         <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
-                                            <center>{data.position_name}</center>
+                                            <label style={{ marginLeft : '25%' }}>{data.position_name}</label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
@@ -276,7 +297,7 @@ export default enhance( (props)=>
                                                 </center>
                                             </Modal.Content>
                                         </Modal>
-                                        <Link href={{ pathname:'/jobPositions/editJobPositions', query: { id : data.id }}}>
+                                        <Link href={{ pathname:'/jobPositions/editJobPositions', query: { id : data.job_position_id }}}>
                                             <ButtonEdit animated='fade' size='mini'>
                                                 <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
@@ -284,7 +305,7 @@ export default enhance( (props)=>
                                                 </Button.Content>
                                             </ButtonEdit>
                                         </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)}>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)} disabled={false}>
                                             <Button.Content visible content='ลบ'/>
                                             <Button.Content hidden >
                                                 <Icon name='trash alternate' />
