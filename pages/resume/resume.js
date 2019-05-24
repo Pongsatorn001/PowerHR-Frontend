@@ -270,10 +270,8 @@ export default enhance( (props)=>
     <div>
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
-        {
-            props.list &&
             <Div>
-                {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.id , true)}
+                {TextHeaderTable(job_pos_name ,props.list ?  props.list.length : 0 , job_button_name , job_pos_des, link , props.url.query.id , true)}
                 <TablePosition striped>
                     <Table.Header>
                         <Table.Row>
@@ -296,7 +294,7 @@ export default enhance( (props)=>
                     </Table.Header>
                     <TableBody>
                         {
-                            props.list.map( (dataResume, i)=>
+                            props.list && props.list.map( (dataResume, i)=>
                                 <TableRow key={i}>
                                     <TableCell>
                                         <Modal trigger={
@@ -364,7 +362,7 @@ export default enhance( (props)=>
                                             {
                                                 dataResume.status === 0
                                                     ?   "รอการพิจารณา"
-                                                    : data.status === 1
+                                                    : dataResume.status === 1
                                                         ?   "ผ่านการพิจารณา"
                                                         :   "ไม่ผ่านการพิจารณา"
                                             }
@@ -419,7 +417,8 @@ export default enhance( (props)=>
                         }
                     </TableBody>
                 </TablePosition>
+                {   !props.list ? <div><center>ไม่มีข้อมูลการสมัครงาน</center><br/><br/></div> : null}
+                
             </Div>
-        }
     </div>
 )
