@@ -1,12 +1,13 @@
 import React from 'react'
 import { withLayout } from '../../hoc'
-import { compose, withProps , withState , withHandlers} from 'recompose'
+import { compose, withProps , withState , withHandlers , lifecycle } from 'recompose'
 import theme from '../../theme/default';
 import styled from 'styled-components';
-import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import { Table , Breadcrumb , Button , Icon , Modal , Divider , Grid , Input , Select , Header , Comment , Form , Radio , value } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const Div = styled.div `
     position : relative ;
@@ -107,13 +108,43 @@ const EditComment = styled(Input)`
 `;
 
 const enhance = compose(
+    withLayout,
+    inject('authStore'),
     withProps({
         pageTitle: 'Resume'
     }),
-    withLayout,
     withState('redio' , 'setRedio' , true),
-    withState('list','setList',[{id: '001', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'พงศธร', lastName: 'จันด้วง', rate: '20000', status: 'รอการสัมภาษณ์'},{id: '002', file: 'https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf', name: 'กิตปกรณ์', lastName: 'ทองเงิน', rate: '30000', status: 'ผ่านการสัมภาษณ์'}]),
+    withState('list','setList'),
+    withState('users','setUsers'),
     withState('comment','setComment',[{nameComment: 'HR', textComment: 'คุณสมบัติทั่วไปผ่าน'},{nameComment: 'Leader', textComment: 'เรียกสัมภาษณ์ได้เลย'}]),
+    withHandlers({
+        initGetResumeInJobsPosition: props => () => {
+            firebase.database()
+            .ref("apply_jobs")
+            .orderByChild("job_position_id")
+            .equalTo(props.url.query.id)
+            .once("value").then( snapshot => {
+                props.setList(Object.values(snapshot.val()))
+                console.log(Object.values(snapshot.val()));
+            })
+        },
+        initGetUserData: props => () => {
+            firebase.database().ref('users')
+            .orderByChild("role")
+            .equalTo("user")
+            .once("value").then( snapshot => {
+                props.setUsers(Object.values(snapshot.val()))
+                console.log(Object.values(snapshot.val()));
+            })
+        }
+    }),
+    lifecycle({
+        async componentDidMount(){
+            await this.props.initGetResumeInJobsPosition()
+            await this.props.initGetUserData()
+            
+        }
+    }),
     withHandlers({
         handleClickChange : props => () => event => {
             props.setRedio(false)
@@ -226,6 +257,7 @@ const enhance = compose(
             )
         },
     }),
+    observer
 );
 
 
@@ -238,146 +270,156 @@ export default enhance( (props)=>
     <div>
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
-        <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.position , true)}
-        <TablePosition striped>
-            <Table.Header>
-                <Table.Row>
-                    <TableHeadcell>
-                        <center>รหัส</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>ชื่อ</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>นามสกุล</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>Rate</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>สถานะ</center>
-                    </TableHeadcell>
-                    <TableHeadcell>
-                        <center>จัดการข้อมูล</center>
-                    </TableHeadcell>
-                </Table.Row>
-            </Table.Header>
-            <TableBody>
-                {
-                    props.list.map( (dataResume, i)=>
-                        <TableRow key={i}>
-                            <TableCell>
-                                <Modal trigger={<center>{i+1}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
-                                    <Modal.Content>
-                                        <Sizeiframe src={dataResume.file}></Sizeiframe>
-                                    </Modal.Content>
-                                    {props.handleClickModal()}
-                                    <Divider hidden />
-                                    <Modal.Actions>
-                                    <ButtonClose>
-                                        <Icon name='close' /> ปิด 
-                                    </ButtonClose>
-                                    </Modal.Actions>
-                                </Modal>
-                            </TableCell>
-                            <TableCell>
-                                <Modal trigger={<center>{dataResume.name}</center>}>
-                                    <ColorModelHeader>ประวัติ : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
-                                    <Modal.Content>
-                                        <center src={dataResume.file}></center>
-                                    </Modal.Content>
-                                    {props.handleClickModal()}
-                                    <Divider hidden />
-                                    <Modal.Actions>
-                                    <ButtonClose>
-                                        <Icon name='close' /> ปิด 
-                                    </ButtonClose>
-                                    </Modal.Actions>
-                                </Modal>
-                            </TableCell>
-                            <TableCell>
-                                <Modal trigger={<center>{dataResume.lastName}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
-                                    <Modal.Content>
-                                        <Sizeiframe src={dataResume.file}></Sizeiframe>
-                                    </Modal.Content>
-                                    {props.handleClickModal()}
-                                    <Divider hidden />
-                                    <Modal.Actions>
-                                    <ButtonClose>
-                                        <Icon name='close' /> ปิด 
-                                    </ButtonClose>
-                                    </Modal.Actions>
-                                </Modal>
-                            </TableCell>
-                            <TableCell>
-                                <Modal trigger={<center>{dataResume.rate}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
-                                    <Modal.Content>
-                                        <Sizeiframe src={dataResume.file}></Sizeiframe>
-                                    </Modal.Content>
-                                    {props.handleClickModal()}
-                                    <Divider hidden />
-                                    <Modal.Actions>
-                                    <ButtonClose>
-                                        <Icon name='close' /> ปิด 
-                                    </ButtonClose>
-                                    </Modal.Actions>
-                                </Modal>
-                            </TableCell>
-                            <TableCell>
-                                <Modal trigger={<center>{dataResume.status}</center>}>
-                                    <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
-                                    <Modal.Content>
-                                        <Sizeiframe src={dataResume.file}></Sizeiframe>
-                                    </Modal.Content>
-                                    {props.handleClickModal()}
-                                    <Divider hidden />
-                                    <Modal.Actions>
-                                    <ButtonClose>
-                                        <Icon name='close' /> ปิด 
-                                    </ButtonClose>
-                                    </Modal.Actions>
-                                </Modal>
-                            </TableCell>
-                            <TableCell>
-                                <center>
-                                    <Modal 
-                                        trigger={
-                                            <ButtonAdd animated='fade' size='mini' color="youtube">
-                                                <Button.Content visible content='ลบ'/>
-                                                <Button.Content hidden >
-                                                    <Icon name='trash alternate' />
-                                                </Button.Content>
-                                            </ButtonAdd>
-                                        }
-                                        size="tiny"
-                                        closeIcon
-                                    >
-                                        <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัคร' />
+        {
+            props.list &&
+            <Div>
+                {TextHeaderTable(job_pos_name , props.list.length , job_button_name , job_pos_des, link , props.url.query.id , true)}
+                <TablePosition striped>
+                    <Table.Header>
+                        <Table.Row>
+                            <TableHeadcell>
+                                <center>ชื่อ</center>
+                            </TableHeadcell>
+                            <TableHeadcell>
+                                <center>นามสกุล</center>
+                            </TableHeadcell>
+                            <TableHeadcell>
+                                <center>Rate</center>
+                            </TableHeadcell>
+                            <TableHeadcell>
+                                <center>สถานะ</center>
+                            </TableHeadcell>
+                            <TableHeadcell>
+                                <center>จัดการข้อมูล</center>
+                            </TableHeadcell>
+                        </Table.Row>
+                    </Table.Header>
+                    <TableBody>
+                        {
+                            props.list.map( (dataResume, i)=>
+                                <TableRow key={i}>
+                                    <TableCell>
+                                        <Modal trigger={
+                                                <center>
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                                }
+                                                </center>
+                                            }
+                                        >
+                                            <ColorModelHeader>ประวัติ : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                             <Modal.Content>
-                                                <p>
-                                                    คุณต้องการลบข้อมูลการสมัครงานของ <b>{dataResume.name} {dataResume.lastName}</b> ใช่หรือไม่ ?
-                                                </p>
+                                                <center src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></center>
                                             </Modal.Content>
-                                        <Modal.Actions>
-                                            <ButtonAdd>
-                                                <Icon name='remove' /> ยกเลิก
-                                            </ButtonAdd>
-                                            <ButtonAdd color='green'>
-                                                <Icon name='checkmark' /> ตกลง
-                                            </ButtonAdd>
-                                        </Modal.Actions>
-                                    </Modal>
-                                </center>
-                            </TableCell>
-                        </TableRow>
-                    )
-                }
-            </TableBody>
-        </TablePosition>
-        </Div>
+                                            {props.handleClickModal()}
+                                            <Divider hidden />
+                                            <Modal.Actions>
+                                            <ButtonClose>
+                                                <Icon name='close' /> ปิด 
+                                            </ButtonClose>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Modal trigger={
+                                                   <center>
+                                                       {
+                                                            props.users &&
+                                                            props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+                                                       }
+                                                   </center>
+                                                }>
+                                            <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <Modal.Content>
+                                                <Sizeiframe src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></Sizeiframe>
+                                            </Modal.Content>
+                                            {props.handleClickModal()}
+                                            <Divider hidden />
+                                            <Modal.Actions>
+                                            <ButtonClose>
+                                                <Icon name='close' /> ปิด 
+                                            </ButtonClose>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Modal trigger={<center>{dataResume.rate}</center>}>
+                                            <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <Modal.Content>
+                                                <Sizeiframe src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></Sizeiframe>
+                                            </Modal.Content>
+                                            {props.handleClickModal()}
+                                            <Divider hidden />
+                                            <Modal.Actions>
+                                            <ButtonClose>
+                                                <Icon name='close' /> ปิด 
+                                            </ButtonClose>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Modal trigger={
+                                            <center>
+                                            {
+                                                dataResume.status === 0
+                                                    ?   "รอการพิจารณา"
+                                                    : data.status === 1
+                                                        ?   "ผ่านการพิจารณา"
+                                                        :   "ไม่ผ่านการพิจารณา"
+                                            }
+                                            </center>
+                                        }>
+                                            <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <Modal.Content>
+                                                <Sizeiframe src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></Sizeiframe>
+                                            </Modal.Content>
+                                            {props.handleClickModal()}
+                                            <Divider hidden />
+                                            <Modal.Actions>
+                                            <ButtonClose>
+                                                <Icon name='close' /> ปิด 
+                                            </ButtonClose>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </TableCell>
+                                    <TableCell>
+                                        <center>
+                                            <Modal 
+                                                trigger={
+                                                    <ButtonAdd animated='fade' size='mini' color="youtube">
+                                                        <Button.Content visible content='ลบ'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='trash alternate' />
+                                                        </Button.Content>
+                                                    </ButtonAdd>
+                                                }
+                                                size="tiny"
+                                                closeIcon
+                                            >
+                                                <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัคร' />
+                                                    <Modal.Content>
+                                                        <p>
+                                                            คุณต้องการลบข้อมูลการสมัครงานของ <b>{dataResume.name} {dataResume.lastName}</b> ใช่หรือไม่ ?
+                                                        </p>
+                                                    </Modal.Content>
+                                                <Modal.Actions>
+                                                    <ButtonAdd>
+                                                        <Icon name='remove' /> ยกเลิก
+                                                    </ButtonAdd>
+                                                    <ButtonAdd color='green'>
+                                                        <Icon name='checkmark' /> ตกลง
+                                                    </ButtonAdd>
+                                                </Modal.Actions>
+                                            </Modal>
+                                        </center>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        }
+                    </TableBody>
+                </TablePosition>
+            </Div>
+        }
     </div>
 )

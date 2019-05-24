@@ -251,17 +251,17 @@ export default enhance( (props)=>
                         return (
                             <TableRow key={i}>                          
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
+                                        <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
                                         <label style={{ marginLeft : '25%' }}>{data.department_name}</label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
+                                        <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
                                             <label style={{ marginLeft : '25%' }}>{data.position_name}</label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                    <Link href={{ pathname : '../resume/resume' , query : { position : data.position_name}}}>
+                                    <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
                                             <center>{data.value}</center>
                                         </Link>
                                     </TableCell>
