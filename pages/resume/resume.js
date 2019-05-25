@@ -117,6 +117,8 @@ const enhance = compose(
     withState('list','setList'),
     withState('users','setUsers'),
     withState('comment','setComment',[{nameComment: 'HR', textComment: 'คุณสมบัติทั่วไปผ่าน'},{nameComment: 'Leader', textComment: 'เรียกสัมภาษณ์ได้เลย'}]),
+    withState('hrChecked','setHrChecked'),
+    withState('leaderChecked', 'setLeaderChecked'),
     withHandlers({
         initGetResumeInJobsPosition: props => () => {
             firebase.database()
@@ -128,6 +130,14 @@ const enhance = compose(
                 console.log(Object.values(snapshot.val()));
             })
         },
+        handleSubmitChangeStatus: props => (applyJobId, status) => {
+            console.log(applyJobId,"applyJobId",props.hrChecked,"props.hrChecked",status,"status")
+            
+              firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+                hr_status : props.hrChecked,
+                status : props.hrChecked < 3 ? props.hrChecked : status
+               })
+        },
         initGetUserData: props => () => {
             firebase.database().ref('users')
             .orderByChild("role")
@@ -136,6 +146,12 @@ const enhance = compose(
                 props.setUsers(Object.values(snapshot.val()))
                 console.log(Object.values(snapshot.val()));
             })
+        },
+        handleOnChangeHrStatus: props => (hrChecked) => event => {
+            props.setHrChecked(hrChecked)
+        },
+        handleOnChangeLeaderStatus: props => (leaderChecked) => event => {
+            props.setLeaderChecked(leaderChecked)
         }
     }),
     lifecycle({
@@ -149,48 +165,140 @@ const enhance = compose(
         handleClickChange : props => () => event => {
             props.setRedio(false)
         },
-        handleClickModal: props => () => {            
+        handleClickModal: props => (applyJobId, status) => {          
             return(
                 <Modal.Description>
                     <MarginGrid columns={2}>
                         <Grid.Column>
-                            <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ HR </p>
+                            <p><Icon circular inverted name='users' size='large'/> HR สถานะของผู้สมัคร</p>
+                            <Modal trigger={<ButtonEdit animated='fade' size='tiny'>
+                                                <Button.Content visible content='แก้ไข'/>
+                                                <Button.Content hidden >
+                                                    <Icon name='edit' />
+                                                </Button.Content>
+                                            </ButtonEdit>}>
+                                <ColorModelHeader icon='archive' content='แก้ไขผลการสมัคร : ฝ่ายบุคคลระดับผู้จัดการ' />
+                                <Modal.Content>
                                 <Form>
-                                    <Form.Group>
-                                        <Form.Field 
-                                            label='ผ่านการสัมภาษณ์' 
-                                            control='input' 
-                                            type='radio'
-                                            name='htmlRadios'
+                                    <Form.Field>
+                                        <Radio
+                                            label='รอการพิจารณา'
+                                            name='HrSelectStatus'
+                                            value='0'
+                                            checked={props.hrChecked === '0'}
+                                            onChange={props.handleOnChangeHrStatus('0')}
                                         />
-                                        <Form.Field 
-                                            label='ไม่ผ่านการสัมภาษณ์' 
-                                            control='input'
-                                            type='radio'
-                                            name='htmlRadios' 
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Radio
+                                            label='ไม่ผ่านการพิจารณา'
+                                            name='HrSelectStatus'
+                                            checked={props.hrChecked === '1'}
+                                            onChange={props.handleOnChangeHrStatus('1')}
                                         />
-                                    </Form.Group>
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Radio
+                                            label='เรียกสัมภาษณ์'
+                                            name='HrSelectStatus'
+                                            checked={props.hrChecked === '2'}
+                                            onChange={props.handleOnChangeHrStatus('2')}
+                                        />
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Radio
+                                            label='ผ่านการสัมภาษณ์'
+                                            name='HrSelectStatus'
+                                            checked={props.hrChecked === '3'}
+                                            onChange={props.handleOnChangeHrStatus('3')}
+                                        />
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Radio
+                                            label='ไม่ผ่านการสัมภาษณ์'
+                                            name='HrSelectStatus'
+                                            checked={props.hrChecked === '4'}
+                                            onChange={props.handleOnChangeHrStatus('4')}
+                                        />
+                                    </Form.Field>
                                 </Form>
-                            {/* <SelectJob placeholder='เลือกผลการสัมภาษณ์' options={props.option}></SelectJob> */}
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button color='red'>
+                                        <Icon name='remove' /> ยกเลิก
+                                    </Button>
+                                    <Button color='green' onClick={()=> props.handleSubmitChangeStatus(applyJobId,status)}>
+                                        <Icon name='checkmark' /> บันทึก
+                                    </Button>
+                                </Modal.Actions>
+                            </Modal>
+                            &nbsp;| {
+                                        props.hrChecked === '1'
+                                            ? "ไม่ผ่านการพิจารณา"
+                                            : props.hrChecked === '2' 
+                                                ? "เรียกสัมภาษณ์"
+                                                : props.hrChecked === '3' 
+                                                    ? "ผ่านการสัมภาษณ์"
+                                                    : props.hrChecked === '4' 
+                                                        ? "ไม่ผ่านการสัมภาษณ์"
+                                                        : "รอการสัมภาษณ์"
+                                    }
                         </Grid.Column>
                         <Grid.Column>
-                            <p><Icon circular inverted name='users' size='large'/> ผลการสัมภาษณ์ Leader </p>
-                            <Form>
-                                    <Form.Group>
-                                        <Form.Field 
-                                                label='ผ่านการสัมภาษณ์' 
-                                                control='input' 
-                                                type='radio'
-                                                name='htmlRadios'
-                                            />
-                                            <Form.Field 
-                                                label='ไม่ผ่านการสัมภาษณ์' 
-                                                control='input'
-                                                type='radio'
-                                                name='htmlRadios' 
-                                            />
-                                        </Form.Group>
+                            <p><Icon circular inverted name='users' size='large'/> Leader เลือกสถานะของผู้สมัคร</p>
+                            <Modal trigger={
+                                            props.hrChecked >='2'
+                                                ? <ButtonEdit animated='fade' size='tiny'>
+                                                        <Button.Content visible content='แก้ไข'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='edit' />
+                                                        </Button.Content>
+                                                    </ButtonEdit>
+                                                : <ButtonEdit animated='fade' size='tiny' disabled>
+                                                        <Button.Content visible content='แก้ไข'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='edit' />
+                                                        </Button.Content>
+                                                    </ButtonEdit>
+                                            
+                                        }>
+                                <ColorModelHeader icon='archive' content='แก้ไขผลการสมัคร : หัวหน้างานแต่ละตำแหน่งงาน' />
+                                <Modal.Content>
+                                <Form>
+                                    <Form.Field>
+                                        <Radio
+                                            label='ผ่านการสัมภาษณ์'
+                                            name='radioGroup'
+                                            checked={props.leaderChecked === '3'}
+                                            onChange={props.handleOnChangeLeaderStatus('3')}
+                                        />
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <Radio
+                                            label='ไม่ผ่านการสัมภาษณ์'
+                                            name='radioGroup'
+                                            checked={props.leaderChecked === '4'}
+                                            onChange={props.handleOnChangeLeaderStatus('4')}
+                                        />
+                                    </Form.Field>
                                 </Form>
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button color='red'>
+                                        <Icon name='remove' /> ยกเลิก
+                                    </Button>
+                                    <Button color='green'>
+                                        <Icon name='checkmark' /> บันทึก
+                                    </Button>
+                                </Modal.Actions>
+                            </Modal>
+                            &nbsp;| {
+                                        props.leaderChecked === '3' 
+                                        ? "ผ่านการสัมภาษณ์"
+                                        : props.leaderChecked === '4' 
+                                            ? "ไม่ผ่านการสัมภาษณ์"
+                                            : "ไม่สามารถเลือกผลการสัมภาษณ์ได้"
+                                    }
                         </Grid.Column>
                     </MarginGrid>
                     <MarginComment>
@@ -308,9 +416,9 @@ export default enhance( (props)=>
                                         >
                                             <ColorModelHeader>ประวัติ : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                             <Modal.Content>
-                                                <center src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></center>
+                                                <Sizeiframe srcsrc={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
-                                            {props.handleClickModal()}
+                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status)}
                                             <Divider hidden />
                                             <Modal.Actions>
                                             <ButtonClose>
@@ -330,9 +438,9 @@ export default enhance( (props)=>
                                                 }>
                                             <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                             <Modal.Content>
-                                                <Sizeiframe src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></Sizeiframe>
+                                                <Sizeiframe src={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
-                                            {props.handleClickModal()}
+                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status)}
                                             <Divider hidden />
                                             <Modal.Actions>
                                             <ButtonClose>
@@ -345,7 +453,7 @@ export default enhance( (props)=>
                                         <Modal trigger={<center>{dataResume.rate}</center>}>
                                             <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                             <Modal.Content>
-                                                <Sizeiframe src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></Sizeiframe>
+                                                <Sizeiframe srcsrc={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
                                             {props.handleClickModal()}
                                             <Divider hidden />
@@ -370,9 +478,9 @@ export default enhance( (props)=>
                                         }>
                                             <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
                                             <Modal.Content>
-                                                <Sizeiframe src="https://www.mogen.co.th/imgadmins/resume/20180226150849.pdf"></Sizeiframe>
+                                                <Sizeiframe srcsrc={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
-                                            {props.handleClickModal()}
+                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status)}
                                             <Divider hidden />
                                             <Modal.Actions>
                                             <ButtonClose>
