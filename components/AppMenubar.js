@@ -64,21 +64,36 @@ export default (props) => (
                 <P>Version 0.0.1</P>
             </center>
             <HR size="1" color="white" />
-            <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
-                <DropdownMenu_Menu>
-                    <Link href={`/jobPositions/jobPositions`}>
-                        <Dropdown.Item icon='address card outline' text='ตำแหน่งงานที่เปิดรับสมัคร' />
-                    </Link>
-                    <Link href={`/blacklist/blackList`}>
-                        <Dropdown.Item icon='user times' text='แบล็คลิสต์' />
-                    </Link>
-                </DropdownMenu_Menu>
-            </DropdownMenu>
-            <Link href={`/departments/departments`}>
-                <MenuItem
-                    name='แผนกงานในบริษัท'
-                />
-            </Link>
+            {
+                props.authStore.userData
+                ?   <div>
+                        <DropdownMenu simple item text='การจัดการข้อมูลผู้สมัคร'>
+                            <DropdownMenu_Menu>
+                                <Link href={`/jobPositions/jobPositions`}>
+                                    <Dropdown.Item icon='address card outline' text='ตำแหน่งงานที่เปิดรับสมัคร' />
+                                </Link>
+                                <Link href={`/blacklist/blackList`}>
+                                    <Dropdown.Item icon='user times' text='แบล็คลิสต์' />
+                                </Link>
+                            </DropdownMenu_Menu>
+                        </DropdownMenu>
+                        <Link href={`/departments/departments`}>
+                            <MenuItem
+                                name='แผนกงานในบริษัท'
+                            />
+                        </Link>
+                        {
+                            props.authStore.userData.role === 'Admin'
+                            ?   <Link href={`/user/user`}>
+                                    <MenuItem
+                                        name='เพิ่มผู้ใช้งานในระบบ'
+                                    />
+                                </Link>
+                            : null
+                        }
+                    </div>
+                : null
+            }
         </MenuBar>
     </div>
 )

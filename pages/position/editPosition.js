@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { Form , Button , Icon , Modal } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const Div = styled.div `
   position : relative ;
@@ -50,7 +52,11 @@ const SizeForm = styled(Form)`
 `
 
 const enhance = compose(
+  withLayout,
+  inject('authStore'),
   withState('position_name' , 'setPosition_Name'),
+  withState('position_id' , 'setPosition_id'),
+  withState('department_id' , 'setDepartment_id'),
   withState('departmentName' , 'setDepartmentName'),
   withState('all_position_name' , 'setAll_Position_name'),
   withState('defaultData' ,'setDefaultData'),
@@ -59,50 +65,72 @@ const enhance = compose(
   withProps({
     pageTitle: 'Edit Position'
   }),
-  withLayout,
+  withHandlers({
+    initGetDepartmentData: props => () => {
+      firebase.database().ref("positions/" + props.url.query.id)
+      .once("value").then( snapshot => {
+        let result = Object.assign(snapshot.val())
+        props.setPosition_Name(result.position_name)
+        props.setDefaultData(result.position_name)
+        props.setPosition_id(result.position_id)
+        props.setDepartment_id(result.department_id)
+        firebase.database().ref("departments/" + result.department_id)
+        .once("value").then( data => {
+          let name = Object.assign(data.val())
+          props.setDepartmentName(name.department_name)       
+        })
+      })
+    }
+  }),
   lifecycle({
     async componentDidMount(){
-      const url = `http://localhost:4000/positions/${this.props.url.query.id}`
-      const res = await axios.get(url)
-      let department_id
-      res.data.map( data => {        
-        this.props.setPosition_Name(data.position_name)
-        this.props.setDefaultData(data.position_name)
-        department_id = data.department_id
-      })
-
-      const urlDepartment = `http://localhost:4000/departments/${department_id}`
-      const response_des = await axios.get(urlDepartment)
-      this.props.setDepartmentName(response_des.data[0].department_name)      
-      
-      let position_all = []
-      const urlAllPosition = `http://localhost:4000/positions`
-      const response_pos = await axios.get(urlAllPosition)
-      response_pos.data.map( data => {
-        position_all.push(data.position_name)
-      })      
-     this.props.setAll_Position_name(position_all)
+      await this.props.initGetDepartmentData()
     }
   }),
   withHandlers({
     handleSavePositionName : props => (id) => event => {
-      let checkData = props.all_position_name.indexOf(props.position_name)
-      if (checkData === -1 || props.position_name === props.defaultData){
-        props.setModal(true)
-        props.setOpen(true)
-        const url = `http://localhost:4000/positions/${id}`
-        axios.put(url , {
-          id : id ,
-          position_name : props.position_name,
-        })
-        .then( res => {
-          console.log(res);
-          setTimeout(() => {
-            javascript:history.back()
-          }, 2000);
-        })
-        .catch( err => {
-          console.log(err);
+      console.log(props.position_name);
+      if (props.position_name) {
+        firebase.database()
+        .ref("positions")
+        .orderByChild("position_name")
+        .equalTo(props.position_name)
+        .once("value").then( snapshot => {
+          if (snapshot.val()) {
+            let result = Object.values(snapshot.val())
+            result.map( data => { 
+              if (data.department_id === props.url.query.id && props.position_name === props.defaultData) {
+                props.setOpen(true)
+                props.setModal(true)
+              }
+              if (data.department_id === props.url.query.id && props.position_name !== props.defaultData) {
+                props.setOpen(true)
+                props.setModal(false)
+              }
+              else{
+                props.setModal(true)
+                props.setOpen(true)
+                let result = {
+                  department_id : props.department_id,
+                  date : firebase.database.ServerValue.TIMESTAMP,
+                  position_id : props.position_id,
+                  position_name : props.position_name
+                }
+                firebase.database().ref('positions/' + props.position_id).update(result)
+              }
+            })
+          }
+          else{
+            props.setModal(true)
+            props.setOpen(true)
+            let result = {
+              department_id : props.department_id,
+              date : firebase.database.ServerValue.TIMESTAMP,
+              position_id : props.position_id,
+              position_name : props.position_name
+            }
+            firebase.database().ref('positions/' + props.position_id).update(result)
+          }
         })
       }
       else{
@@ -110,6 +138,7 @@ const enhance = compose(
       }
     },
     handleInputData: props => () => event => {
+      console.log(event.target.value);
       props.setPosition_Name(event.target.value)      
     },
     handleModalOpen: props => () => event => {
@@ -151,7 +180,7 @@ const enhance = compose(
                   <Panal>
                     แก้ไขตำแหน่ง {props.position_name} สำเร็จ<br/>
                   </Panal>
-                  <ButtonAdd positive onClick={setModal}>
+                  <ButtonAdd positive onClick={() => {javascript:history.back()}}>
                       <Icon name='checkmark' /> ตกลง
                   </ButtonAdd>
                 </center>
@@ -165,7 +194,7 @@ const enhance = compose(
   
 export default enhance((props) => 
   <div>
-    {Breadcrumb2Page('ตำแหน่งงานในบริษัท' , 'แก้ไขตำแหน่งงานในบริษัท' , '/position/position')}
+    {Breadcrumb2Page('ตำแหน่งงานในบริษัท' , 'แก้ไขตำแหน่งงานในบริษัท' , 'javascript:history.back()')}
     <Div>
       <center>{TextHeader('แก้ไขตำแหน่งในบริษัท')}</center>
       <center>
@@ -185,7 +214,7 @@ export default enhance((props) =>
               id='namePositions'
               label='ชื่อตำแหน่งที่ต้องการแก้ไข :'
               placeholder='กรุณากรอก ชื่อตำแหน่งที่ต้องการ'
-              defaultValue={props.position_name}
+              value={props.position_name}
               onChange={props.handleInputData()}
               autoFocus
             />

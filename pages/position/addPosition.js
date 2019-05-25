@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { Form , Button , Icon , Modal } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import axios from 'axios'
+import { inject, observer } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const Div = styled.div `
   position : relative ;
@@ -50,6 +52,8 @@ const SizeForm = styled(Form)`
 `
 
 const enhance = compose(
+  withLayout,
+  inject('authStore'),
   withState('position_name' , 'setPosition_Name'),
   withState('departmentName' , 'setDepartmentName'),
   withState('all_position_name' , 'setAll_Position_name'),
@@ -59,20 +63,18 @@ const enhance = compose(
   withProps({
     pageTitle: 'Add Position'
   }),
-  withLayout,
+  withHandlers({
+    initGetDepartmentData: props => () => {
+      firebase.database().ref("departments/" + props.url.query.data)
+      .once("value").then( snapshot => {
+        let result = Object.assign(snapshot.val())          
+        props.setDepartmentName(result.department_name)
+      })
+    }
+  }),
   lifecycle({
     async componentDidMount(){
-      const url = `http://localhost:4000/departments/${this.props.url.query.data}`
-      const res = await axios.get(url)
-      this.props.setDepartmentName(res.data[0].department_name)
-      
-      let position_all = []
-      const urlAllPosition = `http://localhost:4000/positions`
-      const response = await axios.get(urlAllPosition)
-      response.data.map( data => {
-        position_all.push(data.position_name)
-      })      
-     this.props.setAll_Position_name(position_all)
+      await this.props.initGetDepartmentData()
     }
   }),
   withHandlers({
@@ -80,26 +82,49 @@ const enhance = compose(
       props.setPosition_Name(event.target.value)
     },
     handleSavePosition: props => () => event => {
-      let checkData = props.all_position_name.indexOf(props.position_name)
-      if (checkData === -1 && props.position_name !== props.defaultData){
-        props.setModal(true)
-        props.setOpen(true)
-        props.setDefaultData(props.position_name)
-        const url = 'http://localhost:4000/positions'
-        axios.post(url , {
-          position_name : props.position_name ,
-          department_id : props.url.query.data
-        })
-        .then( res => {
-          console.log(res);
-        })
-        .catch( err => {
-          console.log(err);
+      if (props.position_name) {
+        firebase.database()
+        .ref("positions")
+        .orderByChild("position_name")
+        .equalTo(props.position_name)
+        .once("value").then( snapshot => {
+          if (snapshot.val()) {
+            let result = Object.values(snapshot.val())
+            result.map( data => { 
+              if (data.department_id === props.url.query.data) {
+                props.setOpen(true)
+                props.setModal(false)
+              }
+              else{
+                props.setModal(true)
+                props.setOpen(true)
+                let uniqueID = firebase.database().ref().push().key
+                let result = {
+                  department_id : props.url.query.data,
+                  date : firebase.database.ServerValue.TIMESTAMP,
+                  position_id : uniqueID,
+                  position_name : props.position_name
+                }
+                firebase.database().ref('positions/' + uniqueID).set(result)
+              }
+            })
+          }
+          else{
+            props.setModal(true)
+            props.setOpen(true)
+            let uniqueID = firebase.database().ref().push().key
+            let result = {
+              department_id : props.url.query.data,
+              date : firebase.database.ServerValue.TIMESTAMP,
+              position_id : uniqueID,
+              position_name : props.position_name
+            }
+            firebase.database().ref('positions/' + uniqueID).set(result)
+          }
         })
       }
       else{
         props.setOpen(true)
-        props.setModal(false)
       }
     },
     handleModalOpen: props => () => event => {
@@ -141,7 +166,7 @@ const enhance = compose(
               <Panal>
                 เพิ่มตำแหน่ง {props.position_name} สำเร็จ<br/>
               </Panal>
-              <ButtonAdd positive onClick={setModal}>
+              <ButtonAdd positive onClick={() => {javascript:history.back()}}>
                   <Icon name='checkmark' /> ตกลง
               </ButtonAdd>
             </center>
@@ -150,7 +175,8 @@ const enhance = compose(
         )
       }
     }
-  })
+  }),
+  observer
 )
   
 export default enhance((props) => 

@@ -1,11 +1,12 @@
 import { withLayout } from '../../hoc'
 import React from 'react'
-import { compose, withProps , withHandlers , withState} from 'recompose'
+import { compose, withProps , withHandlers , withState , lifecycle } from 'recompose'
 import { TextHeader } from '../../components/TextHeader'
 import styled from 'styled-components'
 import { Form , Input , Button , Icon , TextArea } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
-import { log } from 'util';
+import { inject } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const Div = styled.div `
   position : relative ;
@@ -37,26 +38,44 @@ const SizeInput = styled(Form.Input)`
 `;
 
 const enhance = compose(
-    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 1234 , des: 'ทำงานดีเกินไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 5678 , des: 'ทำงานดีเกินไป' } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 9876 , des: 'ทำงานดีเกินไป'}]),
+    withLayout,
+    inject('authStore'),
+    withState('list' , 'setlist'),
     withState('keyData' , 'setKeyData', undefined),
+    withState('uid' , 'setUid'),
     withState('firstname' , 'setFirstname', undefined),
     withState('lastname' , 'setLastname', undefined),
     withState('idcard' , 'setIdcard', undefined),
+    withState('reason' , 'setReason', undefined),
     withProps({
     pageTitle: 'Add Blacklist'
     }),
-    withLayout,
+    withHandlers({
+        initGetUserData: props => () => {
+            firebase.database().ref('users')
+            .orderByChild("blacklist")
+            .equalTo(false)
+            .once("value").then( snapshot => {
+                props.setlist(Object.values(snapshot.val()))
+            })
+        }
+    }),
+    lifecycle({
+        async componentDidMount(){
+            await this.props.initGetUserData()            
+        }
+    }),
     withHandlers({
         handleOptionFnameInput: props => (fname , keyData) => {
             let fnameData = fname.map( (data , i) => {
                 if (i === 0) {                    
                     return(
-                        <option value={data.fname} key={i}/>
+                        <option value={data.firstname} key={i}/>
                     )
                 }
                 else{
                     return(
-                        <option value={data.fname} key={i} />
+                        <option value={data.firstname} key={i} />
                     )
                 }
             })
@@ -65,7 +84,7 @@ const enhance = compose(
         handleOptionLnameInput: props => (lname , keyData) =>{
             let lnameData = lname.map( (data , i) => {
                 return(
-                    <option value={data.lname} key={i} />
+                    <option value={data.lastname} key={i} />
                 )
             })
             return lnameData
@@ -87,23 +106,37 @@ const enhance = compose(
             }
             else{                
                 props.list.map( data => {
-                    if(inputData === data.lname){
-                        props.setFirstname(data.fname)
-                        props.setLastname(data.lname)
+                    if(inputData === data.lastname){
+                        props.setFirstname(data.firstname)
+                        props.setLastname(data.lastname)
                         props.setIdcard(data.idcard)
+                        props.setUid(data.uid)
                     }
-                    if(inputData === data.fname){
-                        props.setFirstname(data.fname)
-                        props.setLastname(data.lname)
+                    if(inputData === data.firstname){
+                        props.setFirstname(data.firstname)
+                        props.setLastname(data.lastname)
                         props.setIdcard(data.idcard)
+                        props.setUid(data.uid)
                     }                    
                     if(inputData === data.idcard){
-                        props.setFirstname(data.fname)
-                        props.setLastname(data.lname)
+                        props.setFirstname(data.firstname)
+                        props.setLastname(data.lastname)
                         props.setIdcard(data.idcard)
+                        props.setUid(data.uid)
                     }
                 })     
             }
+        },
+        handleSubmitBlacklist: props => () => {
+            let result = {
+              user_id : props.uid,
+              idcard : props.idcard,
+              reason : props.reason,
+              date : firebase.database.ServerValue.TIMESTAMP
+            }
+            firebase.database().ref('blacklist/' + props.uid).set(result)
+            firebase.database().ref('users/' + props.uid).update({ blacklist : true})
+
         }
     })
 )
@@ -116,6 +149,8 @@ export default enhance((props) =>
             <center>
                 <IconLine name="window minimize outline"/>
             </center>
+            {
+                props.list &&
                 <SizeForm>
                     <Form.Group widths='equal'>
                         <SizeInput
@@ -154,6 +189,7 @@ export default enhance((props) =>
                         name="idcard"
                         onKeyUp={props.onChangeInput()}
                         defaultValue={props.idcard}
+                        disabled={props.idcard ? true : false}
                     />
                     <datalist id="idcard">
                         {props.handleOptionIdcardInput(props.list)}
@@ -163,9 +199,10 @@ export default enhance((props) =>
                         control={TextArea}
                         label='รายละเอียด/เหตุผล :'
                         placeholder='รายละเอียดหรือเหตุผลในการติดแบล็คลิสต์'
+                        onChange={(event) => props.setReason(event.target.value)}
                     />
                     <DivButton>
-                        <ButtonText floated='right' positive>
+                        <ButtonText floated='right' positive onClick={() => props.handleSubmitBlacklist()} disabled={ props.firstname && props.lastname && props.idcard && props.reason ? false : true}>
                             <Icon name='checkmark' /> บันทึก
                         </ButtonText>
                         <ButtonText floated='right' href="javascript:history.back()">
@@ -173,6 +210,7 @@ export default enhance((props) =>
                         </ButtonText>
                     </DivButton>
                 </SizeForm>
+            }
         </Div>
     </div>
 );

@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
+import { inject } from 'mobx-react'
+import { firebase } from '../../firebase/index'
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -49,22 +51,62 @@ const HeaderContent = styled(Header)`
 `
 
 const enhance = compose(
-    withState('list' , 'setlist' , [{fname: 'Tan' , lname : 'Kitpakorn' , posi : 'Fontend Developer' , idcard : 'ทำงานดีเกินไป'} , {fname: 'May' , lname : 'Hathairat' , posi : 'Backend Developer' , idcard : 'ทำงานดีเกินไป' } , {fname: 'Gook' , lname : 'Down' , posi : 'Fullstack Developer' , idcard : 'ทำงานดีเกินไป'}]),
+    withLayout,
+    inject('authStore'),
+    withState('list' , 'setlist'),
+    withState('blacklist' , 'setBlacklist'),
     withProps({
       pageTitle: 'Welcome to PowerHR Admin',
     }),
-    withLayout,
     withHandlers({
-        handleClickModal: props => (idcard , position) => {            
+        initGetUserlistData: props => () => {
+            firebase.database().ref('users')
+            .orderByChild("blacklist")
+            .equalTo(true)
+            .once("value").then( snapshot => {
+                props.setlist(Object.values(snapshot.val()))
+                console.log(Object.values(snapshot.val()));
+            })
+        },
+        initGetBlacklistData: props => () => {
+            firebase.database().ref('blacklist')
+            .once("value").then( snapshot => {
+                props.setBlacklist(Object.values(snapshot.val()))
+                console.log(Object.values(snapshot.val()));
+                
+            })
+        }
+    }),
+    lifecycle({
+        async componentDidMount(){
+            await this.props.initGetUserlistData()
+            await this.props.initGetBlacklistData()
+        }
+    }),
+    withHandlers({
+        handleClickModal: props => (idcard , reason) => {            
             return(
                 <Modal.Content>
                     <Modal.Description>
-                        <p>ตำแหน่ง : {position}</p>
-                        <p>รานละเอียด / เหตุผลแบล็คลิสต์ : {idcard}</p>
+                        <p>รหัสประจำตัวประชาชน : {idcard}</p>
+                        <p>รานละเอียด / เหตุผลแบล็คลิสต์ : {reason}</p>
                     </Modal.Description>
                 </Modal.Content>
             )
         },
+        handleDeleteBlackList: props => (uid) => {
+            const deleteUser = firebase.database().ref('blacklist/' + uid);
+            deleteUser.remove()
+            .then(function() {
+                props.initGetUserlistData()
+                props.initGetBlacklistData()
+                firebase.database().ref('users/' + uid).update({ blacklist : false})
+            })
+            .catch(function(error) {
+                console.log("Remove failed: " + error.message)
+            });
+            
+        }
     }),
 )
     
@@ -74,7 +116,7 @@ let link = '/blacklist/addBlacklist'
 
 export default enhance((props) => 
     <Div>
-        {TextHeaderTable(blacklist_name , `${props.list.length}` , button_name , 'รายชื่อ' , link)}
+        {TextHeaderTable(blacklist_name , props.list && props.list.length , button_name , 'รายชื่อ' , link)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -85,7 +127,7 @@ export default enhance((props) =>
                         <center>นามสกุล</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>ตำแหน่ง</center>
+                        <center>รหัสบัครประชาชน</center>
                     </TableHeadcell>
                     <TableHeadcell>
                         <center>จัดการข้อมูล</center>
@@ -93,64 +135,67 @@ export default enhance((props) =>
                 </Table.Row>
             </Table.Header>
             <TableBody>
-                {props.list.map( (data , i) => {
-                    return (
-                        <TableRow key={i}>
-                            <Modal trigger={
+            {
+                props.list &&
+                    props.list.map( (data , i) => {
+                        return (
+                            <TableRow key={i}>
+                                <Modal trigger={
+                                    <TableCell>
+                                        <center>{data.firstname}</center>
+                                    </TableCell>
+                                }closeIcon size='small'>
+                                    <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
+                                    {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
+                                </Modal>
+                                <Modal trigger={
+                                    <TableCell>
+                                        <center>{data.lastname}</center>
+                                    </TableCell>
+                                }closeIcon size='small'>
+                                    <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
+                                    {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
+                                </Modal>
+                                <Modal trigger={
+                                    <TableCell>
+                                        <center>{data.idcard}</center>
+                                    </TableCell>
+                                }closeIcon size='small'>
+                                    <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
+                                    {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
+                                </Modal>
                                 <TableCell>
-                                    <center>{data.fname}</center>
+                                    <center>
+                                        <Modal 
+                                            trigger={
+                                                <ButtonAdd animated='fade' size='mini' color="youtube">
+                                                    <Button.Content visible content='ลบ'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='trash alternate' />
+                                                    </Button.Content>
+                                                </ButtonAdd>
+                                            }
+                                            size="tiny"
+                                            closeIcon
+                                        >
+                                            <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
+                                            <Modal.Content>
+                                                <p>
+                                                    คุณต้องการลบข้อมูล {data.firstname} {data.lastname} รหัสประจำตัวประชาชน {data.idcard} ใช่หรือไม่ ?
+                                                </p>
+                                            </Modal.Content>
+                                            <Modal.Actions>
+                                                <ButtonAdd color='green' onClick={() => props.handleDeleteBlackList(data.uid)}>
+                                                    <Icon name='checkmark' /> ยืนยัน
+                                                </ButtonAdd>
+                                            </Modal.Actions>
+                                        </Modal>
+                                    </center>
                                 </TableCell>
-                            }closeIcon size='small'>
-                                <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.fname} ${data.lname}`} />
-                                {props.handleClickModal(data.idcard , data.posi)}
-                            </Modal>
-                            <Modal trigger={
-                                <TableCell>
-                                    <center>{data.lname}</center>
-                                </TableCell>
-                            }closeIcon size='small'>
-                                <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.fname} ${data.lname}`} />
-                                {props.handleClickModal(data.idcard , data.posi)}
-                            </Modal>
-                            <Modal trigger={
-                                <TableCell>
-                                    <center>{data.posi}</center>
-                                </TableCell>
-                            }closeIcon size='small'>
-                                <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.fname} ${data.lname}`} />
-                                {props.handleClickModal(data.idcard , data.posi)}
-                            </Modal>
-                            <TableCell>
-                                <center>
-                                    <Modal 
-                                        trigger={
-                                            <ButtonAdd animated='fade' size='mini' color="youtube">
-                                                <Button.Content visible content='ลบ'/>
-                                                <Button.Content hidden >
-                                                    <Icon name='trash alternate' />
-                                                </Button.Content>
-                                            </ButtonAdd>
-                                        }
-                                        size="tiny"
-                                        closeIcon
-                                    >
-                                        <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
-                                        <Modal.Content>
-                                            <p>
-                                                คุณต้องการลบข้อมูล {data.fname} {data.lname} ตำแหน่ง {data.posi} ใช่หรือไม่ ?
-                                            </p>
-                                        </Modal.Content>
-                                        <Modal.Actions>
-                                            <ButtonAdd color='green'>
-                                                <Icon name='checkmark' /> ยืนยัน
-                                            </ButtonAdd>
-                                        </Modal.Actions>
-                                    </Modal>
-                                </center>
-                            </TableCell>
-                        </TableRow>
-                    )
-                })}
+                            </TableRow>
+                        )
+                    })
+            }
             </TableBody>
         </TablePosition>
     </Div>

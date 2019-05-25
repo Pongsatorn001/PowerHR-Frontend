@@ -6,8 +6,6 @@ import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
-import axios from 'axios'
-import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import { inject, observer } from 'mobx-react'
 import { firebase } from '../../firebase/index'
 
@@ -48,6 +46,7 @@ const ButtonText = styled(Button)`
 `
 const TableCell = styled(Table.Cell)`
     border-top : none !important;
+    font-family : 'Kanit', sans-serif !important;
 `
 const Div = styled.div `
     position : relative ;
@@ -72,23 +71,15 @@ const enhance = compose(
     withState('modalShow' , 'setModalShow' , false),
     withState('delSuccess' , 'setDelsucces' , false),
     withState('idList' , 'setIdList'),
-    withState('departmentName' , 'setDepartmentName'),
     withProps({
-        pageTitle: 'Positions'
+        pageTitle: 'Users'
     }),
     withHandlers({
-        initDepartmentData: props => () => {
-            firebase.database().ref("departments/" + props.url.query.id)
-            .once("value").then( snapshot => {
-                let result = Object.assign(snapshot.val())          
-                props.setDepartmentName(result.department_name)
-            })
-        },
-        initPositionInDepartment: props => () => {
+        initUserData: props => () => {
             firebase.database()
-            .ref("positions")
-            .orderByChild("department_id")
-            .equalTo(props.url.query.id)
+            .ref("users")
+            .orderByChild('role')
+            .startAt('Admin').endAt('Leader')
             .once("value").then( snapshot => {
                 props.setlist(Object.values(snapshot.val()))
             })
@@ -96,23 +87,22 @@ const enhance = compose(
     }),
     lifecycle({
         async componentDidMount(){
-            await this.props.initDepartmentData()       
-            await this.props.initPositionInDepartment()     
+            await this.props.initUserData()
         },
 
     }),
     withHandlers({
-        handleDeletePositionName: props => () => event => {
-            const deleteUser = firebase.database().ref('positions/' + props.idList);
+        handleDeleteUser: props => () => event => {
+            const deleteUser = firebase.database().ref('users/' + props.idList);
             deleteUser.remove()
             .then(function() {
-                props.initDepartmentData()
-                props.initPositionInDepartment()
+                props.initUserData()
                 props.setOpen(false)
             })
             .catch(function(error) {
                 console.log("Remove failed: " + error.message)
             });
+            
         },
         handleModalOpen: props => (foo , name , id) => event => {
             props.setOpen(foo)
@@ -155,7 +145,7 @@ const enhance = compose(
                             <center>
                                 <IconModal name="info circle"/><br/><br/>
                                     <Panal>
-                                        ลบตำแหน่งงาน {props.headerName} สำเร็จ<br/>
+                                        ลบผู้ใช้งาน {props.headerName} สำเร็จ<br/>
                                     </Panal>
                                 <ButtonAdd positive onClick={setModal}>
                                     <Icon name='checkmark' /> ตกลง
@@ -173,19 +163,18 @@ const enhance = compose(
     observer
 )
 
-let button_name = 'เพิ่มตำแหน่ง'
-let link = '/position/addPosition'
+let button_name = 'เพิ่มผู้ใช้งานในระบบ'
+let link = '/user/adduser'
 
 export default enhance( (props)=>
     <div>
-        {Breadcrumb2Page('แผนกงานในบริษัท' , 'ตำแหน่งงานในแผนก' , `/departments/departments`)}
         <Div>
-            {TextHeaderTable(`ตำแหน่งงานในแผนก ${props.departmentName}` , `${props.list.length}` , button_name , 'ตำแหน่ง' , link , props.url.query.id)}
+            {TextHeaderTable(`รายชื่อผู้ใช้งานในระบบ` , `${props.list.length}` , button_name , 'คน' , link)}
             <TablePosition striped>
                 <Table.Header>
                     <Table.Row>
                         <TableHeadcell>
-                            <center>รหัส</center>
+                            <center>ชื่อ</center>
                         </TableHeadcell>
                         <TableHeadcell>
                             <center>ตำแหน่ง</center>
@@ -201,14 +190,14 @@ export default enhance( (props)=>
                         return (
                             <TableRow key={i}>
                                 <TableCell>
-                                    <center>{i + 1}</center>
+                                    <label style={{ marginLeft : '35%' }}>{data.name}</label>
                                 </TableCell>
                                 <TableCell>
-                                    <label style={{ marginLeft : '39%' }}>{data.position_name}</label>
+                                    <center>{data.role}</center>
                                 </TableCell>
                                 <TableCell>
                                     <center>
-                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.position_id } }}>
+                                        <Link href={{ pathname: '/user/edituser', query: { id : data.uid } }}>
                                             <ButtonEdit animated='fade' size='mini'>
                                                 <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
@@ -216,7 +205,7 @@ export default enhance( (props)=>
                                                 </Button.Content>
                                             </ButtonEdit>
                                         </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.position_id)}>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.name,data.uid)} disabled={data.role === 'Admin' && data.uid === props.authStore.userData.uid ? true : false}>
                                             <Button.Content visible content='ลบ'/>
                                             <Button.Content hidden >
                                                 <Icon name='trash alternate' />
@@ -230,14 +219,14 @@ export default enhance( (props)=>
                                             <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
                                                 <Modal.Content>
                                                     <p>
-                                                        คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                        คุณต้องการลบผู้ใช้งาน <b>{props.headerName}</b> ออกจากระบบใช่หรือไม่ ?
                                                     </p>
                                                 </Modal.Content>
                                             <Modal.Actions>
                                                 <ButtonText  onClick={props.handleModalOpen(false)}>
                                                     <Icon name='times' /> ยกเลิก
                                                 </ButtonText>
-                                                <ButtonAdd color='green' onClick={props.handleDeletePositionName()}>
+                                                <ButtonAdd color='green' onClick={props.handleDeleteUser()}>
                                                     <Icon name='checkmark' /> ยืนยัน
                                                 </ButtonAdd>
                                             </Modal.Actions>

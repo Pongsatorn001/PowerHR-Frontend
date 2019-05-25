@@ -16,9 +16,11 @@ const PageWrapper = styled(Box) `
 const ContentWrapper = styled(Box) `
     padding: ${theme.dimens.xl} ${theme.dimens.md} ${theme.dimens.md} ${theme.dimens.xl} ;
     backgroud-color: lightgray;
+    font-family: 'Kanit', sans-serif !important;
 `
 const enhance = compose(
     withApp,
+    inject('authStore')
 )
 
 export default function withLayout(WrappedComponent) {
