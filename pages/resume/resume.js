@@ -127,16 +127,17 @@ const enhance = compose(
             .equalTo(props.url.query.id)
             .once("value").then( snapshot => {
                 props.setList(Object.values(snapshot.val()))
-                console.log(Object.values(snapshot.val()));
+                console.log(Object.values(snapshot.val()),"Object");
             })
         },
         handleSubmitChangeStatus: props => (applyJobId, status) => {
-            console.log(applyJobId,"applyJobId",props.hrChecked,"props.hrChecked",status,"status")
-            
               firebase.database().ref('apply_jobs/' + applyJobId).update({ 
                 hr_status : props.hrChecked,
                 status : props.hrChecked < 3 ? props.hrChecked : status
                })
+        },
+        handleSubmitLeaderChangeStatus: props => (applyJobId, status) => {
+            
         },
         initGetUserData: props => () => {
             firebase.database().ref('users')
@@ -165,7 +166,7 @@ const enhance = compose(
         handleClickChange : props => () => event => {
             props.setRedio(false)
         },
-        handleClickModal: props => (applyJobId, status) => {          
+        handleClickModal: props => (applyJobId, status, hr_status, leader_status) => {          
             return(
                 <Modal.Description>
                     <MarginGrid columns={2}>
@@ -185,7 +186,7 @@ const enhance = compose(
                                             label='รอการพิจารณา'
                                             name='HrSelectStatus'
                                             value='0'
-                                            checked={props.hrChecked === '0'}
+                                            checked={hr_status === '0'}
                                             onChange={props.handleOnChangeHrStatus('0')}
                                         />
                                     </Form.Field>
@@ -193,7 +194,7 @@ const enhance = compose(
                                         <Radio
                                             label='ไม่ผ่านการพิจารณา'
                                             name='HrSelectStatus'
-                                            checked={props.hrChecked === '1'}
+                                            checked={hr_status === '1'}
                                             onChange={props.handleOnChangeHrStatus('1')}
                                         />
                                     </Form.Field>
@@ -201,7 +202,7 @@ const enhance = compose(
                                         <Radio
                                             label='เรียกสัมภาษณ์'
                                             name='HrSelectStatus'
-                                            checked={props.hrChecked === '2'}
+                                            checked={hr_status === '2'}
                                             onChange={props.handleOnChangeHrStatus('2')}
                                         />
                                     </Form.Field>
@@ -209,7 +210,7 @@ const enhance = compose(
                                         <Radio
                                             label='ผ่านการสัมภาษณ์'
                                             name='HrSelectStatus'
-                                            checked={props.hrChecked === '3'}
+                                            checked={hr_status === '3'}
                                             onChange={props.handleOnChangeHrStatus('3')}
                                         />
                                     </Form.Field>
@@ -217,7 +218,7 @@ const enhance = compose(
                                         <Radio
                                             label='ไม่ผ่านการสัมภาษณ์'
                                             name='HrSelectStatus'
-                                            checked={props.hrChecked === '4'}
+                                            checked={hr_status === '4'}
                                             onChange={props.handleOnChangeHrStatus('4')}
                                         />
                                     </Form.Field>
@@ -376,6 +377,9 @@ let link ='/resume/addResume'
 
 export default enhance( (props)=> 
     <div>
+        {
+            console.log(props.list,"props.list")
+        }
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
             <Div>
@@ -414,7 +418,18 @@ export default enhance( (props)=>
                                                 </center>
                                             }
                                         >
-                                            <ColorModelHeader>ประวัติ : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <ColorModelHeader>
+                                                ประวัติ : คุณ
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                                }
+                                                &nbsp; 
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+                                                }
+                                            </ColorModelHeader>
                                             <Modal.Content>
                                                 <Sizeiframe srcsrc={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
@@ -436,11 +451,21 @@ export default enhance( (props)=>
                                                        }
                                                    </center>
                                                 }>
-                                            <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <ColorModelHeader>Resume : คุณ
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                                }
+                                                &nbsp; 
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+                                                }
+                                            </ColorModelHeader>
                                             <Modal.Content>
                                                 <Sizeiframe src={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
-                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status)}
+                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status, dataResume.hr_status, dataResume.leader_status)}
                                             <Divider hidden />
                                             <Modal.Actions>
                                             <ButtonClose>
@@ -451,7 +476,17 @@ export default enhance( (props)=>
                                     </TableCell>
                                     <TableCell>
                                         <Modal trigger={<center>{dataResume.rate}</center>}>
-                                            <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <ColorModelHeader>Resume : คุณ
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                                }
+                                                &nbsp; 
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+                                                }
+                                            </ColorModelHeader>
                                             <Modal.Content>
                                                 <Sizeiframe srcsrc={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
@@ -468,15 +503,29 @@ export default enhance( (props)=>
                                         <Modal trigger={
                                             <center>
                                             {
-                                                dataResume.status === 0
-                                                    ?   "รอการพิจารณา"
-                                                    : dataResume.status === 1
-                                                        ?   "ผ่านการพิจารณา"
-                                                        :   "ไม่ผ่านการพิจารณา"
+                                                 props.hrChecked === '1'
+                                                 ? "ไม่ผ่านการพิจารณา"
+                                                 : props.hrChecked === '2' 
+                                                     ? "เรียกสัมภาษณ์"
+                                                     : props.hrChecked === '3' 
+                                                         ? "ผ่านการสัมภาษณ์"
+                                                         : props.hrChecked === '4' 
+                                                             ? "ไม่ผ่านการสัมภาษณ์"
+                                                             : "รอการสัมภาษณ์"
                                             }
                                             </center>
                                         }>
-                                            <ColorModelHeader>Resume : คุณ{dataResume.name}&nbsp; {dataResume.lastName}</ColorModelHeader>
+                                            <ColorModelHeader>Resume : คุณ
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                                }
+                                                &nbsp; 
+                                                {
+                                                    props.users &&
+                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+                                                }
+                                            </ColorModelHeader>
                                             <Modal.Content>
                                                 <Sizeiframe srcsrc={dataResume.resume_pdf}></Sizeiframe>
                                             </Modal.Content>
@@ -506,7 +555,19 @@ export default enhance( (props)=>
                                                 <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัคร' />
                                                     <Modal.Content>
                                                         <p>
-                                                            คุณต้องการลบข้อมูลการสมัครงานของ <b>{dataResume.name} {dataResume.lastName}</b> ใช่หรือไม่ ?
+                                                            คุณต้องการลบข้อมูลการสมัครงานของ <b> คุณ
+                                                            {
+                                                                
+                                                                props.users &&
+                                                                props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                                                
+                                                            }&nbsp;
+                                                            {
+
+                                                                 props.users &&
+                                                                 props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+
+                                                            }</b> ใช่หรือไม่ ?
                                                         </p>
                                                     </Modal.Content>
                                                 <Modal.Actions>
