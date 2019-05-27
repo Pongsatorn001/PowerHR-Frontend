@@ -136,31 +136,42 @@ const enhance = compose(
             })
         },
         handleSubmitChangeStatus: props => (applyJobId, status) => {
-            props.setHrOpenModelEditStatus(false)
-            let check_status 
-            if(props.hrChecked && props.leaderChecked){
-
-                if(props.hrChecked === 3 && props.leaderChecked === 3){
-                    check_status = 3
-                }else{
-                    check_status = 4
+            let { hrChecked , leaderChecked } = props
+            let hr_status = parseInt(hrChecked)
+            let result
+            if (hr_status) {
+                if (hr_status === 0) {
+                    result = 0
                 }
-            }else{
-                if(!props.hrChecked){
-                    check_status = status
+                else if (hr_status === 1) {
+                    result = 1
                 }
-                if(props.hrChecked < 3){
-                    check_status = props.hrChecked
+                else if (hr_status === 2) {
+                    result = 2
                 }
-                if(props.hrChecked && !props.leaderChecked){
-                    check_status = status
+                else if (hr_status === 3 && leaderChecked === 3) {
+                    result = 3
+                }
+                else if (hr_status === 3 && leaderChecked === undefined || hr_status === 4 && leaderChecked === undefined) {
+                    result = status
+                }
+                else{
+                    result = 4
                 }
             }
-            console.log(check_status,"check_status",props.hrChecked , props.leaderChecked)
-              firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+            else{
+                if (hr_status === 0) {
+                    result = 0
+                }
+                else{
+                    result = status
+                }
+            }
+            firebase.database().ref('apply_jobs/' + applyJobId).update({ 
                 hr_status : props.hrChecked ? props.hrChecked : status,
-                status : check_status
-               })
+                status : result
+            })
+            props.setHrOpenModelEditStatus(false)
         },
         handleSubmitLeaderChangeStatus: props => (applyJobId, status) => {
             props.setLeaderOpenModelEditStatus(false)
@@ -175,7 +186,7 @@ const enhance = compose(
             .equalTo("user")
             .once("value").then( snapshot => {
                 props.setUsers(Object.values(snapshot.val()))
-                console.log(Object.values(snapshot.val()));
+                console.log(Object.values(snapshot.val()) , 'user');
             })
         },
         handleOnChangeHrStatus: props => (hrChecked) => event => {
@@ -202,7 +213,7 @@ const enhance = compose(
                     <MarginGrid columns={2}>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> HR สถานะของผู้สมัคร</p>
-                            <Modal trigger={<ButtonEdit animated='fade' size='tiny' onClick={()=> props.setHrOpenModelEditStatus(true)}>
+                            <Modal trigger={<ButtonEdit animated='fade' size='tiny' onClick={()=> props.setHrOpenModelEditStatus("true")}>
                                                 <Button.Content visible content='แก้ไข'/>
                                                 <Button.Content hidden >
                                                     <Icon name='edit' />
@@ -279,12 +290,13 @@ const enhance = compose(
                         </Grid.Column>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> Leader เลือกสถานะของผู้สมัคร</p>
+                            {console.log(props.hrChecked , 'hrcheck')}
                             <Modal trigger={
                                         <ButtonEdit 
                                             animated='fade' 
                                             size='tiny' 
-                                            onClick={()=> props.setLeaderOpenModelEditStatus(true)}
-                                            disable={props.hrChecked && props.hrChecked >= 3 ? false : true}
+                                            onClick={()=> props.setLeaderOpenModelEditStatus("true")}
+                                            disable={props.hrChecked && props.hrChecked > '2' ? "false" : "true"}
                                         >
                                             <Button.Content visible content='แก้ไข'/>
                                             <Button.Content hidden >
@@ -337,8 +349,8 @@ const enhance = compose(
                     <MarginComment>
                         <TextHeader as='h3' dividing> ความคิดเห็นทั้งหมด </TextHeader>
                             {
-                                props.comment.map( (dataComment) =>
-                                    <Comment>
+                                props.comment.map( (dataComment , i) =>
+                                    <Comment key={i}>
                                         <Comment.Avatar src='https://i1.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1' />
                                             <Comment.Content>
                                                 <Comment.Author as='a'>{dataComment.nameComment}</Comment.Author>
@@ -409,9 +421,6 @@ let link ='/resume/addResume'
 
 export default enhance( (props)=> 
     <div>
-        {
-            console.log(props.list,"props.list")
-        }
         {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
             <Div>
@@ -442,7 +451,7 @@ export default enhance( (props)=>
                                 <TableRow key={i}>
                                     <TableCell>
                                         <Modal trigger={
-                                                <label style={{ marginLeft : '35%' , cursor : 'pointer' }} onClick={() => props.setOpenModel(true)}>
+                                                <label style={{ marginLeft : '35%' , cursor : 'pointer' }} onClick={() => props.setOpenModel("true")}>
                                                 {
                                                     props.users &&
                                                     props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
@@ -478,7 +487,7 @@ export default enhance( (props)=>
                                     </TableCell>
                                     <TableCell>
                                         <Modal trigger={
-                                                   <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelLastName(true)}>
+                                                   <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelLastName("true")}>
                                                        {
                                                             props.users &&
                                                             props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
@@ -512,7 +521,7 @@ export default enhance( (props)=>
                                     </TableCell>
                                     <TableCell>
                                         <Modal trigger={
-                                            <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelRate(true)}>
+                                            <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelRate("true")}>
                                                 {dataResume.rate}
                                             </label>}
                                                 open={props.openModelRate}
@@ -542,7 +551,7 @@ export default enhance( (props)=>
                                     </TableCell>
                                     <TableCell>
                                         <Modal trigger={
-                                            <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelStatus(true)}>
+                                            <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelStatus("true")}>
                                             {
                                                  dataResume.status === '1'
                                                  ? "ไม่ผ่านการพิจารณา"
@@ -557,7 +566,7 @@ export default enhance( (props)=>
                                             </label>
                                         }
                                             open={props.openModelStatus}
-                                        >+
+                                        >
                                             <ColorModelHeader>Resume : คุณ
                                                 {
                                                     props.users &&
