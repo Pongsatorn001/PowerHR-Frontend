@@ -43,7 +43,6 @@ export const TextHeaderTable = (name , descrip , button ,  positions , link , qu
             <HeaderName as='h1' floated='left'>
                 {name}&nbsp;<Small>( {descrip} {positions} )</Small>
             </HeaderName>
-            {console.log(bool , 'bool')}
             {
                 bool
                 ?   <div><br/> <br/></div>

@@ -36,9 +36,6 @@ const TableBody = styled(Table.Body)`
 const TableRow = styled(Table.Row)`
     border-color : ${theme.colors.elementBackground} ;
     background: ${theme.colors.elementBackground} ;
-    &:hover {
-        background : #ff84a12b !important;
-    };
 `;
 
 const TableCell = styled(Table.Cell)`
@@ -124,6 +121,11 @@ const enhance = compose(
     withState('openModelStatus','setOpenModelStatus', false),
     withState('hrOpenModelEditStatus', 'setHrOpenModelEditStatus', false),
     withState('leaderOpenModelEditStatus', 'setLeaderOpenModelEditStatus', false),
+    withState('resume_pdf' , 'setResume_pdf'),
+    withState('resume_firstname' , 'setResume_firstname'),
+    withState('resume_lastname' , 'setResume_lastname'),
+    withState('resume_pdf' , 'setResume_pdf'),
+    withState('resumeData' , 'setResumeData'),
     withHandlers({
         initGetResumeInJobsPosition: props => () => {
             firebase.database()
@@ -132,53 +134,7 @@ const enhance = compose(
             .equalTo(props.url.query.id)
             .once("value").then( snapshot => {
                 props.setList(Object.values(snapshot.val()))
-                console.log(Object.values(snapshot.val()),"Object");
             })
-        },
-        handleSubmitChangeStatus: props => (applyJobId, status) => {
-            let { hrChecked , leaderChecked } = props
-            let hr_status = parseInt(hrChecked)
-            let result
-            if (hr_status) {
-                if (hr_status === 0) {
-                    result = 0
-                }
-                else if (hr_status === 1) {
-                    result = 1
-                }
-                else if (hr_status === 2) {
-                    result = 2
-                }
-                else if (hr_status === 3 && leaderChecked === 3) {
-                    result = 3
-                }
-                else if (hr_status === 3 && leaderChecked === undefined || hr_status === 4 && leaderChecked === undefined) {
-                    result = status
-                }
-                else{
-                    result = 4
-                }
-            }
-            else{
-                if (hr_status === 0) {
-                    result = 0
-                }
-                else{
-                    result = status
-                }
-            }
-            firebase.database().ref('apply_jobs/' + applyJobId).update({ 
-                hr_status : props.hrChecked ? props.hrChecked : status,
-                status : result
-            })
-            props.setHrOpenModelEditStatus(false)
-        },
-        handleSubmitLeaderChangeStatus: props => (applyJobId, status) => {
-            props.setLeaderOpenModelEditStatus(false)
-            firebase.database().ref('apply_jobs/' + applyJobId).update({ 
-                leader_status : props.leaderChecked,
-                status : props.leaderChecked === 3 && props.hrChecked === 3 ? 3 : 4
-               })
         },
         initGetUserData: props => () => {
             firebase.database().ref('users')
@@ -186,7 +142,6 @@ const enhance = compose(
             .equalTo("user")
             .once("value").then( snapshot => {
                 props.setUsers(Object.values(snapshot.val()))
-                console.log(Object.values(snapshot.val()) , 'user');
             })
         },
         handleOnChangeHrStatus: props => (hrChecked) => event => {
@@ -195,6 +150,63 @@ const enhance = compose(
         handleOnChangeLeaderStatus: props => (leaderChecked) => event => {
             props.setLeaderChecked(leaderChecked)
         }
+    }),
+    withHandlers({
+        handleSubmitChangeStatus: props => (applyJobId) => {
+            if (props.hrChecked <= 2) {
+                firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+                    hr_status : props.hrChecked,
+                    status : props.hrChecked
+                })
+                props.initGetResumeInJobsPosition()
+                props.initGetUserData()
+                props.setHrOpenModelEditStatus(false)
+                props.setOpenModelRate(false)
+            }
+            else if (props.hrChecked === 3 && !props.leaderChecked) {
+                firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+                    hr_status : props.hrChecked,
+                    status : 2
+                })
+                props.initGetResumeInJobsPosition()
+                props.initGetUserData()
+                props.setHrOpenModelEditStatus(false)
+                props.setOpenModelRate(false)
+            }
+            else if (props.hrChecked === 3 && props.leaderChecked === 3) {
+                firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+                    hr_status : 3,
+                    leader_status : 3,
+                    status : 3
+                })
+                props.initGetResumeInJobsPosition()
+                props.initGetUserData()
+                props.setHrOpenModelEditStatus(false)
+                props.setOpenModelRate(false)
+            }
+            else{
+                firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+                    hr_status : 4,
+                    status : 4,
+                    leader_status: null
+                })
+                props.initGetResumeInJobsPosition()
+                props.initGetUserData()
+                props.setHrOpenModelEditStatus(false)
+                props.setOpenModelRate(false)
+            }
+            
+        },
+        handleSubmitLeaderChangeStatus: props => (applyJobId) => {
+            firebase.database().ref('apply_jobs/' + applyJobId).update({ 
+                leader_status : props.leaderChecked,
+                status : props.leaderChecked === 3 && props.hrChecked === 3 ? 3 : props.hrChecked < 2 ? 2 : 4
+            })
+            props.initGetResumeInJobsPosition()
+            props.initGetUserData()
+            props.setLeaderOpenModelEditStatus(false)
+            props.setOpenModelRate(false)
+        },
     }),
     lifecycle({
         async componentDidMount(){
@@ -207,96 +219,98 @@ const enhance = compose(
         handleClickChange : props => () => event => {
             props.setRedio(false)
         },
-        handleClickModal: props => (applyJobId, status, hr_status, leader_status) => {          
+        handleClickModal: props => (resumeData) => {  
             return(
                 <Modal.Description>
                     <MarginGrid columns={2}>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> HR สถานะของผู้สมัคร</p>
-                            <Modal trigger={<ButtonEdit animated='fade' size='tiny' onClick={()=> props.setHrOpenModelEditStatus("true")}>
-                                                <Button.Content visible content='แก้ไข'/>
-                                                <Button.Content hidden >
-                                                    <Icon name='edit' />
-                                                </Button.Content>
-                                            </ButtonEdit>}
-                                                open={props.hrOpenModelEditStatus}
-                                            >
+                            <Modal 
+                                trigger={
+                                    <ButtonEdit animated='fade' size='tiny' onClick={()=> props.setHrOpenModelEditStatus(true)} disabled={props.authStore.userData.role === 'Leader' ? true : false}>
+                                        <Button.Content visible content='แก้ไข'/>
+                                        <Button.Content hidden >
+                                            <Icon name='edit' />
+                                        </Button.Content>
+                                    </ButtonEdit>
+                                }
+                                open={props.hrOpenModelEditStatus}
+                                dimmer="blurring"
+                            >
                                 <ColorModelHeader icon='archive' content='แก้ไขผลการสมัคร : ฝ่ายบุคคลระดับผู้จัดการ' />
                                 <Modal.Content>
                                 <Form>
-                                    <Form.Field>
-                                        <Radio
-                                            label='รอการพิจารณา'
-                                            name='HrSelectStatus'
-                                            value='0'
-                                            checked={props.hrChecked ? props.hrChecked === '0' : hr_status === '0'}
-                                            onChange={props.handleOnChangeHrStatus('0')}
-                                        />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Radio
-                                            label='ไม่ผ่านการพิจารณา'
-                                            name='HrSelectStatus'
-                                            checked={props.hrChecked ? props.hrChecked === '1' : hr_status === '1'}
-                                            onChange={props.handleOnChangeHrStatus('1')}
-                                        />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Radio
-                                            label='เรียกสัมภาษณ์'
-                                            name='HrSelectStatus'
-                                            checked={props.hrChecked ? props.hrChecked === '2' : hr_status === '2'}
-                                            onChange={props.handleOnChangeHrStatus('2')}
-                                        />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Radio
-                                            label='ผ่านการสัมภาษณ์'
-                                            name='HrSelectStatus'
-                                            checked={props.hrChecked ? props.hrChecked === '3' : hr_status === '3'}
-                                            onChange={props.handleOnChangeHrStatus('3')}
-                                        />
-                                    </Form.Field>
-                                    <Form.Field>
-                                        <Radio
-                                            label='ไม่ผ่านการสัมภาษณ์'
-                                            name='HrSelectStatus'
-                                            checked={props.hrChecked ? props.hrChecked === '4' : hr_status === '4'}
-                                            onChange={props.handleOnChangeHrStatus('4')}
-                                        />
-                                    </Form.Field>
+                                    {
+                                        resumeData && resumeData.status < 2
+                                        ?   <div>
+                                                <Form.Field>
+                                                    <Radio
+                                                        label='ไม่ผ่านการพิจารณา'
+                                                        name='HrSelectStatus'
+                                                        checked={props.hrChecked ? props.hrChecked === 1 : null}
+                                                        onChange={props.handleOnChangeHrStatus(1)}
+                                                    />
+                                                </Form.Field>
+                                                <Form.Field>
+                                                    <Radio
+                                                        label='เรียกสัมภาษณ์'
+                                                        name='HrSelectStatus'
+                                                        checked={props.hrChecked ? props.hrChecked === 2 : null}
+                                                        onChange={props.handleOnChangeHrStatus(2)}
+                                                    />
+                                                </Form.Field>
+                                            </div>
+                                        :   <div>
+                                                <Form.Field>
+                                                    <Radio
+                                                        label='ผ่านการสัมภาษณ์'
+                                                        name='HrSelectStatus'
+                                                        checked={props.hrChecked ? props.hrChecked === 3 :null}
+                                                        onChange={props.handleOnChangeHrStatus(3)}
+                                                    />
+                                                </Form.Field>
+                                                <Form.Field>
+                                                    <Radio
+                                                        label='ไม่ผ่านการสัมภาษณ์'
+                                                        name='HrSelectStatus'
+                                                        checked={props.hrChecked ? props.hrChecked === 4 : null}
+                                                        onChange={props.handleOnChangeHrStatus(4)}
+                                                    />
+                                                </Form.Field>
+                                            </div>
+                                    }
                                 </Form>
                                 </Modal.Content>
                                 <Modal.Actions>
                                     <Button color='red' onClick={()=> props.setHrOpenModelEditStatus(false)}>
                                         <Icon name='remove' /> ยกเลิก
                                     </Button>
-                                    <Button color='green' onClick={()=> props.handleSubmitChangeStatus(applyJobId,status)}>
+                                    <Button color='green' onClick={()=> props.handleSubmitChangeStatus(resumeData.apply_job_id,resumeData.status)}>
                                         <Icon name='checkmark' /> บันทึก
                                     </Button>
                                 </Modal.Actions>
                             </Modal>
                             &nbsp;| {
-                                        props.hrChecked === '1'
-                                            ? "ไม่ผ่านการพิจารณา"
-                                            : props.hrChecked === '2' 
-                                                ? "เรียกสัมภาษณ์"
-                                                : props.hrChecked === '3' 
-                                                    ? "ผ่านการสัมภาษณ์"
-                                                    : props.hrChecked === '4' 
-                                                        ? "ไม่ผ่านการสัมภาษณ์"
-                                                        : "รอการสัมภาษณ์"
+                                        resumeData &&
+                                            resumeData.hr_status === 1
+                                                ? "ไม่ผ่านการพิจารณา"
+                                                : resumeData && resumeData.hr_status === 2
+                                                    ? "เรียกสัมภาษณ์"
+                                                    : resumeData && resumeData.hr_status === 3
+                                                        ? "ผ่านการสัมภาษณ์"
+                                                        : resumeData && resumeData.hr_status === 4
+                                                            ? "ไม่ผ่านการสัมภาษณ์"
+                                                            : "รอการสัมภาษณ์"
                                     }
                         </Grid.Column>
                         <Grid.Column>
                             <p><Icon circular inverted name='users' size='large'/> Leader เลือกสถานะของผู้สมัคร</p>
-                            {console.log(props.hrChecked , 'hrcheck')}
                             <Modal trigger={
                                         <ButtonEdit 
                                             animated='fade' 
                                             size='tiny' 
                                             onClick={()=> props.setLeaderOpenModelEditStatus("true")}
-                                            disable={props.hrChecked && props.hrChecked > '2' ? "false" : "true"}
+                                            disabled={resumeData && resumeData.status < 2 || resumeData && resumeData.status === 4 ? true : false}
                                         >
                                             <Button.Content visible content='แก้ไข'/>
                                             <Button.Content hidden >
@@ -306,6 +320,7 @@ const enhance = compose(
                                             
                                         }
                                         open={props.leaderOpenModelEditStatus}
+                                        dimmer="blurring"
                                     >
                                 <ColorModelHeader icon='archive' content='แก้ไขผลการสมัคร : หัวหน้างานแต่ละตำแหน่งงาน' />
                                 <Modal.Content>
@@ -314,16 +329,16 @@ const enhance = compose(
                                         <Radio
                                             label='ผ่านการสัมภาษณ์'
                                             name='radioGroup'
-                                            checked={props.leaderChecked ? props.leaderChecked === '3' : leader_status === '3'}
-                                            onChange={props.handleOnChangeLeaderStatus('3')}
+                                            checked={props.leaderChecked ? props.leaderChecked === 3 : null}
+                                            onChange={props.handleOnChangeLeaderStatus(3)}
                                         />
                                     </Form.Field>
                                     <Form.Field>
                                         <Radio
                                             label='ไม่ผ่านการสัมภาษณ์'
                                             name='radioGroup'
-                                            checked={props.leaderChecked ? props.leaderChecked === '4' : leader_status === '4'}
-                                            onChange={props.handleOnChangeLeaderStatus('4')}
+                                            checked={props.leaderChecked ? props.leaderChecked === 4 : null}
+                                            onChange={props.handleOnChangeLeaderStatus(4)}
                                         />
                                     </Form.Field>
                                 </Form>
@@ -332,17 +347,18 @@ const enhance = compose(
                                     <Button color='red' onClick={()=> props.setLeaderOpenModelEditStatus(false)}>
                                         <Icon name='remove' /> ยกเลิก
                                     </Button>
-                                    <Button color='green' onClick={() => props.handleSubmitLeaderChangeStatus(applyJobId,status)}>
+                                    <Button color='green' onClick={() => props.handleSubmitLeaderChangeStatus(resumeData.apply_job_id)}>
                                         <Icon name='checkmark' /> บันทึก
                                     </Button>
                                 </Modal.Actions>
                             </Modal>
                             &nbsp;| {
-                                        props.leaderChecked === '3' 
-                                        ? "ผ่านการสัมภาษณ์"
-                                        : props.leaderChecked === '4' 
-                                            ? "ไม่ผ่านการสัมภาษณ์"
-                                            : "ไม่สามารถเลือกผลการสัมภาษณ์ได้"
+                                        resumeData &&
+                                            resumeData.leader_status === 3
+                                            ? "ผ่านการสัมภาษณ์"
+                                            : resumeData && resumeData.leader_status === 4
+                                                ? "ไม่ผ่านการสัมภาษณ์"
+                                                : "พิจารณาการสัมภาษณ์"
                                     }
                         </Grid.Column>
                     </MarginGrid>
@@ -409,6 +425,17 @@ const enhance = compose(
                 </Modal.Description>
             )
         },
+        handleSetData: props => (dataResume) => {
+            props.setOpenModelRate(true)
+            props.setResume_pdf(dataResume.resume_pdf)
+            props.setResumeData(dataResume)
+            props.users.map( user => {
+                if (user.uid === dataResume.uid) {
+                    props.setResume_firstname(user.firstname)
+                    props.setResume_lastname(user.lastname)
+                }
+            })
+        }
     }),
     observer
 );
@@ -450,192 +477,75 @@ export default enhance( (props)=>
                             props.list && props.list.map( (dataResume, i)=>
                                 <TableRow key={i}>
                                     <TableCell>
-                                        <Modal trigger={
-                                                <label style={{ marginLeft : '35%' , cursor : 'pointer' }} onClick={() => props.setOpenModel("true")}>
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                                }
-                                                </label>
-                                            }
-                                            open={props.openModel}
-
-                                        >
-                                            <ColorModelHeader>
-                                                ประวัติ : คุณ
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                                }
-                                                &nbsp; 
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-                                                }
-                                            </ColorModelHeader>
-                                            <Modal.Content>
-                                                <Sizeiframe src={dataResume.resume_pdf}></Sizeiframe>
-                                            </Modal.Content>
-                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status, dataResume.hr_status, dataResume.leader_status)}
-                                            <Divider hidden />
-                                            <Modal.Actions>
-                                                <ButtonClose onClick={()=> props.setOpenModel(false)}>
-                                                    <Icon name='close' /> ปิด 
-                                                </ButtonClose>
-                                            </Modal.Actions>
-                                        </Modal>
+                                    <label style={{ marginLeft : '35%' }} onClick={() => props.setOpenModel("true")}>
+                                    {
+                                        props.users &&
+                                        props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
+                                    }
+                                    </label>
                                     </TableCell>
                                     <TableCell>
-                                        <Modal trigger={
-                                                   <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelLastName("true")}>
-                                                       {
-                                                            props.users &&
-                                                            props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-                                                       }
-                                                   </label>
-                                                }
-                                                open={props.openModelLastName}
-                                                >
-                                            <ColorModelHeader>Resume : คุณ
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                                }
-                                                &nbsp; 
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-                                                }
-                                            </ColorModelHeader>
-                                            <Modal.Content>
-                                                <Sizeiframe src={dataResume.resume_pdf}></Sizeiframe>
-                                            </Modal.Content>
-                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status, dataResume.hr_status, dataResume.leader_status)}
-                                            <Divider hidden />
-                                            <Modal.Actions>
-                                                <ButtonClose onClick={()=> props.setOpenModelLastName(false)}>
-                                                    <Icon name='close' /> ปิด 
-                                                </ButtonClose>
-                                            </Modal.Actions>
-                                        </Modal>
+                                    <label style={{ marginLeft : '35%'}} onClick={() => props.setOpenModelLastName("true")}>
+                                    {
+                                        props.users &&
+                                        props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
+                                    }
+                                    </label>
                                     </TableCell>
                                     <TableCell>
-                                        <Modal trigger={
-                                            <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelRate("true")}>
-                                                {dataResume.rate}
-                                            </label>}
-                                                open={props.openModelRate}
-                                            >
-                                            <ColorModelHeader>Resume : คุณ
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                                }
-                                                &nbsp; 
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-                                                }
-                                            </ColorModelHeader>
-                                            <Modal.Content>
-                                                <Sizeiframe src={dataResume.resume_pdf}></Sizeiframe>
-                                            </Modal.Content>
-                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status, dataResume.hr_status, dataResume.leader_status)}
-                                            <Divider hidden />
-                                            <Modal.Actions>
-                                            <ButtonClose onClick={()=> props.setOpenModelRate(false)}>
-                                                <Icon name='close' /> ปิด 
-                                            </ButtonClose>
-                                            </Modal.Actions>
-                                        </Modal>
+                                        <label style={{ marginLeft : '35%' }} onClick={() => props.setOpenModelRate("true")}>
+                                            {dataResume.rate}
+                                        </label>
                                     </TableCell>
                                     <TableCell>
-                                        <Modal trigger={
-                                            <label style={{ marginLeft : '35%' , cursor : 'pointer'}} onClick={() => props.setOpenModelStatus("true")}>
-                                            {
-                                                 dataResume.status === '1'
-                                                 ? "ไม่ผ่านการพิจารณา"
-                                                 : dataResume.status === '2' 
-                                                     ? "เรียกสัมภาษณ์"
-                                                     : dataResume.status === '3' 
-                                                         ? "ผ่านการสัมภาษณ์"
-                                                         : dataResume.status === '4' 
-                                                             ? "ไม่ผ่านการสัมภาษณ์"
-                                                             : "รอการสัมภาษณ์"
-                                            }
-                                            </label>
-                                        }
-                                            open={props.openModelStatus}
-                                        >
-                                            <ColorModelHeader>Resume : คุณ
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                                }
-                                                &nbsp; 
-                                                {
-                                                    props.users &&
-                                                    props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-                                                }
-                                            </ColorModelHeader>
-                                            <Modal.Content>
-                                                <Sizeiframe src={dataResume.resume_pdf}></Sizeiframe>
-                                            </Modal.Content>
-                                            {props.handleClickModal(dataResume.apply_job_id, dataResume.status, dataResume.hr_status, dataResume.leader_status)}
-                                            <Divider hidden />
-                                            <Modal.Actions>
-                                            <ButtonClose onClick={()=> props.setOpenModelStatus(false)}>
-                                                <Icon name='close' /> ปิด 
-                                            </ButtonClose>
-                                            </Modal.Actions>
-                                        </Modal>
+                                    <label style={{ marginLeft : '35%'}} onClick={() => props.setOpenModelStatus("true")}>
+                                    {
+                                        dataResume.status === 1
+                                        ? "ไม่ผ่านการพิจารณา"
+                                        : dataResume.status === 2
+                                            ? "เรียกสัมภาษณ์"
+                                            : dataResume.status === 3
+                                                ? "ผ่านการสัมภาษณ์"
+                                                : dataResume.status === 4
+                                                    ? "ไม่ผ่านการสัมภาษณ์"
+                                                    : "รอการสัมภาษณ์"
+                                    }
+                                    </label>
                                     </TableCell>
                                     <TableCell>
                                         <center>
-                                            <Modal 
-                                                trigger={
-                                                    <ButtonAdd animated='fade' size='mini' color="youtube">
-                                                        <Button.Content visible content='ลบ'/>
-                                                        <Button.Content hidden >
-                                                            <Icon name='trash alternate' />
-                                                        </Button.Content>
-                                                    </ButtonAdd>
-                                                }
-                                                size="tiny"
-                                                closeIcon
-                                            >
-                                                <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัคร' />
-                                                    <Modal.Content>
-                                                        <p>
-                                                            คุณต้องการลบข้อมูลการสมัครงานของ <b> คุณ
-                                                            {
-                                                                
-                                                                props.users &&
-                                                                props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                                                
-                                                            }&nbsp;
-                                                            {
-
-                                                                 props.users &&
-                                                                 props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-
-                                                            }</b> ใช่หรือไม่ ?
-                                                        </p>
-                                                    </Modal.Content>
-                                                <Modal.Actions>
-                                                    <ButtonAdd>
-                                                        <Icon name='remove' /> ยกเลิก
-                                                    </ButtonAdd>
-                                                    <ButtonAdd color='green'>
-                                                        <Icon name='checkmark' /> ตกลง
-                                                    </ButtonAdd>
-                                                </Modal.Actions>
-                                            </Modal>
+                                                <ButtonAdd animated='fade' size='mini' color="blue" onClick={() => props.handleSetData(dataResume)}>
+                                                    <Button.Content visible content='ดูรายละเอียด'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='search' />
+                                                    </Button.Content>
+                                                </ButtonAdd>
                                         </center>
                                     </TableCell>
                                 </TableRow>
                             )
                         }
+                        <Modal open={props.openModelRate} dimmer="blurring">
+                            <ColorModelHeader>Resume : คุณ
+                                {
+                                    props.resume_firstname
+                                }
+                                &nbsp; 
+                                {
+                                    props.resume_lastname
+                                }
+                            </ColorModelHeader>
+                            <Modal.Content>
+                                <Sizeiframe src={props.resume_pdf}></Sizeiframe>
+                            </Modal.Content>
+                            {props.handleClickModal(props.resumeData)}
+                            <Divider hidden />
+                            <Modal.Actions>
+                            <ButtonClose onClick={()=> props.setOpenModelRate(false)}>
+                                <Icon name='close' /> ปิด 
+                            </ButtonClose>
+                            </Modal.Actions>
+                        </Modal>
                     </TableBody>
                 </TablePosition>
                 {   !props.list ? <div><center>ไม่มีข้อมูลการสมัครงาน</center><br/><br/></div> : null}
