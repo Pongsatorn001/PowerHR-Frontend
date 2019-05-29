@@ -279,12 +279,12 @@ export default enhance( (props)=>
                         return (
                             <TableRow key={i}>
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
+                                        <Link href={{ pathname : '/resume/resume' , query : { id : data.job_position_id}}}>
                                             <center><label>{i+1}</label></center>
                                         </Link>
                                     </TableCell>                          
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
+                                        <Link href={{ pathname : 'resume/resume' , query : { id : data.job_position_id}}}>
                                         <label style={{ marginLeft : '25%' , cursor : 'pointer'}}>
                                         {
                                             props.departmentData 
@@ -295,7 +295,7 @@ export default enhance( (props)=>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                        <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
+                                        <Link href={{ pathname : '/resume/resume' , query : { id : data.job_position_id}}}>
                                             <label style={{ marginLeft : '25%' , cursor : 'pointer' }}>
                                             {
                                                 props.positionData 
@@ -306,7 +306,7 @@ export default enhance( (props)=>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
-                                    <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
+                                    <Link href={{ pathname : '/resume/resume' , query : { id : data.job_position_id}}}>
                                         <label style={{ marginLeft : '45%' , cursor : 'pointer' }}>{data.value}</label>
                                         </Link>
                                     </TableCell>

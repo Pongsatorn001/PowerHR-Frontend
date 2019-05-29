@@ -149,7 +149,8 @@ const enhance = compose(
         },
         handleOnChangeLeaderStatus: props => (leaderChecked) => event => {
             props.setLeaderChecked(leaderChecked)
-        }
+        },
+
     }),
     withHandlers({
         handleSubmitChangeStatus: props => (applyJobId , leaderStatus) => {
@@ -367,53 +368,52 @@ const enhance = compose(
                             {
                                 props.comment.map( (dataComment , i) =>
                                     <Comment key={i}>
-                                        <Comment.Avatar src='https://i1.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1' />
-                                            <Comment.Content>
-                                                <Comment.Author as='a'>{dataComment.nameComment}</Comment.Author>
-                                                    <Comment.Metadata>
-                                                        <div>Today at 5:42PM</div>
-                                                    </Comment.Metadata>
-                                                    <Comment.Text>{dataComment.textComment}</Comment.Text>
-                                                        <Comment.Actions>
-                                                            <Comment.Action>
-                                                                <Modal trigger={<p>แก้ไข</p>} size="tiny" closeIcon centered={false}>
-                                                                    <Header icon='archive' content='แก้ไขความคิดเห็น' />
-                                                                        <Modal.Content>
-                                                                            <p>
-                                                                                แสดงความคิดเห็น: <br/>
-                                                                                    <EditComment placeholder='แสดงความคิดเห็น' defaultValue={dataComment.textComment} />
-                                                                            </p>
-                                                                        </Modal.Content>
-                                                                        <Modal.Actions>
-                                                                            <Button color='red'>
-                                                                                <Icon name='remove' /> ยกเลิก
-                                                                            </Button>
-                                                                            <Button color='green'>
-                                                                                <Icon name='checkmark' /> ตกลง
-                                                                            </Button>
-                                                                        </Modal.Actions>
-                                                                </Modal>
-                                                            </Comment.Action>
-                                                            <Comment.Action>
-                                                                <Modal trigger={<p>ลบ</p>} size="tiny" closeIcon centered={false}>
-                                                                    <Header icon='archive' content='ลบความคิดเห็นใช่หรือไม่ ?' />
+                                        <Comment.Content>
+                                            <Comment.Author as='a'>{dataComment.nameComment}</Comment.Author>
+                                                <Comment.Metadata>
+                                                    <div>Today at 5:42PM</div>
+                                                </Comment.Metadata>
+                                                <Comment.Text>{dataComment.textComment}</Comment.Text>
+                                                    <Comment.Actions>
+                                                        <Comment.Action>
+                                                            <Modal trigger={<p>แก้ไข</p>} size="tiny" closeIcon centered={false}>
+                                                                <Header icon='archive' content='แก้ไขความคิดเห็น' />
                                                                     <Modal.Content>
                                                                         <p>
-                                                                            คุณต้องการลบข้อมูลความเห็น: <b>" {dataComment.textComment} "</b> ใช่หรือไม่ ?
+                                                                            แสดงความคิดเห็น: <br/>
+                                                                                <EditComment placeholder='แสดงความคิดเห็น' defaultValue={dataComment.textComment} />
                                                                         </p>
                                                                     </Modal.Content>
                                                                     <Modal.Actions>
                                                                         <Button color='red'>
-                                                                                <Icon name='remove' /> ยกเลิก
+                                                                            <Icon name='remove' /> ยกเลิก
                                                                         </Button>
                                                                         <Button color='green'>
                                                                             <Icon name='checkmark' /> ตกลง
                                                                         </Button>
                                                                     </Modal.Actions>
-                                                                </Modal>
-                                                            </Comment.Action>
-                                                        </Comment.Actions>
-                                            </Comment.Content>
+                                                            </Modal>
+                                                        </Comment.Action>
+                                                        <Comment.Action>
+                                                            <Modal trigger={<p>ลบ</p>} size="tiny" closeIcon centered={false}>
+                                                                <Header icon='archive' content='ลบความคิดเห็นใช่หรือไม่ ?' />
+                                                                <Modal.Content>
+                                                                    <p>
+                                                                        คุณต้องการลบข้อมูลความเห็น: <b>" {dataComment.textComment} "</b> ใช่หรือไม่ ?
+                                                                    </p>
+                                                                </Modal.Content>
+                                                                <Modal.Actions>
+                                                                    <Button color='red'>
+                                                                            <Icon name='remove' /> ยกเลิก
+                                                                    </Button>
+                                                                    <Button color='green'>
+                                                                        <Icon name='checkmark' /> ตกลง
+                                                                    </Button>
+                                                                </Modal.Actions>
+                                                            </Modal>
+                                                        </Comment.Action>
+                                                    </Comment.Actions>
+                                        </Comment.Content>
                                     </Comment>
                                                 )
                             }
@@ -448,7 +448,7 @@ let link ='/resume/addResume'
 
 export default enhance( (props)=> 
     <div>
-        {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติส่วนตัวผู้สมัคร' , '/jobPositions/jobPositions')}
+        {Breadcrumb2Page('ตำแหน่งานที่เปิดรับสมัคร' , 'ประวัติผู้สมัคร' , '/jobPositions/jobPositions')}
         <Divider hidden />
             <Div>
                 {TextHeaderTable(job_pos_name ,props.list ?  props.list.length : 0 , job_button_name , job_pos_des, link , props.url.query.id , true , props.authStore.userData.role)}
