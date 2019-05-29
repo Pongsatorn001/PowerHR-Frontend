@@ -81,6 +81,9 @@ const enhance = compose(
     withState('idList' , 'setIdList'),
     withState('delSuccess' , 'setDelsucces' , false),
     withState('dataInDepartment' , 'setDataInDepartment'),
+    withState('dataInPosition' , 'setDataInPosition'),
+    withState('isOpen' , 'setIsOpen' , false),
+    withState('message' , 'setMessage'),
     withProps({
         pageTitle: 'Departments'
     }),
@@ -100,25 +103,58 @@ const enhance = compose(
             .catch( err => {
                 console.log(err , 'err');
             })
+        },
+        initGetJobPositionData: props => () => {
+            firebase.database().ref("positions")
+            .once("value").then( snapshot => {
+                let result = Object.values(snapshot.val()) 
+                props.setDataInPosition(result)
+            })
         }
     }),
     lifecycle({
         async componentDidMount(){
             await this.props.initGetDepartment()
-            console.log(this.props.authStore);                   
+            await this.props.initGetJobPositionData()                  
         },
     }),
     withHandlers({
         handleDeleteDepartmentName: props => () => event => {
-            const deleteUser = firebase.database().ref('departments/' + props.idList);
-            deleteUser.remove()
-            .then(function() {
-                props.initGetDepartment()
-                props.setOpen(false)
+            props.setOpen(false)
+            firebase.database()
+            .ref("positions")
+            .orderByChild("department_id")
+            .equalTo(props.idList)
+            .once("value").then( snapshot => {
+                if (snapshot.val() !== null) {
+                    props.setIsOpen(true)
+                    props.setMessage('ลบแผนกงานไม่สำเร็จ เนื่องจากมีข้อมูลตำแหน่งงานอยู่')
+                } 
+                else{
+                    const deleteUser = firebase.database().ref('departments/' + props.idList);
+                    deleteUser.remove()
+                    .then(function() {
+                        props.initGetDepartment()
+                        props.setIsOpen(true)
+                        props.setMessage('ลบแผนกงานสำเร็จ')
+                    })
+                    .catch(function(error) {
+                        console.log("Remove failed: " + error.message)
+                    });
+                }
             })
-            .catch(function(error) {
-                console.log("Remove failed: " + error.message)
-            });
+            .catch( err => {
+                const deleteUser = firebase.database().ref('departments/' + props.idList);
+                deleteUser.remove()
+                .then(function() {
+                    props.initGetDepartment()
+                    props.setIsOpen(true)
+                    props.setMessage('ลบแผนกงานสำเร็จ')
+                })
+                .catch(function(error) {
+                    console.log("Remove failed: " + error.message)
+                });
+            })
         },
         handleModalOpen: props => (foo , name , id) => event => {
             props.setOpen(foo)
@@ -190,7 +226,7 @@ export default enhance( (props)=>
             <Table.Header>
                 <Table.Row>
                     <TableHeadcell>
-                        <center>รหัส</center>
+                        <center>ลำดับ</center>
                     </TableHeadcell>
                     <TableHeadcell>
                         <center>แผนกงานในบริษัท</center>
@@ -208,13 +244,13 @@ export default enhance( (props)=>
                                 return (
                                     <TableRow key={i}>
                                         <TableCell>
-                                            <Link href={{ pathname : '../position/position' , query : { id : data.department_id }}}>
+                                            <Link href={{ pathname : '/position/position' , query : { id : data.department_id }}}>
                                                 <center>{i + 1}</center>
                                             </Link>
                                         </TableCell>
                                         <TableCell>
-                                            <Link href={{ pathname : '../position/position' , query : { id : data.department_id }}}>
-                                                <label style={{ marginLeft : '39%' }}>{data.department_name}</label>
+                                            <Link href={{ pathname : '/position/position' , query : { id : data.department_id }}}>
+                                                <label style={{ marginLeft : '39%' , cursor : 'pointer'}}>{data.department_name}</label>
                                             </Link>
                                         </TableCell>
                                         <TableCell>
@@ -267,6 +303,23 @@ export default enhance( (props)=>
                             </TableNotData>
                 }
             </TableBody>
+            <Modal 
+                size="tiny"
+                open={props.isOpen}
+                dimmer="blurring"
+            >
+            <Modal.Content>
+                <center>
+                    <IconModal name="info circle"/><br/><br/>
+                    <Panal>
+                        {props.message}<br/>
+                    </Panal>
+                    <ButtonAdd onClick={() => props.setIsOpen(false)}>
+                         ปิด
+                    </ButtonAdd>
+                </center>
+            </Modal.Content>
+            </Modal>
         </TablePosition>
     </Div>
 ) 

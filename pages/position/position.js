@@ -6,7 +6,6 @@ import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
-import axios from 'axios'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import { inject, observer } from 'mobx-react'
 import { firebase } from '../../firebase/index'
@@ -73,6 +72,8 @@ const enhance = compose(
     withState('delSuccess' , 'setDelsucces' , false),
     withState('idList' , 'setIdList'),
     withState('departmentName' , 'setDepartmentName'),
+    withState('isOpen' , 'setIsOpen' , false),
+    withState('message' , 'setMessage'),
     withProps({
         pageTitle: 'Positions'
     }),
@@ -103,16 +104,30 @@ const enhance = compose(
     }),
     withHandlers({
         handleDeletePositionName: props => () => event => {
-            const deleteUser = firebase.database().ref('positions/' + props.idList);
-            deleteUser.remove()
-            .then(function() {
-                props.initDepartmentData()
-                props.initPositionInDepartment()
-                props.setOpen(false)
+            props.setOpen(false)
+            firebase.database().ref("job_positions")
+            .orderByChild("position_id")
+            .equalTo(props.idList)
+            .once("value").then( snapshot => {
+                if (snapshot.val()) {
+                    props.setMessage('ไม่สามารถลบตำแหน่งงานได้ เนื่องจากมีการเปิดรับสมัครอยู่ในระบบ')
+                    props.setIsOpen(true)
+                }
+                else{
+                    const deleteUser = firebase.database().ref('positions/' + props.idList);
+                    deleteUser.remove()
+                    .then(function() {
+                        props.initDepartmentData()
+                        props.initPositionInDepartment()
+                        props.setIsOpen(true)
+                        props.setMessage('ลบข้อมูลตำแหน่งงานสำเร็จ')
+                    })
+                    .catch(function(error) {
+                        console.log("Remove failed: " + error.message)
+                    });
+                }
             })
-            .catch(function(error) {
-                console.log("Remove failed: " + error.message)
-            });
+            
         },
         handleModalOpen: props => (foo , name , id) => event => {
             props.setOpen(foo)
@@ -248,6 +263,23 @@ export default enhance( (props)=>
                         )
                     })}
                 </TableBody>
+                <Modal 
+                    size="tiny"
+                    open={props.isOpen}
+                    dimmer="blurring"
+                >
+                <Modal.Content>
+                    <center>
+                        <IconModal name="info circle"/><br/><br/>
+                        <Panal>
+                            {props.message}<br/>
+                        </Panal>
+                        <ButtonAdd onClick={() => props.setIsOpen(false)}>
+                            ปิด
+                        </ButtonAdd>
+                    </center>
+                </Modal.Content>
+                </Modal>
             </TablePosition>
         </Div>
     </div>

@@ -79,6 +79,8 @@ const enhance = compose(
     withLayout,
     inject('authStore'),
     withState('list','setList',[]),
+    withState('positionData','setPositionData',[]),
+    withState('departmentData','setDepartmentData',[]),
     withState('headerName' , 'setHeaderName'),
     withState('open' , 'setOpen' , false),
     withState('modalShow' , 'setModalShow' , false),
@@ -90,23 +92,38 @@ const enhance = compose(
     withState('startdate' , 'setstartdate'),
     withState('enddate' , 'setenddate'),
     withState('description' , 'setdescription'),
-    withState('positionName','setPositionName',[]),
     withState('department_name' , 'setdepartment_name'),
     withProps({
         pageTitle: 'Job Positions'
     }),
     withHandlers({
         initGetJobPositionData: props => () => {
-            firebase.database().ref("job_positions_log")
+            firebase.database().ref("job_positions")
             .once("value").then( snapshot => {
                 let result = Object.values(snapshot.val()) 
                 props.setList(result)
+            })
+        },
+        initGetPositionData: props => () => {
+            firebase.database().ref("positions")
+            .once("value").then( snapshot => {
+                let result = Object.values(snapshot.val()) 
+                props.setPositionData(result)
+            })
+        },
+        initGetDepartmentData: props => () => {
+            firebase.database().ref("departments")
+            .once("value").then( snapshot => {
+                let result = Object.values(snapshot.val())                 
+                props.setDepartmentData(result)
             })
         }
     }),
     lifecycle({
         async componentDidMount(){
-            await this.props.initGetJobPositionData()             
+            await this.props.initGetJobPositionData() 
+            await this.props.initGetPositionData()  
+            await this.props.initGetDepartmentData()     
         }
     }),
     withHandlers({
@@ -120,11 +137,10 @@ const enhance = compose(
         handleCheckDisbledDelete: props => (jpid) => {
             firebase.database()
             .ref("apply_jobs")
-            .orderByChild("jpb_position_id")
+            .orderByChild("job_position_id")
             .equalTo(jpid)
             .once("value").then( snapshot => {
                 let data = Object.values(snapshot.val())
-                console.log(data.job_position_id);
             })
         },
         handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name , rate) => event => {
@@ -148,24 +164,29 @@ const enhance = compose(
             }
         },
         handleDeleteJob_Position: props => () => event => {
-            const id = props.idList
-            const url = `http://localhost:4000/job_position/${id}`
-            axios.delete(url)
-            .then( res => {
-                const urlUpdateData = `http://localhost:4000/joinPositionAndDepartment`
-                axios.get(urlUpdateData)
-                .then( response => {
-                    props.setList(response.data)
-                    props.setOpen(false)
+            props.setOpen(false)
+            firebase.database().ref("apply_jobs")
+            .orderByChild("job_position_id")
+            .equalTo(props.idList)
+            .once("value").then( snapshot => {
+               if (snapshot.val()) {
+                    props.setModalShow(true)
+               }
+               else{
+                const deleteUser = firebase.database().ref('job_positions/' + props.idList);
+                deleteUser.remove()
+                .then(function() {
+                    props.initGetJobPositionData() 
+                    props.initGetPositionData()  
+                    props.initGetDepartmentData()  
                     props.setDelsucces(true)
                 })
-                .catch( err => {
-                    console.log(err);
-                })
+                .catch(function(error) {
+                    console.log("Remove failed: " + error.message)
+                });
+               }
             })
-            .catch( err => {
-                console.log(err);
-            })
+            
         },
         handleModalShow: props => (setModal) => {                        
             if (props.modalShow === true) {
@@ -247,22 +268,34 @@ export default enhance( (props)=>
             {props.handleModalShow(props.handleModalOpen())}
             <TableBody>
                 {
-                    props.list.map( (data,i)=> {
+                    props.list.map( (data,i)=> {                        
                         return (
                             <TableRow key={i}>                          
                                     <TableCell>
                                         <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
-                                        <label style={{ marginLeft : '25%' }}>{data.department_name}</label>
+                                        <label style={{ marginLeft : '25%' , cursor : 'pointer'}}>
+                                        {
+                                            props.departmentData 
+                                            ? props.departmentData.map( result => { return data.department_id === result.department_id ? result.department_name : null})
+                                            : null
+                                        }
+                                        </label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
                                         <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
-                                            <label style={{ marginLeft : '25%' }}>{data.position_name}</label>
+                                            <label style={{ marginLeft : '25%' , cursor : 'pointer' }}>
+                                            {
+                                                props.positionData 
+                                                ? props.positionData.map( result => { return data.position_id === result.position_id ? result.position_name : null})
+                                                : null
+                                            }
+                                            </label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
                                     <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
-                                            <center>{data.value}</center>
+                                        <label style={{ marginLeft : '45%' , cursor : 'pointer' }}>{data.value}</label>
                                         </Link>
                                     </TableCell>
                                     {console.log()}
@@ -305,7 +338,7 @@ export default enhance( (props)=>
                                                 </Button.Content>
                                             </ButtonEdit>
                                         </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)} disabled={false}>
+                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.job_position_id)} >
                                             <Button.Content visible content='ลบ'/>
                                             <Button.Content hidden >
                                                 <Icon name='trash alternate' />
