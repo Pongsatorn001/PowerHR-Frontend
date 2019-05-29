@@ -1,6 +1,7 @@
 import { Menu , Dropdown } from 'semantic-ui-react'
 import Link from 'next/link'
 import styled from 'styled-components'
+import Router from 'next/router'
 
 const H1 = styled.h1 `
     margin-top : 1rem !important;
@@ -77,18 +78,16 @@ export default (props) => (
                                 </Link>
                             </DropdownMenu_Menu>
                         </DropdownMenu>
-                        <Link href={`/departments/departments`}>
-                            <MenuItem
-                                name='แผนกงานในบริษัท'
-                            />
-                        </Link>
+                        <MenuItem
+                            name='แผนกงานในบริษัท'
+                            onClick={() =>  Router.push('/departments/departments')}
+                        />
                         {
                             props.authStore.userData.role === 'Admin'
-                            ?   <Link href={`/user/user`}>
-                                    <MenuItem
-                                        name='เพิ่มผู้ใช้งานในระบบ'
-                                    />
-                                </Link>
+                            ?   <MenuItem
+                                    name='เพิ่มผู้ใช้งานในระบบ'
+                                    onClick={() =>  Router.push('/user/user')}
+                                />
                             : null
                         }
                     </div>
