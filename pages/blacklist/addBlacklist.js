@@ -137,7 +137,7 @@ const enhance = compose(
             }
             firebase.database().ref('blacklist/' + props.uid).set(result)
             firebase.database().ref('users/' + props.uid).update({ blacklist : true})
-            return Router.push('/blacklist/blackList')
+            Router.push('/blacklist/blackList')
         }
     })
 )
