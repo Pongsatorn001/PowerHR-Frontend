@@ -98,9 +98,9 @@ const enhance = compose(
             const deleteUser = firebase.database().ref('blacklist/' + uid);
             deleteUser.remove()
             .then(function() {
+                firebase.database().ref('users/' + uid).update({ blacklist : false})
                 props.initGetUserlistData()
                 props.initGetBlacklistData()
-                firebase.database().ref('users/' + uid).update({ blacklist : false})
             })
             .catch(function(error) {
                 console.log("Remove failed: " + error.message)

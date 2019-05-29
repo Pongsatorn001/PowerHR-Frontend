@@ -7,6 +7,7 @@ import { Form , Input , Button , Icon , TextArea } from 'semantic-ui-react'
 import { Breadcrumb2Page } from '../../components/Breadcrumb'
 import { inject } from 'mobx-react'
 import { firebase } from '../../firebase/index'
+import Router from 'next/router'
 
 const Div = styled.div `
   position : relative ;
@@ -136,7 +137,7 @@ const enhance = compose(
             }
             firebase.database().ref('blacklist/' + props.uid).set(result)
             firebase.database().ref('users/' + props.uid).update({ blacklist : true})
-
+            return Router.push('/blacklist/blackList')
         }
     })
 )
