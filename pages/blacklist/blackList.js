@@ -116,7 +116,7 @@ let link = '/blacklist/addBlacklist'
 
 export default enhance((props) => 
     <Div>
-        {TextHeaderTable(blacklist_name , props.list && props.list.length , button_name , 'รายชื่อ' , link , '' , props.authStore.userData.role )}
+        {TextHeaderTable(blacklist_name , props.list && props.list.length , button_name , 'รายชื่อ' , link , '' , '' ,props.authStore.userData.role )}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -127,7 +127,7 @@ export default enhance((props) =>
                         <center>นามสกุล</center>
                     </TableHeadcell>
                     <TableHeadcell>
-                        <center>รหัสบัครประชาชน</center>
+                        <center>รหัสบัตรประชาชน</center>
                     </TableHeadcell>
                     {
                         props.authStore.userData.role === 'Admin'
