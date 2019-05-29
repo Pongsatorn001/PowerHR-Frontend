@@ -226,10 +226,13 @@ let link ='/jobPositions/addJobPositions'
 
 export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(job_pos_name , props.list.length , job_button_name ,job_pos_des, link)}
+        {TextHeaderTable(job_pos_name , props.list.length , job_button_name ,job_pos_des, link , '' , '' , props.authStore.userData.role)}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
+                    <TableHeadcell>
+                        <center>รหัส</center>
+                    </TableHeadcell>
                     <TableHeadcell>
                         <center>แผนกที่เปิดรับ</center>
                     </TableHeadcell>
@@ -239,9 +242,13 @@ export default enhance( (props)=>
                     <TableHeadcell>
                         <center>จำนวนที่เปิดรับ</center>
                     </TableHeadcell>
-                    <TableHeadcell>
-                        <center>จัดการข้อมูล</center>
-                    </TableHeadcell>
+                    {
+                        props.authStore.userData.role === 'Admin'
+                        ?   <TableHeadcell>
+                                <center>จัดการข้อมูล</center>
+                            </TableHeadcell>
+                        : null
+                    }
                 </Table.Row>
             </Table.Header>
             {props.handleModalShow(props.handleModalOpen())}
@@ -249,10 +256,15 @@ export default enhance( (props)=>
                 {
                     props.list.map( (data,i)=> {
                         return (
-                            <TableRow key={i}>                          
+                            <TableRow key={i}>
                                     <TableCell>
                                         <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
-                                        <label style={{ marginLeft : '25%' }}>{data.department_name}</label>
+                                            <center><label>{i+1}</label></center>
+                                        </Link>
+                                    </TableCell>                          
+                                    <TableCell>
+                                        <Link href={{ pathname : '../resume/resume' , query : { id : data.job_position_id}}}>
+                                            <label style={{ marginLeft : '25%' }}>{data.department_name}</label>
                                         </Link>
                                     </TableCell>
                                     <TableCell>
@@ -266,73 +278,78 @@ export default enhance( (props)=>
                                         </Link>
                                     </TableCell>
                                     {console.log()}
-                                    <TableCell>
-                                    <center>
-                                        <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name , data.rate)}>
-                                            <Button.Content visible content='ดูรายละเอียด'/>
-                                            <Button.Content hidden >
-                                                <Icon name='search' />
-                                            </Button.Content>
-                                        </ButtonDescription>
-                                        <Modal 
-                                            size="tiny"
-                                            open={props.watchDescrip}
-                                            dimmer="blurring"
-                                        >
-                                            <ModalHeader>รายละเอียดตำแหน่ง {props.headerName}</ModalHeader>
-                                            <Modal.Content>
-                                                <span>
-                                                    จำนวนที่เปิดรับสมัคร : <label>{props.value} ตำแหน่ง</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    แผนกที่ทำการเปิดรับสมัคร : <label>{props.department_name}</label><br/><br/>
-                                                    วันที่เปิดรับสมัคร : <label>{props.startdate}</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    วันที่สิ้นสุดการรับสมัคร : <label>{props.enddate}</label><br/><br/>
-                                                    ค่าตอบแทน : <label>{props.rate}</label><br/><br/>
-                                                    รายละเอียดตำแหน่งงาน : <br/>
-                                                    <p dangerouslySetInnerHTML={{ __html: props.description }} />
-                                                </span><br/><br/>
-                                                <center>
-                                                    <ButtonAdd onClick={props.handleModalDescription(false)}>
-                                                        <Icon name='close' /> ปิด
-                                                    </ButtonAdd>
-                                                </center>
-                                            </Modal.Content>
-                                        </Modal>
-                                        <Link href={{ pathname:'/jobPositions/editJobPositions', query: { id : data.job_position_id }}}>
-                                            <ButtonEdit animated='fade' size='mini'>
-                                                <Button.Content visible content='แก้ไข'/>
-                                                <Button.Content hidden >
-                                                    <Icon name='edit' />
-                                                </Button.Content>
-                                            </ButtonEdit>
-                                        </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)} disabled={false}>
-                                            <Button.Content visible content='ลบ'/>
-                                            <Button.Content hidden >
-                                                <Icon name='trash alternate' />
-                                            </Button.Content>
-                                        </ButtonAdd>
-                                        <Modal 
-                                            size="tiny"
-                                            open={props.open}
-                                            dimmer="blurring"
-                                        >
-                                            <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
-                                                <Modal.Content>
-                                                    <p>
-                                                        คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
-                                                    </p>
-                                                </Modal.Content>
-                                            <Modal.Actions>
-                                                <ButtonAdd  onClick={props.handleModalOpen(false)}>
-                                                    <Icon name='times' /> ยกเลิก
+                                    {
+                                        props.authStore.userData.role === 'Admin'
+                                        ? <TableCell>
+                                            <center>
+                                                <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name , data.rate)}>
+                                                    <Button.Content visible content='ดูรายละเอียด'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='search' />
+                                                    </Button.Content>
+                                                </ButtonDescription>
+                                                <Modal 
+                                                    size="tiny"
+                                                    open={props.watchDescrip}
+                                                    dimmer="blurring"
+                                                >
+                                                    <ModalHeader>รายละเอียดตำแหน่ง {props.headerName}</ModalHeader>
+                                                    <Modal.Content>
+                                                        <span>
+                                                            จำนวนที่เปิดรับสมัคร : <label>{props.value} ตำแหน่ง</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            แผนกที่ทำการเปิดรับสมัคร : <label>{props.department_name}</label><br/><br/>
+                                                            วันที่เปิดรับสมัคร : <label>{props.startdate}</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                            วันที่สิ้นสุดการรับสมัคร : <label>{props.enddate}</label><br/><br/>
+                                                            ค่าตอบแทน : <label>{props.rate}</label><br/><br/>
+                                                            รายละเอียดตำแหน่งงาน : <br/>
+                                                            <p dangerouslySetInnerHTML={{ __html: props.description }} />
+                                                        </span><br/><br/>
+                                                        <center>
+                                                            <ButtonAdd onClick={props.handleModalDescription(false)}>
+                                                                <Icon name='close' /> ปิด
+                                                            </ButtonAdd>
+                                                        </center>
+                                                    </Modal.Content>
+                                                </Modal>
+                                                <Link href={{ pathname:'/jobPositions/editJobPositions', query: { id : data.job_position_id }}}>
+                                                    <ButtonEdit animated='fade' size='mini'>
+                                                        <Button.Content visible content='แก้ไข'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='edit' />
+                                                        </Button.Content>
+                                                    </ButtonEdit>
+                                                </Link>
+                                                <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)} disabled={false}>
+                                                    <Button.Content visible content='ลบ'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='trash alternate' />
+                                                    </Button.Content>
                                                 </ButtonAdd>
-                                                <ButtonAdd color='green' onClick={props.handleDeleteJob_Position()}>
-                                                    <Icon name='checkmark' /> ยืนยัน
-                                                </ButtonAdd>
-                                            </Modal.Actions>
-                                        </Modal>
-                                    </center>
-                                </TableCell>
+                                                <Modal 
+                                                    size="tiny"
+                                                    open={props.open}
+                                                    dimmer="blurring"
+                                                >
+                                                    <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                                        <Modal.Content>
+                                                            <p>
+                                                                คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                            </p>
+                                                        </Modal.Content>
+                                                    <Modal.Actions>
+                                                        <ButtonAdd  onClick={props.handleModalOpen(false)}>
+                                                            <Icon name='times' /> ยกเลิก
+                                                        </ButtonAdd>
+                                                        <ButtonAdd color='green' onClick={props.handleDeleteJob_Position()}>
+                                                            <Icon name='checkmark' /> ยืนยัน
+                                                        </ButtonAdd>
+                                                    </Modal.Actions>
+                                                </Modal>
+                                            </center>
+                                        </TableCell>
+                                        : null
+                                    }
+                                    
                             </TableRow>
                         )}
                     )

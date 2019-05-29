@@ -116,7 +116,7 @@ let link = '/blacklist/addBlacklist'
 
 export default enhance((props) => 
     <Div>
-        {TextHeaderTable(blacklist_name , props.list && props.list.length , button_name , 'รายชื่อ' , link)}
+        {TextHeaderTable(blacklist_name , props.list && props.list.length , button_name , 'รายชื่อ' , link , '' , props.authStore.userData.role )}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -129,9 +129,14 @@ export default enhance((props) =>
                     <TableHeadcell>
                         <center>รหัสบัครประชาชน</center>
                     </TableHeadcell>
-                    <TableHeadcell>
-                        <center>จัดการข้อมูล</center>
-                    </TableHeadcell>
+                    {
+                        props.authStore.userData.role === 'Admin'
+                        ?   <TableHeadcell>
+                                <center>จัดการข้อมูล</center>
+                            </TableHeadcell>
+                        : null
+                    }
+                            
                 </Table.Row>
             </Table.Header>
             <TableBody>
@@ -164,34 +169,39 @@ export default enhance((props) =>
                                     <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
                                     {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
                                 </Modal>
-                                <TableCell>
-                                    <center>
-                                        <Modal 
-                                            trigger={
-                                                <ButtonAdd animated='fade' size='mini' color="youtube">
-                                                    <Button.Content visible content='ลบ'/>
-                                                    <Button.Content hidden >
-                                                        <Icon name='trash alternate' />
-                                                    </Button.Content>
-                                                </ButtonAdd>
-                                            }
-                                            size="tiny"
-                                            closeIcon
-                                        >
-                                            <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
-                                            <Modal.Content>
-                                                <p>
-                                                    คุณต้องการลบข้อมูล {data.firstname} {data.lastname} รหัสประจำตัวประชาชน {data.idcard} ใช่หรือไม่ ?
-                                                </p>
-                                            </Modal.Content>
-                                            <Modal.Actions>
-                                                <ButtonAdd color='green' onClick={() => props.handleDeleteBlackList(data.uid)}>
-                                                    <Icon name='checkmark' /> ยืนยัน
-                                                </ButtonAdd>
-                                            </Modal.Actions>
-                                        </Modal>
-                                    </center>
-                                </TableCell>
+                                {
+                                    props.authStore.userData.role === 'Admin'
+                                    ?   <TableCell>
+                                            <center>
+                                                <Modal 
+                                                    trigger={
+                                                        <ButtonAdd animated='fade' size='mini' color="youtube">
+                                                            <Button.Content visible content='ลบ'/>
+                                                            <Button.Content hidden >
+                                                                <Icon name='trash alternate' />
+                                                            </Button.Content>
+                                                        </ButtonAdd>
+                                                    }
+                                                    size="tiny"
+                                                    closeIcon
+                                                >
+                                                    <HeaderContent icon='archive' content='ลบข้อมูลผู้สมัครไม่ผ่านการคัดเลือกใช่หรือไม่ ?' />
+                                                    <Modal.Content>
+                                                        <p>
+                                                            คุณต้องการลบข้อมูล {data.firstname} {data.lastname} รหัสประจำตัวประชาชน {data.idcard} ใช่หรือไม่ ?
+                                                        </p>
+                                                    </Modal.Content>
+                                                    <Modal.Actions>
+                                                        <ButtonAdd color='green' onClick={() => props.handleDeleteBlackList(data.uid)}>
+                                                            <Icon name='checkmark' /> ยืนยัน
+                                                        </ButtonAdd>
+                                                    </Modal.Actions>
+                                                </Modal>
+                                            </center>
+                                        </TableCell>
+                                    : null
+                                }
+                                        
                             </TableRow>
                         )
                     })
