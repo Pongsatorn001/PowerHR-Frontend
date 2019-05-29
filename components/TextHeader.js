@@ -46,7 +46,7 @@ export const TextHeaderTable = (name , descrip , button ,  positions , link , qu
             {
                 bool
                 ?   <div><br/> <br/></div>
-                :   role === 'Admin'
+                :   role && role === 'Admin'
                     ?   <HeaderButtonAdd as='h2' floated='right'>
                             <Link href={link}>
                                 <ButtonAdd positive animated='fade' size='medium'>

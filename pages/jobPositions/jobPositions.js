@@ -6,9 +6,9 @@ import Link from 'next/link'
 import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
-import axios from 'axios'
 import { inject, observer } from 'mobx-react'
 import { firebase } from '../../firebase/index'
+import Router from 'next/router'
 
 const TablePosition = styled(Table)`
     padding-left : 50px !important;
@@ -278,13 +278,10 @@ export default enhance( (props)=>
                     props.list.map( (data,i)=> {                        
                         return (
                             <TableRow key={i}>
-                                    <TableCell>
-                                        <Link href={{ pathname : '/resume/resume' , query : { id : data.job_position_id}}}>
-                                            <center><label>{i+1}</label></center>
-                                        </Link>
+                                    <TableCell onClick={() => Router.push({ pathname : '/resume/resume' , query : { id : data.job_position_id}})}>
+                                        <center><label style={{ cursor : 'pointer' }}>{i+1}</label></center>
                                     </TableCell>                          
-                                    <TableCell>
-                                        <Link href={{ pathname : 'resume/resume' , query : { id : data.job_position_id}}}>
+                                    <TableCell onClick={() => Router.push({ pathname : '/resume/resume' , query : { id : data.job_position_id}})}>
                                         <label style={{ marginLeft : '25%' , cursor : 'pointer'}}>
                                         {
                                             props.departmentData 
@@ -292,25 +289,19 @@ export default enhance( (props)=>
                                             : null
                                         }
                                         </label>
-                                        </Link>
                                     </TableCell>
-                                    <TableCell>
-                                        <Link href={{ pathname : '/resume/resume' , query : { id : data.job_position_id}}}>
-                                            <label style={{ marginLeft : '25%' , cursor : 'pointer' }}>
-                                            {
-                                                props.positionData 
-                                                ? props.positionData.map( result => { return data.position_id === result.position_id ? result.position_name : null})
-                                                : null
-                                            }
-                                            </label>
-                                        </Link>
+                                    <TableCell onClick={() => Router.push({ pathname : '/resume/resume' , query : { id : data.job_position_id}})}>
+                                        <label style={{ marginLeft : '25%' , cursor : 'pointer' }}>
+                                        {
+                                            props.positionData 
+                                            ? props.positionData.map( result => { return data.position_id === result.position_id ? result.position_name : null})
+                                            : null
+                                        }
+                                        </label>
                                     </TableCell>
-                                    <TableCell>
-                                    <Link href={{ pathname : '/resume/resume' , query : { id : data.job_position_id}}}>
+                                    <TableCell onClick={() => Router.push({ pathname : '/resume/resume' , query : { id : data.job_position_id}})}>
                                         <label style={{ marginLeft : '45%' , cursor : 'pointer' }}>{data.value}</label>
-                                        </Link>
                                     </TableCell>
-                                    {console.log()}
                                     {
                                         props.authStore.userData.role === 'Admin'
                                         ? <TableCell>
