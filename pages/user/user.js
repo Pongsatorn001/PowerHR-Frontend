@@ -169,7 +169,7 @@ let link = '/user/adduser'
 export default enhance( (props)=>
     <div>
         <Div>
-            {TextHeaderTable(`รายชื่อผู้ใช้งานในระบบ` , `${props.list.length}` , button_name , 'คน' , link)}
+            {TextHeaderTable(`รายชื่อผู้ใช้งานในระบบ` , `${props.list.length}` , button_name , 'คน' , link , '' , '' , props.authStore.userData.role)}
             <TablePosition striped>
                 <Table.Header>
                     <Table.Row>
