@@ -152,7 +152,7 @@ const enhance = compose(
         }
     }),
     withHandlers({
-        handleSubmitChangeStatus: props => (applyJobId) => {
+        handleSubmitChangeStatus: props => (applyJobId , leaderStatus) => {
             if (props.hrChecked <= 2) {
                 firebase.database().ref('apply_jobs/' + applyJobId).update({ 
                     hr_status : props.hrChecked,
@@ -163,7 +163,7 @@ const enhance = compose(
                 props.setHrOpenModelEditStatus(false)
                 props.setOpenModelRate(false)
             }
-            else if (props.hrChecked === 3 && !props.leaderChecked) {
+            else if (props.hrChecked === 3 && !leaderStatus) {
                 firebase.database().ref('apply_jobs/' + applyJobId).update({ 
                     hr_status : props.hrChecked,
                     status : 2
@@ -173,7 +173,7 @@ const enhance = compose(
                 props.setHrOpenModelEditStatus(false)
                 props.setOpenModelRate(false)
             }
-            else if (props.hrChecked === 3 && props.leaderChecked === 3) {
+            else if (props.hrChecked === 3 && leaderStatus === 3) {
                 firebase.database().ref('apply_jobs/' + applyJobId).update({ 
                     hr_status : 3,
                     leader_status : 3,
@@ -200,7 +200,7 @@ const enhance = compose(
         handleSubmitLeaderChangeStatus: props => (applyJobId) => {
             firebase.database().ref('apply_jobs/' + applyJobId).update({ 
                 leader_status : props.leaderChecked,
-                status : props.leaderChecked === 3 && props.hrChecked === 3 ? 3 : props.hrChecked < 2 ? 2 : 4
+                status : props.leaderChecked === 3 && props.hrChecked === 3 ? 3 : props.hrChecked <= 2 ? 2 : 4
             })
             props.initGetResumeInJobsPosition()
             props.initGetUserData()
@@ -285,7 +285,7 @@ const enhance = compose(
                                     <Button color='red' onClick={()=> props.setHrOpenModelEditStatus(false)}>
                                         <Icon name='remove' /> ยกเลิก
                                     </Button>
-                                    <Button color='green' onClick={()=> props.handleSubmitChangeStatus(resumeData.apply_job_id,resumeData.status)}>
+                                    <Button color='green' onClick={()=> props.handleSubmitChangeStatus(resumeData.apply_job_id,resumeData.leader_status)}>
                                         <Icon name='checkmark' /> บันทึก
                                     </Button>
                                 </Modal.Actions>
@@ -310,7 +310,7 @@ const enhance = compose(
                                             animated='fade' 
                                             size='tiny' 
                                             onClick={()=> props.setLeaderOpenModelEditStatus("true")}
-                                            disabled={resumeData && resumeData.status < 2 || resumeData && resumeData.status === 4 ? true : false}
+                                            disabled={resumeData && resumeData.status < 2 || resumeData && resumeData.status === 4 && resumeData.leader_status ? true : false}
                                         >
                                             <Button.Content visible content='แก้ไข'/>
                                             <Button.Content hidden >
