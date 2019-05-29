@@ -2,7 +2,7 @@ import React from 'react'
 import { withLayout } from '../../hoc'
 import { compose, withProps , withState , lifecycle , withHandlers } from 'recompose'
 import styled from 'styled-components'
-import { Button , Icon , Table , Modal , Header } from 'semantic-ui-react'
+import { Button , Icon , Table , Modal , Header , Input } from 'semantic-ui-react'
 import Link from 'next/link'
 import { TextHeaderTable } from '../../components/TextHeader'
 import theme from '../../theme/default';
@@ -69,6 +69,10 @@ const ButtonAdd = styled(Button)`
 const HeaderContent = styled(Header)`
     font-family : 'Kanit', sans-serif !important;
 `
+const InputSearch = styled(Input)`
+    margin-left: 60% !important;
+    margin-top: -50px !important;
+`;
 
 const enhance = compose(
     withLayout,
@@ -219,9 +223,12 @@ let department_name = 'แผนกงานในบริษัท'
 let button_name = 'เพิ่มแผนกงาน'
 let link = '/departments/addDepartments'
 
+
+
 export default enhance( (props)=> 
     <Div>
-        {TextHeaderTable(department_name , `${props.list.length}` , button_name , 'แผนก' , link)}
+        {TextHeaderTable(department_name , `${props.list.length}` , button_name , 'แผนก' , link , '' , '' , props.authStore.userData.role )}
+        {/* <Input icon='search' placeholder='Search...' onChange={props.handleSearch()} /> */}
         <TablePosition striped>
             <Table.Header>
                 <Table.Row>
@@ -231,9 +238,14 @@ export default enhance( (props)=>
                     <TableHeadcell>
                         <center>แผนกงานในบริษัท</center>
                     </TableHeadcell>
-                    <TableHeadcell>
-                        <center>จัดการข้อมูล</center>
-                    </TableHeadcell>
+                    {
+                        props.authStore.userData.role === 'Admin'
+                        ?   <TableHeadcell>
+                                <center>จัดการข้อมูล</center>
+                            </TableHeadcell>
+                        : null
+                    }
+                        
                 </Table.Row>
             </Table.Header>
             {props.handleModalShow(props.handleModalOpen())}
@@ -253,44 +265,49 @@ export default enhance( (props)=>
                                                 <label style={{ marginLeft : '39%' , cursor : 'pointer'}}>{data.department_name}</label>
                                             </Link>
                                         </TableCell>
-                                        <TableCell>
-                                            <center>
-                                                <Link href={{ pathname: '/departments/editDepartments', query: { id : data.department_id } }}>
-                                                    <ButtonEdit animated='fade' size='mini'>
-                                                        <Button.Content visible content='แก้ไข'/>
+                                        {
+                                            props.authStore.userData.role === 'Admin'
+                                            ? <TableCell>
+                                                <center>
+                                                    <Link href={{ pathname: '/departments/editDepartments', query: { id : data.department_id } }}>
+                                                        <ButtonEdit animated='fade' size='mini'>
+                                                            <Button.Content visible content='แก้ไข'/>
+                                                            <Button.Content hidden >
+                                                                <Icon name='edit' />
+                                                            </Button.Content>
+                                                        </ButtonEdit>
+                                                    </Link>
+                                                    <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.department_name,data.department_id)}>
+                                                        <Button.Content visible content='ลบ'/>
                                                         <Button.Content hidden >
-                                                            <Icon name='edit' />
+                                                            <Icon name='trash alternate' />
                                                         </Button.Content>
-                                                    </ButtonEdit>
-                                                </Link>
-                                                <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.department_name,data.department_id)}>
-                                                    <Button.Content visible content='ลบ'/>
-                                                    <Button.Content hidden >
-                                                        <Icon name='trash alternate' />
-                                                    </Button.Content>
-                                                </ButtonAdd>
-                                                <Modal 
-                                                    size="tiny"
-                                                    open={props.open}
-                                                    dimmer="blurring"
-                                                >
-                                                    <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
-                                                        <Modal.Content>
-                                                            <p>
-                                                                คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
-                                                            </p>
-                                                        </Modal.Content>
-                                                    <Modal.Actions>
-                                                        <ButtonText  onClick={props.handleModalOpen(false)}>
-                                                            <Icon name='times' /> ยกเลิก
-                                                        </ButtonText>
-                                                        <ButtonAdd color='green' onClick={props.handleDeleteDepartmentName()}>
-                                                            <Icon name='checkmark' /> ยืนยัน
-                                                        </ButtonAdd>
-                                                    </Modal.Actions>
-                                                </Modal>
-                                            </center>
-                                        </TableCell>
+                                                    </ButtonAdd>
+                                                    <Modal 
+                                                        size="tiny"
+                                                        open={props.open}
+                                                        dimmer="blurring"
+                                                    >
+                                                        <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                                            <Modal.Content>
+                                                                <p>
+                                                                    คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                                </p>
+                                                            </Modal.Content>
+                                                        <Modal.Actions>
+                                                            <ButtonText  onClick={props.handleModalOpen(false)}>
+                                                                <Icon name='times' /> ยกเลิก
+                                                            </ButtonText>
+                                                            <ButtonAdd color='green' onClick={props.handleDeleteDepartmentName()}>
+                                                                <Icon name='checkmark' /> ยืนยัน
+                                                            </ButtonAdd>
+                                                        </Modal.Actions>
+                                                    </Modal>
+                                                </center>
+                                            </TableCell>
+                                            : null
+                                        }
+                                            
                                     </TableRow>
                                 )
                             })

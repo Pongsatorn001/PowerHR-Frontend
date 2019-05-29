@@ -195,7 +195,7 @@ export default enhance( (props)=>
     <div>
         {Breadcrumb2Page('แผนกงานในบริษัท' , 'ตำแหน่งงานในแผนก' , `/departments/departments`)}
         <Div>
-            {TextHeaderTable(`ตำแหน่งงานในแผนก ${props.departmentName}` , `${props.list.length}` , button_name , 'ตำแหน่ง' , link , props.url.query.id)}
+            {TextHeaderTable(`ตำแหน่งงานในแผนก ${props.departmentName}` , `${props.list.length}` , button_name , 'ตำแหน่ง' , link , props.url.query.id , '' , props.authStore.userData.role )}
             <TablePosition striped>
                 <Table.Header>
                     <Table.Row>
@@ -205,9 +205,14 @@ export default enhance( (props)=>
                         <TableHeadcell>
                             <center>ตำแหน่ง</center>
                         </TableHeadcell>
-                        <TableHeadcell>
-                            <center>จัดการข้อมูล</center>
-                        </TableHeadcell>
+                        {
+                            props.authStore.userData.role === 'Admin'
+                            ?   <TableHeadcell>
+                                    <center>จัดการข้อมูล</center>
+                                </TableHeadcell>
+                            : null
+                        }
+                            
                     </Table.Row>
                 </Table.Header>
                 {props.handleModalShow(props.handleModalOpen())}
@@ -221,44 +226,49 @@ export default enhance( (props)=>
                                 <TableCell>
                                     <label style={{ marginLeft : '39%' }}>{data.position_name}</label>
                                 </TableCell>
-                                <TableCell>
-                                    <center>
-                                        <Link href={{ pathname: '/position/editPosition', query: { id : data.position_id } }}>
-                                            <ButtonEdit animated='fade' size='mini'>
-                                                <Button.Content visible content='แก้ไข'/>
-                                                <Button.Content hidden >
-                                                    <Icon name='edit' />
-                                                </Button.Content>
-                                            </ButtonEdit>
-                                        </Link>
-                                        <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.position_id)}>
-                                            <Button.Content visible content='ลบ'/>
-                                            <Button.Content hidden >
-                                                <Icon name='trash alternate' />
-                                            </Button.Content>
-                                        </ButtonAdd>
-                                        <Modal 
-                                            size="tiny"
-                                            open={props.open}
-                                            dimmer="blurring"
-                                        >
-                                            <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
-                                                <Modal.Content>
-                                                    <p>
-                                                        คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
-                                                    </p>
-                                                </Modal.Content>
-                                            <Modal.Actions>
-                                                <ButtonText  onClick={props.handleModalOpen(false)}>
-                                                    <Icon name='times' /> ยกเลิก
-                                                </ButtonText>
-                                                <ButtonAdd color='green' onClick={props.handleDeletePositionName()}>
-                                                    <Icon name='checkmark' /> ยืนยัน
+                                {
+                                    props.authStore.userData.role === 'Admin'
+                                    ?   <TableCell>
+                                            <center>
+                                                <Link href={{ pathname: '/position/editPosition', query: { id : data.position_id } }}>
+                                                    <ButtonEdit animated='fade' size='mini'>
+                                                        <Button.Content visible content='แก้ไข'/>
+                                                        <Button.Content hidden >
+                                                            <Icon name='edit' />
+                                                        </Button.Content>
+                                                    </ButtonEdit>
+                                                </Link>
+                                                <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.position_id)}>
+                                                    <Button.Content visible content='ลบ'/>
+                                                    <Button.Content hidden >
+                                                        <Icon name='trash alternate' />
+                                                    </Button.Content>
                                                 </ButtonAdd>
-                                            </Modal.Actions>
-                                        </Modal>
-                                    </center>
-                                </TableCell>
+                                                <Modal 
+                                                    size="tiny"
+                                                    open={props.open}
+                                                    dimmer="blurring"
+                                                >
+                                                    <HeaderContent icon='archive' content='ลบข้อมูลตำแหน่งใช่หรือไม่ ?' />
+                                                        <Modal.Content>
+                                                            <p>
+                                                                คุณต้องการลบข้อมูลตำแหน่งงาน {props.headerName} ใช่หรือไม่ ?
+                                                            </p>
+                                                        </Modal.Content>
+                                                    <Modal.Actions>
+                                                        <ButtonText  onClick={props.handleModalOpen(false)}>
+                                                            <Icon name='times' /> ยกเลิก
+                                                        </ButtonText>
+                                                        <ButtonAdd color='green' onClick={props.handleDeletePositionName()}>
+                                                            <Icon name='checkmark' /> ยืนยัน
+                                                        </ButtonAdd>
+                                                    </Modal.Actions>
+                                                </Modal>
+                                            </center>
+                                        </TableCell>
+                                    : null
+                                }
+                                        
                             </TableRow>
                         )
                     })}

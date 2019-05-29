@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import Link from 'next/link'
-import { Button , Icon , Header } from 'semantic-ui-react'
+import { Button , Icon , Header  } from 'semantic-ui-react'
 
 const HeaderName = styled(Header)`
     padding-top : 20px !important;
@@ -34,30 +34,32 @@ export  const TextHeader = (name) => {
     return <H2>{name}</H2>
 }
 
-export const TextHeaderTable = (name , descrip , button ,  positions , link , queryData , bool) => {
+export const TextHeaderTable = (name , descrip , button ,  positions , link , queryData , bool , role ) => {
     if (queryData !== undefined) {
         link = { pathname : `${link}` , query : { data : queryData}}
     }
     return (
         <div>
             <HeaderName as='h1' floated='left'>
-                {name}&nbsp;<Small>( จำนวนทั้งหมด {descrip} {positions} )</Small>
+                {name}&nbsp;<Small>( {descrip} {positions} )</Small>
             </HeaderName>
             {
                 bool
-                ?   <br/>
-                :   <HeaderButtonAdd as='h2' floated='right'>
-                        <Link href={link}>
-                            <ButtonAdd positive animated='fade' size='medium'>
-                                <Button.Content visible>
-                                    {button}
-                                </Button.Content>
-                                <Button.Content hidden>
-                                    <IconAdd name='add' />
-                                </Button.Content>
-                            </ButtonAdd>
-                        </Link>
-                    </HeaderButtonAdd>
+                ?   <div><br/> <br/></div>
+                :   role === 'Admin'
+                    ?   <HeaderButtonAdd as='h2' floated='right'>
+                            <Link href={link}>
+                                <ButtonAdd positive animated='fade' size='medium'>
+                                    <Button.Content visible>
+                                        {button}
+                                    </Button.Content>
+                                    <Button.Content hidden>
+                                        <IconAdd name='add' />
+                                    </Button.Content>
+                                </ButtonAdd>
+                            </Link>
+                        </HeaderButtonAdd>
+                    : null
             }
         </div>
     )
