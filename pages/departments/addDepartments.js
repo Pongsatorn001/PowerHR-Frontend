@@ -60,7 +60,7 @@ const enhance = compose(
   }),
   withHandlers({
     handleInputAddDepartment: props => () => event => {
-      props.setDepartment_Name(event.target.value)
+      props.setDepartment_Name(event.target.value.toUpperCase())
     },
     handleSaveDepartment: props => () => event => {    
       if (props.department_name) {

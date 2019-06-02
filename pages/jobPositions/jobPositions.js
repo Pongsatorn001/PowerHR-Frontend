@@ -127,9 +127,13 @@ const enhance = compose(
         }
     }),
     withHandlers({
-        handleModalOpen: props => (foo , name , id) => event => {
+        handleModalOpen: props => (foo , position_id , id) => event => {
             props.setOpen(foo)
-            props.setHeaderName(name)
+            props.setHeaderName(
+                props.positionData 
+                    ? props.positionData.map( result => { return position_id === result.position_id ? result.position_name : null})
+                    : null
+            )
             props.setIdList(id)
             props.setModalShow(false)
             props.setDelsucces(false)
@@ -143,7 +147,7 @@ const enhance = compose(
                 let data = Object.values(snapshot.val())
             })
         },
-        handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name , rate) => event => {
+        handleModalDescription: props => (bool , name , value , startdate , enddate , description , department_name , rate , data) => event => {
             if (bool === true) {
                 const localStartDate = startdate.split('-')
                 const localEndDate = enddate.split('-')
@@ -151,12 +155,20 @@ const enhance = compose(
                 const result_end = new Date(Date.UTC(localEndDate[0],localEndDate[1]-1,localEndDate[2]));
                 const options = { year: 'numeric', month: 'long', day: 'numeric' };
                 props.setWatchDescrip(bool)
-                props.setHeaderName(name)
+                props.setHeaderName(
+                    props.positionData 
+                    ? props.positionData.map( result => { return data.position_id === result.position_id ? result.position_name : null})
+                    : null
+                )
                 props.setvalue(value)
                 props.setstartdate(result_start.toLocaleDateString('th-TH', options))
                 props.setenddate(result_end.toLocaleDateString('th-TH', options))
                 props.setdescription(description)
-                props.setdepartment_name(department_name)
+                props.setdepartment_name(
+                    props.departmentData 
+                    ? props.departmentData.map( result => { return data.department_id === result.department_id ? result.department_name : null})
+                    : null
+                )
                 props.setRate(rate)
             }
             else{
@@ -168,7 +180,7 @@ const enhance = compose(
             firebase.database().ref("apply_jobs")
             .orderByChild("job_position_id")
             .equalTo(props.idList)
-            .once("value").then( snapshot => {
+            .once("value").then( snapshot => {                
                if (snapshot.val()) {
                     props.setModalShow(true)
                }
@@ -188,7 +200,7 @@ const enhance = compose(
             })
             
         },
-        handleModalShow: props => (setModal) => {                        
+        handleModalShow: props => (setModal) => {                                    
             if (props.modalShow === true) {
                 return(
                     <Modal 
@@ -306,7 +318,7 @@ export default enhance( (props)=>
                                         props.authStore.userData.role === 'Admin'
                                         ? <TableCell>
                                             <center>
-                                                <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name , data.rate)}>
+                                                <ButtonDescription animated='fade' size='mini' onClick={props.handleModalDescription(true , data.position_name , data.value , data.startdate , data.enddate , data.description , data.department_name , data.rate , data)}>
                                                     <Button.Content visible content='ดูรายละเอียด'/>
                                                     <Button.Content hidden >
                                                         <Icon name='search' />
@@ -343,7 +355,7 @@ export default enhance( (props)=>
                                                         </Button.Content>
                                                     </ButtonEdit>
                                                 </Link>
-                                                <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_name,data.id)} disabled={false}>
+                                                <ButtonAdd animated='fade' size='mini' color="youtube" onClick={props.handleModalOpen(true,data.position_id,data.job_position_id)} disabled={false}>
                                                     <Button.Content visible content='ลบ'/>
                                                     <Button.Content hidden >
                                                         <Icon name='trash alternate' />

@@ -462,13 +462,13 @@ export default enhance( (props)=>
                                 <center>นามสกุล</center>
                             </TableHeadcell>
                             <TableHeadcell>
-                                <center>Rate</center>
+                                <center>Rate (บาท)</center>
                             </TableHeadcell>
                             <TableHeadcell>
                                 <center>สถานะ</center>
                             </TableHeadcell>
                             <TableHeadcell>
-                                <center>จัดการข้อมูล</center>
+                                <center>ดูรายละเอียด</center>
                             </TableHeadcell>
                         </Table.Row>
                     </Table.Header>
@@ -515,7 +515,7 @@ export default enhance( (props)=>
                                     <TableCell>
                                         <center>
                                                 <ButtonAdd animated='fade' size='mini' color="blue" onClick={() => props.handleSetData(dataResume)}>
-                                                    <Button.Content visible content='ดูรายละเอียด'/>
+                                                    <Button.Content visible content='คลิ๊ก'/>
                                                     <Button.Content hidden >
                                                         <Icon name='search' />
                                                     </Button.Content>

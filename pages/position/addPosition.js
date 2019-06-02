@@ -79,7 +79,7 @@ const enhance = compose(
   }),
   withHandlers({
     handleInputAddPosition: props => () => event => {
-      props.setPosition_Name(event.target.value)
+      props.setPosition_Name(event.target.value.toUpperCase())
     },
     handleSavePosition: props => () => event => {
       if (props.position_name) {

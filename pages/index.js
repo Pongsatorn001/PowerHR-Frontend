@@ -27,7 +27,7 @@ const enhance = compose(
   withState('email' , 'setEmail'),
   withState('password' , 'setPassword'),
   withProps({
-    pageTitle: 'Welcome to PowerHR Admin'
+    pageTitle: 'Welcome to Cupcode'
   }),
   withHandlers({
     handleLoginButton: props => async() => {      
@@ -42,7 +42,7 @@ export default enhance((props) =>
     <center>
       {
         props.authStore.currentUser 
-          ?  <H1>Welcome To PowerHR</H1>
+          ?  <H1>Welcome to Cupcode</H1>
           :  <FormContainer>
                 <LoginHeader as='h1'>เข้าสู่ระบบ</LoginHeader><br/>
                 <Form.Group widths='equal'>

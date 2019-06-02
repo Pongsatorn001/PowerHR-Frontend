@@ -56,7 +56,7 @@ const enhance = compose(
     withState('list' , 'setlist'),
     withState('blacklist' , 'setBlacklist'),
     withProps({
-      pageTitle: 'Welcome to PowerHR Admin',
+      pageTitle: 'Blacklist',
     }),
     withHandlers({
         initGetUserlistData: props => () => {
