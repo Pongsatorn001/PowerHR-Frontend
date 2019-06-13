@@ -475,54 +475,57 @@ export default enhance( (props)=>
                     <TableBody>
                         {
                             props.list && props.list.map( (dataResume, i)=>
-                                <TableRow key={i}>
-                                    <TableCell>
-                                    <label style={{ marginLeft : '35%' }} onClick={() => props.setOpenModel("true")}>
-                                    {
-                                        props.users &&
-                                        props.users.map( user => {return user.uid === dataResume.uid ? user.firstname : null})
-                                    }
-                                    </label>
-                                    </TableCell>
-                                    <TableCell>
-                                    <label style={{ marginLeft : '35%'}} onClick={() => props.setOpenModelLastName("true")}>
-                                    {
-                                        props.users &&
-                                        props.users.map( user => {return user.uid === dataResume.uid ? user.lastname : null})
-                                    }
-                                    </label>
-                                    </TableCell>
-                                    <TableCell>
-                                        <label style={{ marginLeft : '35%' }} onClick={() => props.setOpenModelRate("true")}>
-                                            {dataResume.rate}
-                                        </label>
-                                    </TableCell>
-                                    <TableCell>
-                                    <label style={{ marginLeft : '35%'}} onClick={() => props.setOpenModelStatus("true")}>
-                                    {
-                                        dataResume.status === 1
-                                        ? "ไม่ผ่านการพิจารณา"
-                                        : dataResume.status === 2
-                                            ? "เรียกสัมภาษณ์"
-                                            : dataResume.status === 3
-                                                ? "ผ่านการสัมภาษณ์"
-                                                : dataResume.status === 4
-                                                    ? "ไม่ผ่านการสัมภาษณ์"
-                                                    : "รอการสัมภาษณ์"
-                                    }
-                                    </label>
-                                    </TableCell>
-                                    <TableCell>
-                                        <center>
-                                                <ButtonAdd animated='fade' size='mini' color="blue" onClick={() => props.handleSetData(dataResume)}>
-                                                    <Button.Content visible content='คลิ๊ก'/>
-                                                    <Button.Content hidden >
-                                                        <Icon name='search' />
-                                                    </Button.Content>
-                                                </ButtonAdd>
-                                        </center>
-                                    </TableCell>
-                                </TableRow>
+                                props.users &&
+                                props.users.map( user => {
+                                    return ( 
+                                        user.uid === dataResume.uid && user.blacklist === false
+                                        ?   <TableRow key={i}><TableCell>
+                                                <label style={{ marginLeft : '35%' }} onClick={() => props.setOpenModel("true")}>
+                                                {
+                                                    user.uid === dataResume.uid ? user.firstname : null
+                                                }
+                                                </label>
+                                                </TableCell>
+                                                <TableCell>
+                                                <label style={{ marginLeft : '35%'}} onClick={() => props.setOpenModelLastName("true")}>
+                                                {
+                                                    user.uid === dataResume.uid ? user.lastname : null
+                                                }
+                                                </label>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <label style={{ marginLeft : '35%' }} onClick={() => props.setOpenModelRate("true")}>
+                                                        {dataResume.rate}
+                                                    </label>
+                                                </TableCell>
+                                                <TableCell>
+                                                <label style={{ marginLeft : '35%'}} onClick={() => props.setOpenModelStatus("true")}>
+                                                {
+                                                    dataResume.status === 1
+                                                    ? "ไม่ผ่านการพิจารณา"
+                                                    : dataResume.status === 2
+                                                        ? "เรียกสัมภาษณ์"
+                                                        : dataResume.status === 3
+                                                            ? "ผ่านการสัมภาษณ์"
+                                                            : dataResume.status === 4
+                                                                ? "ไม่ผ่านการสัมภาษณ์"
+                                                                : "รอการสัมภาษณ์"
+                                                }
+                                                </label>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <center>
+                                                            <ButtonAdd animated='fade' size='mini' color="blue" onClick={() => props.handleSetData(dataResume)}>
+                                                                <Button.Content visible content='คลิ๊ก'/>
+                                                                <Button.Content hidden >
+                                                                    <Icon name='search' />
+                                                                </Button.Content>
+                                                            </ButtonAdd>
+                                                    </center>
+                                                </TableCell>
+                                            </TableRow>
+                                        : null
+                                )})
                             )
                         }
                         <Modal open={props.openModelRate} dimmer="blurring">

@@ -65,15 +65,12 @@ const enhance = compose(
             .equalTo(true)
             .once("value").then( snapshot => {
                 props.setlist(Object.values(snapshot.val()))
-                console.log(Object.values(snapshot.val()));
             })
         },
         initGetBlacklistData: props => () => {
             firebase.database().ref('blacklist')
             .once("value").then( snapshot => {
-                props.setBlacklist(Object.values(snapshot.val()))
-                console.log(Object.values(snapshot.val()));
-                
+                props.setBlacklist(Object.values(snapshot.val()))                
             })
         }
     }),
@@ -145,27 +142,36 @@ export default enhance((props) =>
                     props.list.map( (data , i) => {
                         return (
                             <TableRow key={i}>
-                                <Modal trigger={
-                                    <TableCell>
-                                        <center>{data.firstname}</center>
-                                    </TableCell>
-                                }closeIcon size='small'>
+                                <Modal 
+                                    trigger={
+                                        <TableCell>
+                                            <center>{data.firstname}</center>
+                                        </TableCell>
+                                    }
+                                    closeIcon size='small'
+                                >
                                     <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
                                     {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
                                 </Modal>
-                                <Modal trigger={
-                                    <TableCell>
-                                        <center>{data.lastname}</center>
-                                    </TableCell>
-                                }closeIcon size='small'>
+                                <Modal 
+                                    trigger={
+                                        <TableCell>
+                                            <center>{data.lastname}</center>
+                                        </TableCell>
+                                    }
+                                    closeIcon size='small'
+                                >
                                     <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
                                     {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
                                 </Modal>
-                                <Modal trigger={
-                                    <TableCell>
-                                        <center>{data.idcard}</center>
-                                    </TableCell>
-                                }closeIcon size='small'>
+                                <Modal 
+                                    trigger={
+                                        <TableCell>
+                                            <center>{data.idcard}</center>
+                                        </TableCell>
+                                    }
+                                    closeIcon size='small'
+                                >
                                     <HeaderContent icon='user times' content={`แบล็คลิสต์ : คุณ ${data.firstname} ${data.lastname}`} />
                                     {props.handleClickModal(data.idcard , props.blacklist && props.blacklist.map( result => {return result.user_id === data.uid ? result.reason : null}))}
                                 </Modal>
