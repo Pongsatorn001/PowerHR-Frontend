@@ -28,7 +28,7 @@
     "module-resolver": "^1.0.0",
     "moment": "^2.19.2",
     "next": "^4.1.4",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.13.1",
     "normalize.css": "^7.0.0",
     "postcss-easy-import": "^3.0.0",
     "postcss-loader": "^2.0.8",
