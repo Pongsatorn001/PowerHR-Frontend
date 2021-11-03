@@ -48,7 +48,7 @@
     "semantic-ui-react": "^0.83.0",
     "store": "^2.0.12",
     "styled-components": "^2.2.3",
-    "validator": "^9.1.1"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
