@@ -27,7 +27,7 @@
     "mobx-react": "^4.3.4",
     "module-resolver": "^1.0.0",
     "moment": "^2.19.2",
-    "next": "^4.1.4",
+    "next": "^13.0.3",
     "node-sass": "^4.7.2",
     "normalize.css": "^7.0.0",
     "postcss-easy-import": "^3.0.0",
